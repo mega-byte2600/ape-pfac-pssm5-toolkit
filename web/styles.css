@@ -13,6 +13,7 @@
   --card: #ffffff;
   --patient: #00693e;
   --risk: #8a3a2b;
+  --gold: #c7a252;
   --shadow: 0 18px 50px rgba(18, 49, 43, 0.12);
   --soft-shadow: 0 8px 24px rgba(18, 49, 43, 0.08);
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
@@ -23,8 +24,9 @@ html { scroll-behavior: smooth; }
 body {
   margin: 0;
   background:
-    radial-gradient(circle at 12% 0%, rgba(0, 105, 62, 0.16), transparent 28rem),
-    linear-gradient(180deg, #ffffff 0%, var(--mist) 48%, #eef5f1 100%);
+    radial-gradient(circle at 12% -5%, rgba(0, 105, 62, 0.28), transparent 24rem),
+    radial-gradient(circle at 92% 8%, rgba(18, 49, 43, 0.18), transparent 26rem),
+    linear-gradient(180deg, #ffffff 0%, var(--mist) 43%, #eaf4ef 100%);
   color: var(--ink);
   line-height: 1.6;
 }
@@ -60,8 +62,8 @@ a { color: inherit; }
 .mark {
   display: grid;
   place-items: center;
-  width: 2.7rem;
-  height: 2.7rem;
+  width: 2.85rem;
+  height: 2.85rem;
   border-radius: .85rem;
   background: linear-gradient(135deg, var(--dartmouth-green), var(--forest));
   color: white;
@@ -98,6 +100,8 @@ main {
   display: grid;
   align-content: center;
   gap: 1.35rem;
+  background:
+    linear-gradient(135deg, rgba(18, 49, 43, .96), rgba(0, 105, 62, .92) 48%, rgba(255,255,255,.96) 48.3%, rgba(255,255,255,.96) 100%);
 }
 .hero::before {
   content: "";
@@ -117,6 +121,32 @@ main {
   background: rgba(0, 105, 62, .08);
   pointer-events: none;
 }
+.hero > * { position: relative; z-index: 1; }
+.hero .eyebrow { color: #d8efe6; }
+.hero h1 { color: white; text-shadow: 0 8px 24px rgba(0,0,0,.16); }
+.hero .lead { color: #e9f6f0; max-width: 760px; }
+.hero-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.hero-grid article {
+  padding: 1.1rem;
+  border: 1px solid rgba(0, 105, 62, .16);
+  border-radius: 1rem;
+  background: rgba(255,255,255,.96);
+  box-shadow: var(--soft-shadow);
+}
+.hero-grid span, .tag {
+  display: inline-block;
+  color: var(--dartmouth-green);
+  font-size: .76rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .09em;
+}
+.hero-grid strong { display: block; margin-top: .45rem; color: var(--forest); }
 .eyebrow {
   margin: 0 0 .5rem;
   color: var(--dartmouth-green);
@@ -148,27 +178,6 @@ p { max-width: 78ch; }
   color: var(--granite);
   font-size: clamp(1.08rem, 2vw, 1.32rem);
 }
-.hero-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  margin-top: 1rem;
-}
-.hero-grid article {
-  padding: 1.1rem;
-  border: 1px solid rgba(0, 105, 62, .16);
-  border-radius: 1rem;
-  background: linear-gradient(180deg, #ffffff, #f4faf7);
-}
-.hero-grid span, .tag {
-  display: inline-block;
-  color: var(--dartmouth-green);
-  font-size: .76rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: .09em;
-}
-.hero-grid strong { display: block; margin-top: .45rem; color: var(--forest); }
 .actions { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: .35rem; }
 .button {
   display: inline-flex;
@@ -257,6 +266,23 @@ a.question:hover { border-color: var(--dartmouth-green); color: var(--dartmouth-
 .resource-link::after { content: " ↗"; }
 .references ol { padding-left: 1.3rem; }
 .references li { margin-bottom: .8rem; color: var(--muted); }
+pre {
+  overflow: auto;
+  padding: 1rem;
+  border-radius: 1rem;
+  background: #0d211d;
+  color: #eaf7f1;
+  line-height: 1.45;
+}
+.matrix-table {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+}
+table { width: 100%; border-collapse: collapse; min-width: 980px; background: white; }
+th, td { padding: .85rem; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+th { background: #e8f2ee; color: var(--forest); font-size: .86rem; }
+td { color: var(--granite); font-size: .92rem; }
 .stat-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -288,7 +314,10 @@ footer {
 @media (max-width: 900px) {
   .site-header { align-items: flex-start; flex-direction: column; }
   nav { justify-content: flex-start; }
+  .hero {
+    min-height: auto;
+    background: linear-gradient(160deg, var(--forest), var(--dartmouth-green));
+  }
   .hero-grid, .patient-first, .card-grid, .evidence-grid, .step-list, .stat-grid { grid-template-columns: 1fr; }
-  .hero { min-height: auto; }
   h1 { font-size: clamp(2.15rem, 13vw, 3.55rem); }
 }
