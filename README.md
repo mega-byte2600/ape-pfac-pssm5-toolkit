@@ -4,6 +4,16 @@ This repository is a standalone MPH Applied Practice Experience demo.
 
 It is not connected to Hedge Desk or any finance project.
 
+## First acknowledgement
+
+This project is dedicated first and foremost to Rosie Bartel.
+
+Rosie Bartel's lived experience after total knee replacement, healthcare-associated MRSA infection, sepsis, amputation, and long-term patient safety advocacy is the patient story anchor for this toolkit. Without her public witness and advocacy, this project would not have the same purpose, urgency, or moral center.
+
+Formal research explains what the evidence supports. Rosie Bartel's story explains why the toolkit must stay patient first.
+
+See `ACKNOWLEDGEMENT.md` and `web/story.html`.
+
 ## Purpose
 
 Build an industry-grade, evidence-based leadership toolkit that helps health systems deploy Patient and Family Advisory Councils as a practical structure for CMS PSSM 5 Patient and Family Engagement.
@@ -12,12 +22,13 @@ The toolkit is designed to help leaders improve patient experience metrics, incl
 
 ## Patient-first motto
 
-Patients over payers, bureaucracy, and internal convenience.
+Patients over payers, bureaucracy, internal convenience, and checkbox compliance.
 
-Every design decision begins with two questions:
+Every design decision begins with three questions:
 
 1. How does this benefit the patient or family?
 2. How could this hurt the patient or family if we get it wrong?
+3. Would this be acceptable if the patient were me, my mother, or someone I love?
 
 ## APE competency proof
 
@@ -50,6 +61,7 @@ Open `http://localhost:8765`.
 
 - `/api/health`
 - `/api/toolkit`
+- `/api/open-resources`
 
 ## Scope boundary
 
