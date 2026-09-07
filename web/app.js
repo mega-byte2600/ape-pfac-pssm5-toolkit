@@ -125,17 +125,28 @@ function fillStory(item) {
 }
 
 async function boot() {
-  const data = await fetchJson("/api/toolkit");
-  document.getElementById("motto").textContent = data.project.motto;
-  fillStory(data.story_anchor);
-  fillQuestions(data.project.patient_first_questions);
-  fillMetrics(data.metric_drivers);
-  fillCompetencies(data.competencies);
-  fillSteps(data.playbook_steps);
-  fillModels(data.peer_models || []);
-  fillEvidence(data.evidence);
-  fillReferences(data.references);
-  fillOpenResources(data.open_resources || []);
+  const toolkitTarget = document.getElementById("motto");
+  const resourcesTarget = document.getElementById("open-resources-grid");
+
+  if (toolkitTarget) {
+    const data = await fetchJson("/api/toolkit");
+    toolkitTarget.textContent = data.project.motto;
+    fillStory(data.story_anchor);
+    fillQuestions(data.project.patient_first_questions);
+    fillMetrics(data.metric_drivers);
+    fillCompetencies(data.competencies);
+    fillSteps(data.playbook_steps);
+    fillModels(data.peer_models || []);
+    fillEvidence(data.evidence);
+    fillReferences(data.references);
+    fillOpenResources(data.open_resources || []);
+    return;
+  }
+
+  if (resourcesTarget) {
+    const data = await fetchJson("/api/open-resources");
+    fillOpenResources(data.open_resources || []);
+  }
 }
 
 boot().catch((error) => {
