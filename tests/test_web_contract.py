@@ -56,6 +56,16 @@ class WebContractTests(unittest.TestCase):
         self.assertIn("Research surveillance how-to", body)
         self.assertIn('href="/surveillance-method.html"', body)
 
+    def test_evidence_summary_uses_ape_ile_framing(self):
+        status, headers, body = request("/evidence-summary.html")
+
+        self.assertEqual(status, "200 OK")
+        self.assertIn("text/html", headers["Content-Type"])
+        self.assertIn("My APE/ILE project translates", body)
+        self.assertIn("mutually beneficial applied work", body)
+        self.assertIn("culminating high-quality written product", body)
+        self.assertNotIn("The Agreement defines", body)
+
     def test_public_pages_do_not_expose_internal_admin_language(self):
         public_paths = [
             "/",
