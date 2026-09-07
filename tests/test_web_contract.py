@@ -112,7 +112,7 @@ class WebContractTests(unittest.TestCase):
                 "Applied Practice Experience Deliverables",
                 "Environmental scan",
                 "PFAC/PSSM 5 leadership toolkit",
-                "Selected competencies",
+                "Selected APE competencies",
             ],
             "/mvp-one.html": [
                 "Reviewer Readiness",
