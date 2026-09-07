@@ -11,7 +11,7 @@
   <a class="skip" href="#main">Skip to main content</a>
   <header class="site-header enterprise-header">
     <div class="brand"><span class="mark">DH</span><div><strong>Dartmouth Health Benchmark</strong><small>Assessment framework and evidence status</small></div></div>
-    <nav aria-label="Primary"><a href="/">Overview</a><a href="/evidence-summary.html">Summary</a><a href="/research-plan.html">Research</a><a href="/surveillance-method.html">Method</a><a href="/evidence-matrix.html">Matrix</a><a href="/collaboration.html">Collaborate</a></nav>
+    <nav aria-label="Primary"><a href="/evidence-summary.html">Summary</a><a href="/research-plan.html">Research</a><a href="/surveillance-method.html">Method</a><a href="/evidence-matrix.html">Matrix</a><a href="/hai-alert.html">HAI Alert</a><a href="/about.html">About</a></nav>
   </header>
 
   <main id="main">
@@ -19,7 +19,7 @@
       <div class="hero-copy">
         <p class="eyebrow">DH value-add • benchmark framework • evidence status</p>
         <h1>Evaluate where Dartmouth Health is strong, where evidence is still needed, and where the toolkit can add value.</h1>
-        <p class="lead">This page is a benchmark assessment framework, not a completed evaluation. It identifies the evidence needed to assess PFAC governance, PSSM 5 alignment, patient and care partner engagement, measurement, equity, and learning health system practice.</p>
+        <p class="lead">This page is a benchmark assessment framework, not a finished rating. It identifies the evidence needed to assess PFAC governance, PSSM 5 alignment, patient and care partner engagement, measurement, equity, and learning health system practice.</p>
         <div class="actions">
           <a class="button" href="#assessment-framework">View framework</a>
           <a class="button secondary" href="#evidence-status">Evidence status</a>
@@ -40,18 +40,33 @@
     </section>
 
     <section id="evidence-status" class="panel">
-      <div class="section-title"><p class="eyebrow">Public evidence available so far</p><h2>What is supported now versus what still needs validation.</h2></div>
+      <div class="section-title"><p class="eyebrow">Evidence-backed preliminary findings</p><h2>What is publicly supported, what is not yet validated, and where evidence is still insufficient.</h2></div>
       <div class="matrix-table">
-        <table>
-          <thead><tr><th>Item</th><th>Current evidence status</th><th>Why it matters</th><th>Source or next evidence needed</th></tr></thead>
+        <table class="evidence-status-table">
+          <thead><tr><th>Status</th><th>Item</th><th>Current finding</th><th>Limitations and next evidence needed</th></tr></thead>
           <tbody>
-            <tr><td>ConnectShareCare</td><td>Publicly supported</td><td>Shows a Dartmouth Health-supported patient and care partner engagement asset.</td><td><a href="https://connectsharecare.org/our-story-2/" target="_blank" rel="noopener noreferrer">ConnectShareCare story page</a> and <a href="https://www.dartmouth-health.org/about/news/article/dartmouth-healths-online-community-offers-lifeline-those-facing-illness-caregiving-and-loss" target="_blank" rel="noopener noreferrer">Dartmouth Health news release</a>.</td></tr>
-            <tr><td>Promise Partnership Coproduction Learning Health System</td><td>Publicly supported</td><td>Shows the broader DH and Dartmouth Institute context for coproduction and learning health system work.</td><td><a href="https://sites.dartmouth.edu/promisepartnership/" target="_blank" rel="noopener noreferrer">Promise Partnership public page</a> and <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9976397/" target="_blank" rel="noopener noreferrer">case study article</a>.</td></tr>
-            <tr><td>Care Experience Collaborative</td><td>Publicly supported</td><td>Shows an existing improvement structure that can be examined for patient and family engagement connections.</td><td><a href="https://sites.dartmouth.edu/promisepartnership/learning-collaboratives/" target="_blank" rel="noopener noreferrer">Learning collaboratives page</a>.</td></tr>
-            <tr><td>PSSM 5 patient and family engagement expectation</td><td>External benchmark supported</td><td>Provides the safety-structure lens for PFAC input on safety.</td><td><a href="https://www.ahrq.gov/action-alliance/resources/measure-domains.html" target="_blank" rel="noopener noreferrer">AHRQ PSSM domain resources</a>.</td></tr>
-            <tr><td>DH PFAC governance authority</td><td>Not yet validated</td><td>Needed to know whether patient and family input reaches decision-makers.</td><td>Collect or review charters, agendas, sponsorship model, decision logs, and escalation pathways.</td></tr>
-            <tr><td>Measurement and feedback loop</td><td>Not yet validated</td><td>Needed to know whether DH can show what was heard, what changed, who owned it, and what improved.</td><td>Collect or review dashboards, closed-loop reports, action trackers, and before-and-after summaries.</td></tr>
-            <tr><td>Equity and representation</td><td>Not yet validated</td><td>Needed to know whether engagement reflects the communities served.</td><td>Collect or review recruitment approach, language access, rural access, caregiver diversity, and participation barriers.</td></tr>
+            <tr data-evidence-status="publicly-supported"><td>Publicly supported</td><td>ConnectShareCare</td><td>Public sources support that Dartmouth Health has sponsored a patient and care partner engagement asset.</td><td>This does not prove PFAC governance authority, systemwide reach, or measurable improvement. Review charters, reporting paths, and action logs next.</td></tr>
+            <tr data-evidence-status="publicly-supported"><td>Publicly supported</td><td>Promise Partnership Coproduction Learning Health System</td><td>Public pages and a peer-reviewed case study support the coproduction learning health system context.</td><td>This does not show how every PFAC recommendation moves into leadership decisions. Map the connection from engagement activity to operating decisions.</td></tr>
+            <tr data-evidence-status="preliminary-finding"><td>Preliminary finding</td><td>Care Experience Collaborative</td><td>Public information suggests an improvement structure that may be relevant to patient and family engagement.</td><td>The available public source does not yet prove PFAC membership, cadence, decision rights, or closed-loop reporting.</td></tr>
+            <tr data-evidence-status="not-yet-validated"><td>Not yet validated</td><td>DH PFAC governance authority</td><td>Governance authority cannot be assessed from the public evidence reviewed so far.</td><td>Collect or review charters, agendas, sponsorship model, decision logs, and escalation pathways.</td></tr>
+            <tr data-evidence-status="not-yet-validated"><td>Not yet validated</td><td>Measurement and feedback loop</td><td>Closed-loop measurement cannot be assessed from the public evidence reviewed so far.</td><td>Collect or review dashboards, closed-loop reports, action trackers, and before-and-after summaries.</td></tr>
+            <tr data-evidence-status="insufficient-evidence"><td>Insufficient evidence</td><td>Equity and representation</td><td>Current public evidence is not enough to assess whether engagement reflects the communities served.</td><td>Review recruitment approach, language access, rural access, caregiver diversity, disability access, and participation barriers.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="evidence-table" class="panel">
+      <div class="section-title"><p class="eyebrow">Reusable evidence table</p><h2>Each future benchmark claim should use the same fields before any score is considered.</h2></div>
+      <div class="matrix-table">
+        <table class="benchmark-evidence-table">
+          <thead><tr><th>Domain</th><th>Evidence item</th><th>Evidence type</th><th>Source title</th><th>Source URL</th><th>Date reviewed</th><th>Current finding</th><th>Limitation</th><th>Confidence</th><th>Gap</th><th>Recommended action</th><th>Public safe</th><th>Include on site</th></tr></thead>
+          <tbody>
+            <tr data-evidence-status="publicly-supported"><td>Engagement infrastructure</td><td>ConnectShareCare public story page</td><td>Public web source</td><td>ConnectShareCare story page</td><td><a href="https://connectsharecare.org/our-story-2/" target="_blank" rel="noopener noreferrer">Public source</a></td><td>September 7, 2026</td><td>Dartmouth Health-supported engagement asset is publicly visible.</td><td>Does not prove governance authority or outcomes.</td><td>Moderate</td><td>Need operating owner, reporting path, and use in improvement decisions.</td><td>Use as one input in the engagement infrastructure asset map.</td><td>Yes</td><td>Yes</td></tr>
+            <tr data-evidence-status="publicly-supported"><td>Learning health system connection</td><td>Promise Partnership public pages and case study</td><td>Public web source and peer-reviewed article</td><td>Promise Partnership Coproduction Learning Health System</td><td><a href="https://sites.dartmouth.edu/promisepartnership/" target="_blank" rel="noopener noreferrer">Public source</a></td><td>September 7, 2026</td><td>Public sources support a coproduction learning health system context.</td><td>Does not prove closed-loop PFAC action for the benchmark domains.</td><td>Moderate</td><td>Need evidence of specific patient-family input moving into decisions.</td><td>Map where PFAC, patient story, collaborative, and measurement workflows intersect.</td><td>Yes</td><td>Yes</td></tr>
+            <tr data-evidence-status="preliminary-finding"><td>Measurement and feedback</td><td>Care Experience Collaborative public description</td><td>Public web source</td><td>Promise Partnership learning collaboratives</td><td><a href="https://sites.dartmouth.edu/promisepartnership/learning-collaboratives/" target="_blank" rel="noopener noreferrer">Public source</a></td><td>September 7, 2026</td><td>Public source suggests a possible improvement structure for experience work.</td><td>Does not document PFAC authority, membership, metrics, or report-back practice.</td><td>Low</td><td>Need agendas, owners, measures, and closed-loop examples.</td><td>Treat as a preliminary finding and validate before using it as scoring evidence.</td><td>Yes</td><td>Yes</td></tr>
+            <tr data-evidence-status="not-yet-validated"><td>PFAC authority</td><td>PFAC charter, agendas, decision logs, and escalation path</td><td>Project document or internal artifact</td><td></td><td></td><td>Not reviewed</td><td>Not yet scored.</td><td>No reviewed evidence yet.</td><td>Insufficient</td><td>Need source documents and stakeholder confirmation.</td><td>Collect the governance evidence before making any public claim beyond the framework question.</td><td>No</td><td>No</td></tr>
+            <tr data-evidence-status="insufficient-evidence"><td>Equity and representation</td><td>Recruitment, access, and representation evidence</td><td>Stakeholder input, metric, or internal artifact</td><td></td><td></td><td>Not reviewed</td><td>Not yet scored.</td><td>Public evidence is not enough to assess representativeness.</td><td>Insufficient</td><td>Need language access, rural access, caregiver diversity, age, disability, and participation-barrier evidence.</td><td>Add equity fields to the benchmark intake before publishing findings.</td><td>No</td><td>No</td></tr>
           </tbody>
         </table>
       </div>

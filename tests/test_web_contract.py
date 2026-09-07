@@ -63,9 +63,10 @@ class WebContractTests(unittest.TestCase):
             "/dh-benchmark.html": [
                 "Benchmark assessment framework",
                 "not a scored evaluation",
-                "Public evidence available so far",
+                "Evidence-backed preliminary findings",
                 "Evidence needed before scoring",
                 "Not yet scored",
+                "Reusable evidence table",
             ],
             "/research-plan.html": [
                 "Inclusion criteria",
@@ -180,12 +181,72 @@ class WebContractTests(unittest.TestCase):
                 "Publicly supported",
                 "Not yet validated",
                 "Insufficient evidence",
+                "Preliminary finding",
+                'id="evidence-status"',
+                'class="evidence-status-table"',
+                'id="evidence-table"',
+                'class="benchmark-evidence-table"',
             ],
         )
         self.assertNotIn("Benchmark maturity model", body)
         self.assertNotIn("View maturity model", body)
         self.assertNotIn("maturity score", body.lower())
         self.assertNotIn("completed scorecard", body.lower())
+        self.assertNotIn("completed evaluation", body.lower())
+
+    def test_dh_benchmark_uses_plan_evidence_fields(self):
+        body = self.assert_page_contains(
+            "/dh-benchmark.html",
+            [
+                "Domain",
+                "Evidence item",
+                "Evidence type",
+                "Source title",
+                "Source URL",
+                "Date reviewed",
+                "Current finding",
+                "Limitation",
+                "Confidence",
+                "Gap",
+                "Recommended action",
+                "Public safe",
+                "Include on site",
+            ],
+        )
+        self.assertIn('data-evidence-status="publicly-supported"', body)
+        self.assertIn('data-evidence-status="not-yet-validated"', body)
+        self.assertIn('data-evidence-status="insufficient-evidence"', body)
+        self.assertIn('data-evidence-status="preliminary-finding"', body)
+
+    def test_dh_benchmark_keeps_public_and_unvalidated_findings_separate(self):
+        body = self.assert_page_contains("/dh-benchmark.html", ["evidence-status-table"])
+        rows = [segment.split("</tr>", 1)[0] for segment in body.split("<tr") if "data-evidence-status" in segment]
+
+        self.assertGreaterEqual(len(rows), 4)
+        for row in rows:
+            statuses = [
+                status
+                for status in ("publicly-supported", "not-yet-validated", "insufficient-evidence", "preliminary-finding")
+                if f'data-evidence-status="{status}"' in row
+            ]
+            self.assertEqual(len(statuses), 1, row)
+
+    def test_dh_benchmark_avoids_internal_or_prompt_language(self):
+        body = self.assert_page_contains("/dh-benchmark.html", ["Dartmouth Health Benchmark"])
+        forbidden_fragments = [
+            "raw prompt",
+            "prompt language",
+            "internal admin",
+            "administrative tooling",
+            "private repository",
+            "deployment",
+            "CI/CD",
+            "scratchpad",
+            "AI-generated project notes",
+        ]
+
+        for fragment in forbidden_fragments:
+            self.assertNotIn(fragment.lower(), body.lower())
 
     def test_public_pages_do_not_render_markdown_artifacts(self):
         forbidden_markdown = ["**", "```", "### ", "## "]
