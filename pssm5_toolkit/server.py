@@ -1,4 +1,4 @@
-"""Standalone web server for the APE PFAC PSSM 5 toolkit."""
+"""Web server for the APE PFAC PSSM 5 toolkit."""
 
 from __future__ import annotations
 
@@ -8,8 +8,7 @@ import os
 from pathlib import Path
 from wsgiref.simple_server import make_server
 
-from .open_resources import build_open_resources
-from .toolkit import build_toolkit
+from .supabase_backend import backend_status, build_demo_payload, submit_demo_intake
 
 PACKAGE_ROOT = Path(__file__).resolve().parents[1]
 CWD_ROOT = Path.cwd()
@@ -48,6 +47,9 @@ def _asset(start_response, target: Path):
 
 def application(environ, start_response):
     path = environ.get("PATH_INFO", "/")
+    method = environ.get("REQUEST_METHOD", "GET").upper()
+    if method == "OPTIONS":
+        return _json(start_response, {"status": "ok"})
     if path == "/api/health":
         return _json(
             start_response,
@@ -55,16 +57,28 @@ def application(environ, start_response):
                 "status": "ok",
                 "service": "ape-pfac-pssm5-toolkit",
                 "project_identity": "MPH Applied Practice Experience",
-                "scope": "PSSM 5 Patient and Family Engagement only",
-                "boundary": "Standalone. Not connected to Hedge Desk or any finance project.",
             },
         )
+    if path == "/api/backend-status":
+        return _json(start_response, backend_status())
+    if path == "/api/demo-intake":
+        if method != "POST":
+            return _json(start_response, {"error": "method_not_allowed"}, "405 Method Not Allowed")
+        try:
+            size = int(environ.get("CONTENT_LENGTH") or "0")
+            body = environ["wsgi.input"].read(min(size, 4096)).decode("utf-8")
+            payload = json.loads(body or "{}")
+        except (ValueError, json.JSONDecodeError, UnicodeDecodeError):
+            return _json(start_response, {"error": "invalid_json"}, "400 Bad Request")
+        result = submit_demo_intake(payload)
+        status = "201 Created" if result.get("status") == "received" else "202 Accepted"
+        if result.get("status") == "error" or result.get("error") == "validation_failed":
+            status = "422 Unprocessable Entity"
+        return _json(start_response, result, status)
     if path == "/api/open-resources":
-        return _json(start_response, {"open_resources": build_open_resources()})
+        return _json(start_response, {"open_resources": build_demo_payload()["open_resources"]})
     if path == "/api/toolkit":
-        payload = build_toolkit()
-        payload["open_resources"] = build_open_resources()
-        return _json(start_response, payload)
+        return _json(start_response, build_demo_payload())
     relative = "index.html" if path in ("/", "") else path.lstrip("/")
     target = (WEB / relative).resolve()
     web_root = WEB.resolve()
