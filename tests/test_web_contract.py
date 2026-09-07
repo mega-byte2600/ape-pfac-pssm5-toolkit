@@ -110,8 +110,8 @@ class WebContractTests(unittest.TestCase):
             ],
             "/deliverables.html": [
                 "Applied Practice Experience Deliverables",
-                "Environmental Scan",
-                "PFAC/PSSM 5 Leadership Toolkit",
+                "Environmental scan",
+                "PFAC/PSSM 5 leadership toolkit",
                 "Selected competencies",
             ],
             "/mvp-one.html": [
@@ -132,7 +132,6 @@ class WebContractTests(unittest.TestCase):
                 self.assertEqual(status, "200 OK")
                 self.assertIn("text/html", headers["Content-Type"])
                 if path != "/":
-                    title = Path(path).name.replace(".html", "")
                     self.assertNotIn("Turn patient voice into better care.", body, f"{path} appears to be falling back to homepage")
 
     def test_public_pages_do_not_expose_prompt_or_admin_language(self):
