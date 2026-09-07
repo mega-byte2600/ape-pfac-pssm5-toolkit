@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: ape-pfac-pssm5-toolkit
+    runtime: python
+    plan: free
+    buildCommand: pip install .
+    startCommand: pssm5-toolkit-web
+    healthCheckPath: /api/health
