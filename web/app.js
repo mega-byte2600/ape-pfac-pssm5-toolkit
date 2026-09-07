@@ -11,21 +11,10 @@ function el(tag, className, text) {
   return node;
 }
 
-function card(title, body, eyebrow) {
-  const article = el("article", "card");
-  if (eyebrow) article.appendChild(el("span", "tag", eyebrow));
-  article.appendChild(el("h3", "", title));
-  article.appendChild(el("p", "", body));
-  return article;
-}
-
 function fillQuestions(items) {
   const target = document.getElementById("questions");
   target.innerHTML = "";
-  for (const item of items) {
-    const div = el("div", "question", item);
-    target.appendChild(div);
-  }
+  for (const item of items) target.appendChild(el("div", "question", item));
 }
 
 function fillMetrics(items) {
@@ -36,8 +25,7 @@ function fillMetrics(items) {
     article.appendChild(el("span", "tag", item.metric));
     article.appendChild(el("h3", "", item.patient_question));
     article.appendChild(el("p", "", item.improvement_signal));
-    const use = el("p", "use", `PFAC use: ${item.pfac_use}`);
-    article.appendChild(use);
+    article.appendChild(el("p", "use", `PFAC use: ${item.pfac_use}`));
     target.appendChild(article);
   }
 }
@@ -66,6 +54,20 @@ function fillSteps(items) {
     li.appendChild(el("p", "guardrail", `Guardrail: ${item.guardrail}`));
     li.appendChild(el("p", "use", `Artifact: ${item.artifact}`));
     target.appendChild(li);
+  }
+}
+
+function fillModels(items) {
+  const target = document.getElementById("model-grid");
+  if (!target) return;
+  target.innerHTML = "";
+  for (const item of items) {
+    const article = el("article", "card model-card");
+    article.appendChild(el("span", "tag", item.type));
+    article.appendChild(el("h3", "", item.name));
+    article.appendChild(el("p", "benefit", `Learn from: ${item.what_to_learn}`));
+    article.appendChild(el("p", "guardrail", `Improve on: ${item.how_we_improve}`));
+    target.appendChild(article);
   }
 }
 
@@ -112,13 +114,25 @@ function fillOpenResources(items) {
   }
 }
 
+function fillStory(item) {
+  if (!item) return;
+  const quote = document.getElementById("story-quote");
+  const why = document.getElementById("story-why");
+  const reason = document.getElementById("story-reason");
+  if (quote) quote.textContent = `“${item.approved_excerpt}”`;
+  if (why) why.textContent = item.why_it_matters;
+  if (reason) reason.textContent = item.why_this_excerpt;
+}
+
 async function boot() {
   const data = await fetchJson("/api/toolkit");
   document.getElementById("motto").textContent = data.project.motto;
+  fillStory(data.story_anchor);
   fillQuestions(data.project.patient_first_questions);
   fillMetrics(data.metric_drivers);
   fillCompetencies(data.competencies);
   fillSteps(data.playbook_steps);
+  fillModels(data.peer_models || []);
   fillEvidence(data.evidence);
   fillReferences(data.references);
   fillOpenResources(data.open_resources || []);
