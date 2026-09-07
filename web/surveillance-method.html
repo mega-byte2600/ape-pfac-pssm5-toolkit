@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Reusable research surveillance and evidence cataloging method for PubMed, MyNCBI, Outlook, Zotero, and SQL-based evidence tracking.">
+  <title>Surveillance Method | PFAC PSSM 5 Toolkit</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to main content</a>
+  <header class="site-header enterprise-header">
+    <div class="brand"><span class="mark">RS</span><div><strong>Research Surveillance Method</strong><small>Reusable evidence cataloging workflow</small></div></div>
+    <nav aria-label="Primary"><a href="/">Overview</a><a href="/evidence-summary.html">Summary</a><a href="/research-plan.html">Research</a><a href="/evidence-matrix.html">Matrix</a><a href="/bibliography.html">Bibliography</a><a href="/about.html">About</a></nav>
+  </header>
+
+  <main id="main">
+    <section class="hero hero-executive">
+      <div class="hero-copy">
+        <p class="eyebrow">Reusable method • PubMed/MyNCBI • Outlook • Zotero • SQL</p>
+        <h1>Build a living evidence system other researchers can reuse.</h1>
+        <p class="lead">This method shows how to turn literature alerts into a structured evidence catalog that supports research, public health practice, quality improvement, and implementation decisions.</p>
+        <div class="actions">
+          <a class="button" href="#architecture">View architecture</a>
+          <a class="button secondary" href="#sql">Example SQL</a>
+          <a class="button secondary" href="/evidence-matrix.html">Evidence matrix</a>
+        </div>
+      </div>
+      <aside class="hero-dashboard" aria-label="Method highlights">
+        <div class="dash-card dark"><span>Input</span><strong>Alerts</strong><p>PubMed and MyNCBI searches become continuous evidence feeds.</p></div>
+        <div class="dash-card"><span>Processing</span><strong>Triage</strong><p>Outlook folders and rules separate signal from noise.</p></div>
+        <div class="dash-card"><span>Output</span><strong>Action</strong><p>Zotero, SQL, and the matrix convert sources into decisions.</p></div>
+      </aside>
+    </section>
+
+    <section class="panel executive-summary highlight-panel">
+      <div class="section-title"><p class="eyebrow">Standalone contribution</p><h2>This is a method others can apply to their own research topics.</h2></div>
+      <p class="lede">The surveillance system is not just an internal project workflow. It is a repeatable method for students, researchers, analysts, and health system teams who need to monitor literature, organize sources, and translate evidence into action.</p>
+      <p>The model works for PFACs and PSSM 5, but it can also be adapted to other public health, clinical quality, patient safety, health services research, policy, or implementation science topics.</p>
+    </section>
+
+    <section id="architecture" class="panel">
+      <div class="section-title"><p class="eyebrow">System architecture</p><h2>Search strategy to surveillance to catalog to action.</h2></div>
+      <div class="card-grid">
+        <article class="card premium-card"><span class="tag">1. Define lanes</span><h3>Research questions</h3><p>Create topic lanes before searching so alerts are meaningful. Example lanes: PFAC governance, patient experience and safety, HAI/MRSA patient engagement, co-production, and implementation.</p></article>
+        <article class="card premium-card"><span class="tag">2. Build searches</span><h3>PubMed/MyNCBI</h3><p>Use Boolean logic, MeSH terms, title/abstract terms, and saved searches. Turn high-value searches into recurring MyNCBI email alerts.</p></article>
+        <article class="card premium-card"><span class="tag">3. Route alerts</span><h3>Outlook folders</h3><p>Create rules that move PubMed and NCBI alert emails into dedicated research folders by topic lane, date, or project.</p></article>
+        <article class="card premium-card"><span class="tag">4. Catalog sources</span><h3>Zotero collections</h3><p>Save accepted sources into named collections so the bibliography, annotated bibliography, and source map stay organized.</p></article>
+        <article class="card premium-card"><span class="tag">5. Structure evidence</span><h3>SQL catalog</h3><p>Track PMID, DOI, source type, relevance, evidence use, patient benefit, patient risk, PFAC action, leadership action, and status.</p></article>
+        <article class="card premium-card"><span class="tag">6. Translate</span><h3>Evidence matrix</h3><p>Move the best sources into the evidence-to-action matrix so literature becomes operational guidance, not a passive reading list.</p></article>
+      </div>
+    </section>
+
+    <section class="panel patient-first">
+      <div>
+        <p class="eyebrow">Operating model</p>
+        <h2>Weekly review keeps the evidence current and usable.</h2>
+        <p>The weekly cycle is simple: review alerts, remove duplicates, screen abstracts, save accepted sources, tag by topic lane, update the evidence catalog, promote high-value sources into the matrix, and document what changed in the toolkit.</p>
+      </div>
+      <div class="question-stack">
+        <div class="question">Did this source change the evidence base?</div>
+        <div class="question">Does it support a patient benefit or reveal patient risk?</div>
+        <div class="question">Does it create a PFAC question or leadership action?</div>
+        <div class="question">Does it belong in the bibliography, matrix, or toolkit?</div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="section-title"><p class="eyebrow">Folder and collection model</p><h2>Use consistent names so the system is teachable and auditable.</h2></div>
+      <div class="card-grid">
+        <article class="card"><span class="tag">Outlook</span><h3>Suggested folders</h3><p>Research Alerts, PFAC, Patient Experience, PSSM Policy, HAI/MRSA, Implementation, To Screen, Accepted, Excluded, Needs Full Text.</p></article>
+        <article class="card"><span class="tag">Zotero</span><h3>Suggested collections</h3><p>APE_HIGH_VALUE, APE_PFAC, APE_EXPERIENCE_ACCESS, APE_PSSM_POLICY, APE_IMPLEMENTATION, APE_HAI_SAFETY, APE_METHODS.</p></article>
+        <article class="card"><span class="tag">Catalog</span><h3>Suggested statuses</h3><p>Captured, Screened, Accepted, Excluded, Needs Review, Annotated, Matrix Ready, Toolkit Integrated, Archived.</p></article>
+      </div>
+    </section>
+
+    <section id="sql" class="panel references">
+      <div class="section-title"><p class="eyebrow">Example SQL</p><h2>Starter schema for a reusable evidence catalog.</h2></div>
+      <pre><code>create table search_queries (
+  query_id text primary key,
+  topic_lane text not null,
+  database_name text not null,
+  query_text text not null,
+  date_created date not null,
+  alert_enabled boolean default true,
+  notes text
+);
+
+create table sources (
+  source_id text primary key,
+  date_captured date not null,
+  source_type text not null,
+  topic_lane text not null,
+  title text not null,
+  authors text,
+  journal_or_publisher text,
+  publication_year int,
+  pmid text,
+  doi text,
+  url text,
+  zotero_key text,
+  abstract_notes text,
+  relevance_summary text,
+  evidence_use text,
+  patient_benefit text,
+  patient_risk_if_ignored text,
+  pfac_action text,
+  leadership_action text,
+  metric_connection text,
+  competency_connection text,
+  status text default 'Captured'
+);
+
+create table surveillance_alerts (
+  alert_id text primary key,
+  query_id text references search_queries(query_id),
+  received_at timestamp not null,
+  email_folder text,
+  source_id text references sources(source_id),
+  triage_status text default 'To Screen'
+);
+
+create table evidence_tags (
+  tag_id text primary key,
+  tag_name text not null unique,
+  tag_type text not null
+);
+
+create table source_tags (
+  source_id text references sources(source_id),
+  tag_id text references evidence_tags(tag_id),
+  primary key (source_id, tag_id)
+);
+
+create table evidence_actions (
+  action_id text primary key,
+  source_id text references sources(source_id),
+  action_type text not null,
+  action_summary text not null,
+  owner_role text,
+  due_date date,
+  status text default 'Proposed'
+);</code></pre>
+    </section>
+
+    <section class="panel">
+      <div class="section-title"><p class="eyebrow">Replication guide</p><h2>How another researcher can use this method.</h2></div>
+      <ol class="step-list">
+        <li class="step"><h3>Choose a topic</h3><p>Define a practical question that requires ongoing evidence surveillance.</p></li>
+        <li class="step"><h3>Create search lanes</h3><p>Separate the topic into 3 to 5 focused lanes rather than one oversized search.</p></li>
+        <li class="step"><h3>Save PubMed searches</h3><p>Use MyNCBI alerts to receive new results on a regular cadence.</p></li>
+        <li class="step"><h3>Route emails</h3><p>Use Outlook rules to move alerts into triage folders automatically.</p></li>
+        <li class="step"><h3>Catalog accepted sources</h3><p>Save sources in Zotero and record key metadata in the SQL catalog.</p></li>
+        <li class="step"><h3>Translate evidence</h3><p>Promote high-value sources into an evidence matrix and update the product, paper, or implementation plan.</p></li>
+      </ol>
+    </section>
+  </main>
+  <footer><span>Research Surveillance Method</span><span>Reusable evidence workflow</span></footer>
+</body>
+</html>
