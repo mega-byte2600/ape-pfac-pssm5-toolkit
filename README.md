@@ -4,15 +4,25 @@ This repository is a standalone MPH Applied Practice Experience demo.
 
 It is not connected to Hedge Desk or any finance project.
 
-## First acknowledgement
+## First acknowledgement and patient story anchor
 
-This project is dedicated first and foremost to Rosie Bartel.
+Rosie Bartel is the most important acknowledgement and lived-experience source for this project.
 
-Rosie Bartel's lived experience after total knee replacement, healthcare-associated MRSA infection, sepsis, amputation, and long-term patient safety advocacy is the patient story anchor for this toolkit. Without her public witness and advocacy, this project would not have the same purpose, urgency, or moral center.
+Her story is the reason this toolkit stays patient-first. Public sources describe Rosie as a Wisconsin patient advocate and sepsis survivor whose routine total knee replacement was complicated by MRSA infection, repeated surgeries, hospitalizations, transfusions, amputation, and ongoing advocacy.
 
-Formal research explains what the evidence supports. Rosie Bartel's story explains why the toolkit must stay patient first.
+The selected project anchor is:
 
-See `ACKNOWLEDGEMENT.md` and `web/story.html`.
+> What matters to a patient is to survive and to survive it with some dignity and respect.
+
+This project uses that lived-experience anchor as a design test:
+
+Would this process be safe enough for my mother before, during, and after total knee replacement?
+
+Would the patient or family know when to escalate infection warning signs?
+
+Would staff listen if the patient or family said something was wrong?
+
+Would the health system learn fast enough to protect the next patient?
 
 ## Purpose
 
@@ -40,6 +50,16 @@ This demo is built to show practical attainment of the five competencies selecte
 4. CEPH 21: integrate perspectives from other sectors and professions.
 5. Dartmouth program-specific competency 4: compare engagement approaches in decision making, design, governance, and service delivery, including effects on quality, safety, equity, and value.
 
+## Comparative toolkit scan
+
+The project now includes a comparative scan of existing PFAC and patient/family engagement toolkits from AHRQ, IPFCC, AMA STEPS Forward, Betsy Lehman Center, academic medical center projects, and learning health system literature.
+
+The design conclusion is clear: existing toolkits are useful, but this APE product should improve on them by adding PSSM 5 traceability, Press Ganey-style patient experience metric logic, a Rosie Bartel lived-experience anchor, and a leadership action loop with visible follow-through.
+
+## Open resources
+
+This project includes an open resources layer so Dartmouth Health and other researchers can reuse, validate, benchmark, and improve the work.
+
 ## Architecture
 
 - Python standard-library web service
@@ -62,6 +82,16 @@ Open `http://localhost:8765`.
 - `/api/health`
 - `/api/toolkit`
 - `/api/open-resources`
+
+## Key project files
+
+- `ACKNOWLEDGEMENT.md`
+- `docs/ROSIE_BARTEL_STORY_ANCHOR.md`
+- `docs/ROSIE_BARTEL_EXCERPT_SELECTION.md`
+- `docs/COMPARATIVE_TOOLKIT_SCAN.md`
+- `bibliography/APE_PFAC_PSSM5_BIBLIOGRAPHY.rtf`
+- `web/story.html`
+- `web/resources.html`
 
 ## Scope boundary
 
