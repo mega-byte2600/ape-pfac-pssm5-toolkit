@@ -45,6 +45,42 @@ class WebContractTests(unittest.TestCase):
         self.assertIn('id="hai-baseline-chart"', body)
         self.assertIn("plotly", body.lower())
 
+    def test_about_page_has_notion_and_core_reviewer_links(self):
+        status, headers, body = request("/about.html")
+
+        self.assertEqual(status, "200 OK")
+        self.assertIn("text/html", headers["Content-Type"])
+        self.assertIn("Notion workspace", body)
+        self.assertIn("Evidence-Based PFAC Summary", body)
+        self.assertIn("APE deliverables", body)
+        self.assertIn("Research surveillance how-to", body)
+        self.assertIn('href="/surveillance-method.html"', body)
+
+    def test_public_pages_do_not_expose_internal_admin_language(self):
+        public_paths = [
+            "/",
+            "/about.html",
+            "/collaboration.html",
+            "/evidence-summary.html",
+            "/surveillance-method.html",
+            "/deliverables.html",
+        ]
+        forbidden_fragments = [
+            "Private</span><strong>GitHub",
+            "Private repository",
+            "repository stays private",
+            "Code, deployment, drafts, and project administration",
+            "private project administration",
+        ]
+
+        for path in public_paths:
+            with self.subTest(path=path):
+                status, _, body = request(path)
+                self.assertEqual(status, "200 OK")
+                self.assertNotIn("GitHub", body)
+                for fragment in forbidden_fragments:
+                    self.assertNotIn(fragment, body)
+
     def test_payloads_have_content_for_rendered_sections(self):
         toolkit = build_toolkit()
         resources = build_open_resources()
