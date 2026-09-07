@@ -1,8 +1,6 @@
 # APE PFAC PSSM 5 Leadership Toolkit
 
-This repository is a standalone MPH Applied Practice Experience demo.
-
-It is not connected to Hedge Desk or any finance project.
+This repository is an MPH Applied Practice Experience demo.
 
 ## First acknowledgement and patient story anchor
 
@@ -48,7 +46,7 @@ This demo is built to show practical attainment of the five competencies selecte
 2. CEPH 7: assess population needs, assets, and capacities.
 3. CEPH 16: apply leadership and management principles.
 4. CEPH 21: integrate perspectives from other sectors and professions.
-5. Dartmouth program-specific competency 4: compare engagement approaches in decision making, design, governance, and service delivery, including effects on quality, safety, equity, and value.
+5. Dartmouth program-specific competency 4: compare engagement approaches in decision making, design, governance, and delivery of services, including effects on quality, safety, equity, and value.
 
 ## Comparative toolkit scan
 
@@ -65,6 +63,7 @@ This project includes an open resources layer so Dartmouth Health and other rese
 - Python standard-library web service
 - Static website front end
 - JSON API routes
+- Supabase-backed demo data and intake
 - Separate Supabase project: `ape-pfac-pssm5-toolkit`
 - Separate Render service target: `ape-pfac-pssm5-toolkit`
 
@@ -80,8 +79,22 @@ Open `http://localhost:8765`.
 ## API routes
 
 - `/api/health`
+- `/api/backend-status`
 - `/api/toolkit`
 - `/api/open-resources`
+- `/api/demo-intake`
+
+## Demo backend
+
+The app reads live toolkit tables through the deployed Supabase Edge Function at:
+
+`https://vgquagonefygzgebgzyx.supabase.co/functions/v1/toolkit-data`
+
+The homepage demo intake form posts to the Python route `/api/demo-intake`, which forwards sanitized, de-identified notes to:
+
+`https://vgquagonefygzgebgzyx.supabase.co/functions/v1/demo-intake`
+
+The intake table has RLS enabled and does not grant direct anonymous table access. Do not enter PHI, MRNs, dates of birth, or private patient details in the demo form.
 
 ## Key project files
 
@@ -92,7 +105,3 @@ Open `http://localhost:8765`.
 - `bibliography/APE_PFAC_PSSM5_BIBLIOGRAPHY.rtf`
 - `web/story.html`
 - `web/resources.html`
-
-## Scope boundary
-
-This project is only for the MPH Applied Practice Experience PFAC/PSSM 5 toolkit. It must not be routed through, branded with, or mixed into Hedge Desk or any other unrelated project.
