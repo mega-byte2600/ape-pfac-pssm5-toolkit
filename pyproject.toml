@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ape-pfac-pssm5-toolkit"
+version = "0.1.0"
+description = "Standalone MPH APE PFAC PSSM 5 leadership toolkit demo"
+requires-python = ">=3.9"
+
+[project.scripts]
+pssm5-toolkit-web = "pssm5_toolkit.server:main"
+
+[tool.setuptools.packages.find]
+include = ["pssm5_toolkit*"]
