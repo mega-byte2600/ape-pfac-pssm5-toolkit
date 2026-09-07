@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Reusable research surveillance and evidence cataloging method for PubMed, MyNCBI, Outlook, Zotero, and SQL-based evidence tracking.">
+  <meta name="description" content="Reusable research surveillance and evidence cataloging method for PubMed, MyNCBI, Outlook, Zotero, SQL-based evidence tracking, and collaborative review.">
   <title>Surveillance Method | PFAC PSSM 5 Toolkit</title>
   <link rel="stylesheet" href="/styles.css">
 </head>
@@ -11,31 +11,31 @@
   <a class="skip" href="#main">Skip to main content</a>
   <header class="site-header enterprise-header">
     <div class="brand"><span class="mark">RS</span><div><strong>Research Surveillance Method</strong><small>Reusable evidence cataloging workflow</small></div></div>
-    <nav aria-label="Primary"><a href="/">Overview</a><a href="/evidence-summary.html">Summary</a><a href="/research-plan.html">Research</a><a href="/evidence-matrix.html">Matrix</a><a href="/bibliography.html">Bibliography</a><a href="/about.html">About</a></nav>
+    <nav aria-label="Primary"><a href="/">Overview</a><a href="/evidence-summary.html">Summary</a><a href="/dh-benchmark.html">DH Benchmark</a><a href="/research-plan.html">Research</a><a href="/evidence-matrix.html">Matrix</a><a href="/collaboration.html">Collaborate</a></nav>
   </header>
 
   <main id="main">
     <section class="hero hero-executive">
       <div class="hero-copy">
-        <p class="eyebrow">Reusable method • PubMed/MyNCBI • Outlook • Zotero • SQL</p>
+        <p class="eyebrow">Reusable method • PubMed/MyNCBI • Outlook • Zotero • SQL • Notion-ready</p>
         <h1>Build a living evidence system other researchers can reuse.</h1>
-        <p class="lead">This method shows how to turn literature alerts into a structured evidence catalog that supports research, public health practice, quality improvement, and implementation decisions.</p>
+        <p class="lead">This method shows how to turn literature alerts into a structured evidence catalog that supports research, public health practice, quality improvement, collaboration, and implementation decisions.</p>
         <div class="actions">
           <a class="button" href="#architecture">View architecture</a>
           <a class="button secondary" href="#sql">Example SQL</a>
-          <a class="button secondary" href="/evidence-matrix.html">Evidence matrix</a>
+          <a class="button secondary" href="/collaboration.html">Collaboration layer</a>
         </div>
       </div>
       <aside class="hero-dashboard" aria-label="Method highlights">
         <div class="dash-card dark"><span>Input</span><strong>Alerts</strong><p>PubMed and MyNCBI searches become continuous evidence feeds.</p></div>
         <div class="dash-card"><span>Processing</span><strong>Triage</strong><p>Outlook folders and rules separate signal from noise.</p></div>
-        <div class="dash-card"><span>Output</span><strong>Action</strong><p>Zotero, SQL, and the matrix convert sources into decisions.</p></div>
+        <div class="dash-card"><span>Output</span><strong>Action</strong><p>Zotero, SQL, Notion, and the matrix convert sources into decisions.</p></div>
       </aside>
     </section>
 
     <section class="panel executive-summary highlight-panel">
       <div class="section-title"><p class="eyebrow">Standalone contribution</p><h2>This is a method others can apply to their own research topics.</h2></div>
-      <p class="lede">The surveillance system is not just an internal project workflow. It is a repeatable method for students, researchers, analysts, and health system teams who need to monitor literature, organize sources, and translate evidence into action.</p>
+      <p class="lede">The surveillance system is not just an internal project workflow. It is a repeatable method for students, researchers, analysts, PFAC members, patients, care partners, and health system teams who need to monitor literature, organize sources, and translate evidence into action.</p>
       <p>The model works for PFACs and PSSM 5, but it can also be adapted to other public health, clinical quality, patient safety, health services research, policy, or implementation science topics.</p>
     </section>
 
@@ -46,7 +46,7 @@
         <article class="card premium-card"><span class="tag">2. Build searches</span><h3>PubMed/MyNCBI</h3><p>Use Boolean logic, MeSH terms, title/abstract terms, and saved searches. Turn high-value searches into recurring MyNCBI email alerts.</p></article>
         <article class="card premium-card"><span class="tag">3. Route alerts</span><h3>Outlook folders</h3><p>Create rules that move PubMed and NCBI alert emails into dedicated research folders by topic lane, date, or project.</p></article>
         <article class="card premium-card"><span class="tag">4. Catalog sources</span><h3>Zotero collections</h3><p>Save accepted sources into named collections so the bibliography, annotated bibliography, and source map stay organized.</p></article>
-        <article class="card premium-card"><span class="tag">5. Structure evidence</span><h3>SQL catalog</h3><p>Track PMID, DOI, source type, relevance, evidence use, patient benefit, patient risk, PFAC action, leadership action, and status.</p></article>
+        <article class="card premium-card"><span class="tag">5. Collaborate</span><h3>Notion workspace</h3><p>Use a controlled collaboration layer for source suggestions, benchmark examples, reviewer notes, and toolkit improvement ideas.</p></article>
         <article class="card premium-card"><span class="tag">6. Translate</span><h3>Evidence matrix</h3><p>Move the best sources into the evidence-to-action matrix so literature becomes operational guidance, not a passive reading list.</p></article>
       </div>
     </section>
@@ -55,13 +55,13 @@
       <div>
         <p class="eyebrow">Operating model</p>
         <h2>Weekly review keeps the evidence current and usable.</h2>
-        <p>The weekly cycle is simple: review alerts, remove duplicates, screen abstracts, save accepted sources, tag by topic lane, update the evidence catalog, promote high-value sources into the matrix, and document what changed in the toolkit.</p>
+        <p>The weekly cycle is simple: review alerts, remove duplicates, screen abstracts, save accepted sources, tag by topic lane, update the evidence catalog, promote high-value sources into the matrix, document what changed in the toolkit, and route collaboration inputs for review.</p>
       </div>
       <div class="question-stack">
         <div class="question">Did this source change the evidence base?</div>
         <div class="question">Does it support a patient benefit or reveal patient risk?</div>
         <div class="question">Does it create a PFAC question or leadership action?</div>
-        <div class="question">Does it belong in the bibliography, matrix, or toolkit?</div>
+        <div class="question">Does it belong in the bibliography, matrix, toolkit, or collaboration backlog?</div>
       </div>
     </section>
 
@@ -70,8 +70,14 @@
       <div class="card-grid">
         <article class="card"><span class="tag">Outlook</span><h3>Suggested folders</h3><p>Research Alerts, PFAC, Patient Experience, PSSM Policy, HAI/MRSA, Implementation, To Screen, Accepted, Excluded, Needs Full Text.</p></article>
         <article class="card"><span class="tag">Zotero</span><h3>Suggested collections</h3><p>APE_HIGH_VALUE, APE_PFAC, APE_EXPERIENCE_ACCESS, APE_PSSM_POLICY, APE_IMPLEMENTATION, APE_HAI_SAFETY, APE_METHODS.</p></article>
-        <article class="card"><span class="tag">Catalog</span><h3>Suggested statuses</h3><p>Captured, Screened, Accepted, Excluded, Needs Review, Annotated, Matrix Ready, Toolkit Integrated, Archived.</p></article>
+        <article class="card"><span class="tag">Notion</span><h3>Suggested workspaces</h3><p>Source Intake, PFAC Benchmark Catalog, Evidence Review Queue, Evidence-to-Action Map, Toolkit Backlog, Contributor Notes.</p></article>
       </div>
+    </section>
+
+    <section class="panel executive-summary highlight-panel">
+      <div class="section-title"><p class="eyebrow">Collaboration layer</p><h2>Open science needs a working room.</h2></div>
+      <p>The public website publishes the method and evidence trail. A future Notion workspace can support contributor intake, source triage, benchmark review, backlog management, and shared learning without exposing the private GitHub repository.</p>
+      <p><a class="resource-link" href="/collaboration.html">Open the collaboration model</a></p>
     </section>
 
     <section id="sql" class="panel references">
@@ -118,6 +124,19 @@ create table surveillance_alerts (
   email_folder text,
   source_id text references sources(source_id),
   triage_status text default 'To Screen'
+);
+
+create table collaboration_items (
+  item_id text primary key,
+  submitted_at timestamp not null,
+  submitter_role text,
+  item_type text not null,
+  title text not null,
+  url text,
+  topic_lane text,
+  notes text,
+  review_status text default 'Submitted',
+  reviewer_notes text
 );
 
 create table evidence_tags (
