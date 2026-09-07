@@ -60,6 +60,13 @@ class WebContractTests(unittest.TestCase):
                 "mutually beneficial applied work",
                 "culminating high-quality written product",
             ],
+            "/dh-benchmark.html": [
+                "Benchmark assessment framework",
+                "not a scored evaluation",
+                "Public evidence available so far",
+                "Evidence needed before scoring",
+                "Not yet scored",
+            ],
             "/research-plan.html": [
                 "Inclusion criteria",
                 "Exclusion criteria",
@@ -162,6 +169,23 @@ class WebContractTests(unittest.TestCase):
                 self.assertEqual(status, "200 OK")
                 for fragment in forbidden_fragments:
                     self.assertNotIn(fragment, body, f"{path} exposes {fragment!r}")
+
+    def test_dh_benchmark_discloses_evidence_state(self):
+        body = self.assert_page_contains(
+            "/dh-benchmark.html",
+            [
+                "The framework is real as a structured assessment method.",
+                "It is not yet real as a scored benchmark",
+                "Scoring should occur only after reviewing public materials",
+                "Publicly supported",
+                "Not yet validated",
+                "Insufficient evidence",
+            ],
+        )
+        self.assertNotIn("Benchmark maturity model", body)
+        self.assertNotIn("View maturity model", body)
+        self.assertNotIn("maturity score", body.lower())
+        self.assertNotIn("completed scorecard", body.lower())
 
     def test_public_pages_do_not_render_markdown_artifacts(self):
         forbidden_markdown = ["**", "```", "### ", "## "]
