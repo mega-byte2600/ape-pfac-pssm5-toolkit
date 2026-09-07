@@ -6,6 +6,8 @@
   <meta name="description" content="Healthcare-associated infection risk alert page for PFAC and PSSM 5 leaders.">
   <title>HAI Risk Alert | PFAC PSSM 5 Toolkit</title>
   <link rel="stylesheet" href="/styles.css">
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" defer></script>
+  <script src="/app.js" defer></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
@@ -40,6 +42,25 @@
       </div>
     </section>
 
+    <section class="panel dashboard-panel">
+      <div class="section-title">
+        <p class="eyebrow">Executive dashboard</p>
+        <h2>National HAI signal translated into PFAC action.</h2>
+        <p id="hai-headline">Loading HAI dashboard…</p>
+      </div>
+      <div class="dashboard-grid">
+        <article class="chart-card">
+          <div class="chart-title"><span>2024 vs 2023</span><strong>Change in acute-care HAI SIR</strong></div>
+          <div id="hai-trend-chart" class="plotly-chart" role="img" aria-label="HAI SIR change by measure"></div>
+        </article>
+        <article class="chart-card">
+          <div class="chart-title"><span>2015 baseline</span><strong>Progress and remaining pressure</strong></div>
+          <div id="hai-baseline-chart" class="plotly-chart" role="img" aria-label="HAI SIR change versus baseline"></div>
+        </article>
+      </div>
+      <div id="hai-action-grid" class="action-grid"></div>
+    </section>
+
     <section class="panel">
       <div class="section-title"><p class="eyebrow">Current data signal</p><h2>Use national HAI trends as the conversation starter, then ask for local data.</h2></div>
       <div class="card-grid">
@@ -72,6 +93,14 @@
         <div class="question">Which warning signs are most likely to be missed?</div>
         <div class="question">What happens when a loved one says something is wrong?</div>
         <div class="question">Where has patient voice changed infection prevention practice?</div>
+      </div>
+    </section>
+
+    <section class="panel synthesis-slot">
+      <div class="section-title">
+        <p class="eyebrow">Evidence synthesis summary</p>
+        <h2>Reserved for the synthesis text.</h2>
+        <p>Drop the final synthesis here when ready. The dashboard above is already structured to connect that summary to executive decisions, PFAC questions, HAI metrics, and patient-facing follow-through.</p>
       </div>
     </section>
 

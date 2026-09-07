@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 from wsgiref.simple_server import make_server
 
+from .hai_dashboard import build_hai_dashboard
 from .supabase_backend import backend_status, build_demo_payload, submit_demo_intake
 
 PACKAGE_ROOT = Path(__file__).resolve().parents[1]
@@ -77,6 +78,8 @@ def application(environ, start_response):
         return _json(start_response, result, status)
     if path == "/api/open-resources":
         return _json(start_response, {"open_resources": build_demo_payload()["open_resources"]})
+    if path == "/api/hai-dashboard":
+        return _json(start_response, build_hai_dashboard())
     if path == "/api/toolkit":
         return _json(start_response, build_demo_payload())
     relative = "index.html" if path in ("/", "") else path.lstrip("/")

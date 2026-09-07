@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import unittest
 
+from pssm5_toolkit.hai_dashboard import build_hai_dashboard
 from pssm5_toolkit.open_resources import build_open_resources
 from pssm5_toolkit.server import application
 from pssm5_toolkit.toolkit import build_toolkit
@@ -35,12 +36,36 @@ class WebContractTests(unittest.TestCase):
         self.assertIn('id="open-resources-grid"', body)
         self.assertIn("/api/open-resources", body)
 
+    def test_hai_alert_page_has_dashboard_surface(self):
+        status, headers, body = request("/hai-alert.html")
+
+        self.assertEqual(status, "200 OK")
+        self.assertIn("text/html", headers["Content-Type"])
+        self.assertIn('id="hai-trend-chart"', body)
+        self.assertIn('id="hai-baseline-chart"', body)
+        self.assertIn("plotly", body.lower())
+
     def test_payloads_have_content_for_rendered_sections(self):
         toolkit = build_toolkit()
         resources = build_open_resources()
 
         self.assertGreaterEqual(len(toolkit["peer_models"]), 5)
         self.assertGreaterEqual(len(resources), 5)
+
+    def test_hai_dashboard_exposes_executive_actions(self):
+        dashboard = build_hai_dashboard()
+
+        self.assertEqual(dashboard["status"], "ok")
+        self.assertGreaterEqual(len(dashboard["measures"]), 7)
+        self.assertGreaterEqual(len(dashboard["executive_actions"]), 4)
+        self.assertTrue(any(item["measure"] == "SSI hysterectomy" for item in dashboard["measures"]))
+
+    def test_hai_dashboard_endpoint_returns_chart_data(self):
+        status, _, body = request("/api/hai-dashboard")
+
+        self.assertEqual(status, "200 OK")
+        self.assertIn('"measures"', body)
+        self.assertIn('"executive_actions"', body)
 
 
 if __name__ == "__main__":

@@ -124,9 +124,86 @@ function fillStory(item) {
   if (reason) reason.textContent = item.why_this_excerpt;
 }
 
+function plotTheme() {
+  return {
+    paper_bgcolor: "rgba(0,0,0,0)",
+    plot_bgcolor: "rgba(0,0,0,0)",
+    font: { color: "#17211f", family: "ui-sans-serif, system-ui, -apple-system, Segoe UI, Arial" },
+    margin: { t: 18, r: 18, b: 72, l: 48 },
+    xaxis: { zeroline: true, zerolinecolor: "#64736f", gridcolor: "#e4ece8" },
+    yaxis: { gridcolor: "#e4ece8" },
+    showlegend: false,
+  };
+}
+
+function fillHaiActions(items) {
+  const target = document.getElementById("hai-action-grid");
+  if (!target) return;
+  target.innerHTML = "";
+  for (const item of items) {
+    const article = el("article", "action-card");
+    article.appendChild(el("span", "tag", item.lane));
+    article.appendChild(el("h3", "", item.owner));
+    article.appendChild(el("p", "", item.decision));
+    target.appendChild(article);
+  }
+}
+
+function renderHaiCharts(data) {
+  const trendTarget = document.getElementById("hai-trend-chart");
+  const baselineTarget = document.getElementById("hai-baseline-chart");
+  const headline = document.getElementById("hai-headline");
+  if (headline) headline.textContent = data.headline;
+  fillHaiActions(data.executive_actions || []);
+  if (!window.Plotly || !trendTarget || !baselineTarget) return;
+
+  const measures = data.measures || [];
+  const labels = measures.map((item) => item.measure);
+  const trendValues = measures.map((item) => item.change_vs_2023);
+  const baselineValues = measures.map((item) => item.change_vs_2015);
+  const colors = trendValues.map((value) => value > 0 ? "#8a3a2b" : "#00693e");
+  const hover = measures.map((item) => item.pfac_question);
+  const config = { displayModeBar: false, responsive: true };
+
+  Plotly.newPlot(trendTarget, [{
+    type: "bar",
+    orientation: "h",
+    y: labels,
+    x: trendValues,
+    marker: { color: colors },
+    text: trendValues.map((value) => `${value > 0 ? "+" : ""}${value}%`),
+    textposition: "auto",
+    hovertext: hover,
+    hovertemplate: "%{y}: %{x}%<br>%{hovertext}<extra></extra>",
+  }], {
+    ...plotTheme(),
+    xaxis: { ...plotTheme().xaxis, title: "% change vs 2023" },
+  }, config);
+
+  Plotly.newPlot(baselineTarget, [{
+    type: "scatter",
+    mode: "markers+lines",
+    x: labels,
+    y: baselineValues,
+    marker: {
+      size: baselineValues.map((value) => Math.max(12, Math.abs(value) * 0.65)),
+      color: baselineValues.map((value) => value > 0 ? "#8a3a2b" : "#267aba"),
+      line: { color: "#ffffff", width: 2 },
+    },
+    line: { color: "#9fb2ad", width: 2 },
+    text: baselineValues.map((value) => `${value > 0 ? "+" : ""}${value}%`),
+    hovertext: hover,
+    hovertemplate: "%{x}: %{y}%<br>%{hovertext}<extra></extra>",
+  }], {
+    ...plotTheme(),
+    yaxis: { ...plotTheme().yaxis, title: "% change vs 2015 baseline" },
+  }, config);
+}
+
 async function boot() {
   const toolkitTarget = document.getElementById("motto");
   const resourcesTarget = document.getElementById("open-resources-grid");
+  const haiTarget = document.getElementById("hai-trend-chart");
 
   if (toolkitTarget) {
     const data = await fetchJson("/api/toolkit");
@@ -146,6 +223,11 @@ async function boot() {
   if (resourcesTarget) {
     const data = await fetchJson("/api/open-resources");
     fillOpenResources(data.open_resources || []);
+  }
+
+  if (haiTarget) {
+    const data = await fetchJson("/api/hai-dashboard");
+    renderHaiCharts(data);
   }
 }
 
