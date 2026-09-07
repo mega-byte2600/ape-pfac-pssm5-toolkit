@@ -8,10 +8,12 @@ import os
 from pathlib import Path
 from wsgiref.simple_server import make_server
 
+from .open_resources import build_open_resources
 from .toolkit import build_toolkit
 
-ROOT = Path(__file__).resolve().parents[1]
-WEB = ROOT / "web"
+PACKAGE_ROOT = Path(__file__).resolve().parents[1]
+CWD_ROOT = Path.cwd()
+WEB = CWD_ROOT / "web" if (CWD_ROOT / "web").is_dir() else PACKAGE_ROOT / "web"
 
 
 def _json(start_response, payload, status="200 OK"):
@@ -57,8 +59,12 @@ def application(environ, start_response):
                 "boundary": "Standalone. Not connected to Hedge Desk or any finance project.",
             },
         )
+    if path == "/api/open-resources":
+        return _json(start_response, {"open_resources": build_open_resources()})
     if path == "/api/toolkit":
-        return _json(start_response, build_toolkit())
+        payload = build_toolkit()
+        payload["open_resources"] = build_open_resources()
+        return _json(start_response, payload)
     relative = "index.html" if path in ("/", "") else path.lstrip("/")
     target = (WEB / relative).resolve()
     web_root = WEB.resolve()
