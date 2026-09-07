@@ -66,6 +66,18 @@ class WebContractTests(unittest.TestCase):
         self.assertIn("culminating high-quality written product", body)
         self.assertNotIn("The Agreement defines", body)
 
+    def test_reviewer_readiness_page_is_public_facing(self):
+        status, headers, body = request("/mvp-one.html")
+
+        self.assertEqual(status, "200 OK")
+        self.assertIn("text/html", headers["Content-Type"])
+        self.assertIn("Reviewer Readiness", body)
+        self.assertIn("What reviewers can inspect now", body)
+        self.assertIn("Surveillance how-to", body)
+        self.assertNotIn("Acceptance criteria", body)
+        self.assertNotIn("What MVP 1 must do well", body)
+        self.assertNotIn("No prompt spillover", body)
+
     def test_public_pages_do_not_expose_internal_admin_language(self):
         public_paths = [
             "/",
@@ -74,6 +86,7 @@ class WebContractTests(unittest.TestCase):
             "/evidence-summary.html",
             "/surveillance-method.html",
             "/deliverables.html",
+            "/mvp-one.html",
         ]
         forbidden_fragments = [
             "Private</span><strong>GitHub",
@@ -81,6 +94,13 @@ class WebContractTests(unittest.TestCase):
             "repository stays private",
             "Code, deployment, drafts, and project administration",
             "private project administration",
+            "Acceptance criteria",
+            "What MVP 1 must do well",
+            "No prompt spillover",
+            "internal instructions",
+            "code repository",
+            "MVP 1 reviewer portal",
+            "Reviewer portal acceptance criteria",
         ]
 
         for path in public_paths:
