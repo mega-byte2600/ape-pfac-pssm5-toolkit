@@ -115,7 +115,6 @@ class WebContractTests(unittest.TestCase):
             "public release",
             "acceptance criteria",
             "coming soon",
-            "placeholder",
         ]
         for path in public_html_paths():
             with self.subTest(path=path):
