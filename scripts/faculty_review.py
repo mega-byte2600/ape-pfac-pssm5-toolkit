@@ -59,10 +59,10 @@ REQUIRED = {
     ],
     "web/applied-analysis.js": [
         "/upper-valley-local-analysis.csv",
-        "72,736",
-        "48.4",
-        "60.5",
-        "47.9",
+        "Poverty percent",
+        "Disability percent",
+        "Age 65+ percent",
+        "2023 population",
         "Above service-area average",
     ],
 }
@@ -88,6 +88,9 @@ FORBIDDEN = {
         "Dartmouth Health implemented",
         "improved patient outcomes",
         "validated risk score",
+        "<canvas",
+        "<svg",
+        "plotly",
     ],
 }
 
