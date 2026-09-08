@@ -6,8 +6,9 @@
   <meta name="description" content="Interactive Upper Valley local analysis and applied implementation demonstration for the APE PFAC leadership toolkit.">
   <title>Applied Analysis | APE PFAC Leadership Toolkit</title>
   <link rel="stylesheet" href="/styles.css">
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" defer></script>
   <style>
-    .analysis-controls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.85rem;margin:1rem 0 1.2rem}.analysis-controls label{display:grid;gap:.4rem;color:var(--forest);font-weight:850;font-size:.88rem}.analysis-controls select,.analysis-controls input{width:100%;min-height:2.8rem;border:1px solid var(--line);border-radius:.8rem;padding:.7rem .8rem;background:white;color:var(--ink);font:inherit}.analysis-controls select:focus,.analysis-controls input:focus{outline:3px solid rgba(0,105,62,.16);border-color:var(--dartmouth-green)}.analysis-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.85rem;margin:0 0 1.15rem}.analysis-stat{border:1px solid var(--line);border-radius:1rem;background:#fff;padding:1rem}.analysis-stat span{display:block;color:var(--muted);font-size:.78rem;font-weight:850;text-transform:uppercase;letter-spacing:.06em}.analysis-stat strong{display:block;margin-top:.25rem;color:var(--forest);font-size:1.55rem;line-height:1.1}.analysis-readout{border-left:.35rem solid var(--dartmouth-green);background:#f4faf7;border-radius:.9rem;padding:1rem 1.1rem;margin:0 0 1.15rem}.analysis-readout p{margin:.25rem 0;max-width:none}.analysis-table{overflow-x:auto;border:1px solid var(--line);border-radius:1rem}.analysis-table table{min-width:760px}.status-pill{display:inline-block;border-radius:999px;padding:.2rem .55rem;font-size:.78rem;font-weight:900;background:#eef5f1;color:var(--forest)}.status-pill.above{background:#fff4e8;color:#6e3c00}.analysis-source-note{color:var(--muted);font-size:.9rem}.analysis-status{margin:.75rem 0 0;color:var(--muted);font-size:.9rem}@media(max-width:860px){.analysis-controls,.analysis-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.analysis-controls,.analysis-summary{grid-template-columns:1fr}}
+    .analysis-controls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.85rem;margin:1rem 0 1.2rem}.analysis-controls label{display:grid;gap:.4rem;color:var(--forest);font-weight:850;font-size:.88rem}.analysis-controls select,.analysis-controls input{width:100%;min-height:2.8rem;border:1px solid var(--line);border-radius:.8rem;padding:.7rem .8rem;background:white;color:var(--ink);font:inherit}.analysis-controls select:focus,.analysis-controls input:focus{outline:3px solid rgba(0,105,62,.16);border-color:var(--dartmouth-green)}.analysis-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.85rem;margin:0 0 1.15rem}.analysis-stat{border:1px solid var(--line);border-radius:1rem;background:#fff;padding:1rem}.analysis-stat span{display:block;color:var(--muted);font-size:.78rem;font-weight:850;text-transform:uppercase;letter-spacing:.06em}.analysis-stat strong{display:block;margin-top:.25rem;color:var(--forest);font-size:1.55rem;line-height:1.1}.analysis-readout{border-left:.35rem solid var(--dartmouth-green);background:#f4faf7;border-radius:.9rem;padding:1rem 1.1rem;margin:0 0 1.15rem}.analysis-readout p{margin:.25rem 0;max-width:none}.analysis-table{overflow-x:auto;border:1px solid var(--line);border-radius:1rem}.analysis-table table{min-width:760px}.analysis-chart{width:100%;min-height:520px}.status-pill{display:inline-block;border-radius:999px;padding:.2rem .55rem;font-size:.78rem;font-weight:900;background:#eef5f1;color:var(--forest)}.status-pill.above{background:#fff4e8;color:#6e3c00}.analysis-source-note{color:var(--muted);font-size:.9rem}.analysis-status{margin:.75rem 0 0;color:var(--muted);font-size:.9rem}@media(max-width:860px){.analysis-controls,.analysis-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.analysis-controls,.analysis-summary{grid-template-columns:1fr}.analysis-chart{min-height:620px}}
   </style>
 </head>
 <body>
@@ -51,7 +52,7 @@
     </section>
 
     <section id="explorer" class="panel" data-local-analysis>
-      <div class="section-title"><p class="eyebrow">Original local analysis</p><h2>Inspect the 19-municipality calculation directly.</h2><p>Select a characteristic, filter the municipalities, and sort the rows. The result statement always retains the full 72,736-person denominator so the faculty reviewer can see exactly how the finding was derived.</p></div>
+      <div class="section-title"><p class="eyebrow">Original local analysis</p><h2>Explore the 19-municipality calculation.</h2><p>Select a characteristic, filter municipalities, and sort the view. The chart and supporting table use the same source file and retain the full 72,736-person denominator for the headline calculation.</p></div>
 
       <div class="analysis-controls" aria-label="Local analysis controls">
         <label>Characteristic
@@ -68,7 +69,7 @@
             <option value="not-above">At or below service-area average</option>
           </select>
         </label>
-        <label>Sort rows
+        <label>Sort view
           <select id="analysis-sort">
             <option value="population-desc">Population, largest first</option>
             <option value="metric-desc">Selected percentage, highest first</option>
@@ -92,21 +93,29 @@
         <p id="analysis-readout"><strong>Poverty:</strong> 48.4% of the 72,736 service-area residents live in 6 municipalities where the published poverty percentage is above the 8% service-area average. Recruitment and participation should account for cost, compensation, transportation, time, and other economic barriers.</p>
       </div>
 
-      <div class="analysis-table">
-        <table>
-          <thead><tr><th>Municipality</th><th>2023 population</th><th>Selected characteristic</th><th>Service-area average</th><th>Comparison</th></tr></thead>
-          <tbody id="analysis-body">
-            <tr><td>Canaan</td><td>3,801</td><td>13%</td><td>8%</td><td><span class="status-pill above">Above service-area average</span></td></tr>
-            <tr><td>Dorchester</td><td>431</td><td>17%</td><td>8%</td><td><span class="status-pill above">Above service-area average</span></td></tr>
-            <tr><td>Enfield</td><td>4,488</td><td>13%</td><td>8%</td><td><span class="status-pill above">Above service-area average</span></td></tr>
-            <tr><td>Fairlee</td><td>1,042</td><td>11%</td><td>8%</td><td><span class="status-pill above">Above service-area average</span></td></tr>
-            <tr><td>Hartford</td><td>10,713</td><td>11%</td><td>8%</td><td><span class="status-pill above">Above service-area average</span></td></tr>
-            <tr><td>Lebanon</td><td>14,759</td><td>9%</td><td>8%</td><td><span class="status-pill above">Above service-area average</span></td></tr>
-          </tbody>
-        </table>
-      </div>
-      <p id="analysis-status" class="analysis-status" aria-live="polite">Interactive table loading all 19 municipalities.</p>
-      <p class="analysis-source-note">Three validated headline results remain fixed for review: <strong>48.4%</strong> for poverty, <strong>60.5%</strong> for disability, and <strong>47.9%</strong> for age 65+. The interactive controls reveal the municipality-level rows behind those estimates; they do not alter the underlying analysis.</p>
+      <article class="chart-card">
+        <div class="chart-title"><span>Interactive local view</span><strong id="analysis-chart-title">Poverty by municipality</strong></div>
+        <div id="analysis-chart" class="analysis-chart" role="img" aria-label="Interactive municipality-level local analysis"></div>
+      </article>
+
+      <details class="data-details">
+        <summary>View municipality data table</summary>
+        <div class="analysis-table">
+          <table>
+            <thead><tr><th>Municipality</th><th>2023 population</th><th>Selected characteristic</th><th>Service-area average</th><th>Comparison</th></tr></thead>
+            <tbody id="analysis-body">
+              <tr><td>Canaan</td><td>3,801</td><td>13%</td><td>8%</td><td><span class="status-pill above">Above service-area average</span></td></tr>
+              <tr><td>Dorchester</td><td>431</td><td>17%</td><td>8%</td><td><span class="status-pill above">Above service-area average</span></td></tr>
+              <tr><td>Enfield</td><td>4,488</td><td>13%</td><td>8%</td><td><span class="status-pill above">Above service-area average</span></td></tr>
+              <tr><td>Fairlee</td><td>1,042</td><td>11%</td><td>8%</td><td><span class="status-pill above">Above service-area average</span></td></tr>
+              <tr><td>Hartford</td><td>10,713</td><td>11%</td><td>8%</td><td><span class="status-pill above">Above service-area average</span></td></tr>
+              <tr><td>Lebanon</td><td>14,759</td><td>9%</td><td>8%</td><td><span class="status-pill above">Above service-area average</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+      <p id="analysis-status" class="analysis-status" aria-live="polite">Interactive analysis loading all 19 municipalities.</p>
+      <p class="analysis-source-note">Three validated headline results remain fixed for review: <strong>48.4%</strong> for poverty, <strong>60.5%</strong> for disability, and <strong>47.9%</strong> for age 65+. The controls reveal the municipality-level data behind those estimates; they do not alter the underlying analysis.</p>
       <p><a class="resource-link" href="/upper-valley-local-analysis.csv">Inspect the source calculation file</a></p>
     </section>
 
@@ -126,18 +135,21 @@
     <section id="implementation" class="panel">
       <div class="section-title"><p class="eyebrow">Implementation demonstration</p><h2>The toolkit is applied to a real Upper Valley access and navigation use case.</h2></div>
       <p class="lede">This is implementation of the APE method, not a claim that Dartmouth Health has adopted the recommendations. The local problem, population context, PFAC workstream, measurement logic, and validation steps are populated so a health-system leader can move directly into host review.</p>
-      <div class="matrix-table">
-        <table>
-          <thead><tr><th>Implementation element</th><th>Completed in the APE</th><th>Host validation required</th></tr></thead>
-          <tbody>
-            <tr><td>Problem definition</td><td>Access, navigation, capacity, wait-time, and rural or isolation signals are extracted from the 2025 CHNA and converted into a defined PFAC workstream.</td><td>Confirm which access pathway should be prioritized first.</td></tr>
-            <tr><td>Population and representation</td><td>Age, disability, poverty, geography, isolation, transportation, caregiver, and technology considerations are built into the representation and access logic.</td><td>Compare current PFAC composition and participation options with local service-area context.</td></tr>
-            <tr><td>Governance and action</td><td>A standing access and navigation agenda lane, leadership disposition, accountable owner, due date, escalation, and report-back requirement are specified.</td><td>Assign the actual executive sponsor and operational owners.</td></tr>
-            <tr><td>Measurement</td><td>Proposed measures include time to leadership disposition, action closure, report-back completion, and representation or access barriers mitigated.</td><td>Select locally available data sources and review cadence.</td></tr>
-            <tr><td>Domain 5 traceability</td><td>The workstream is connected to patient and family engagement infrastructure, local evidence, accountable roles, actions, and validation sources.</td><td>Validate any evidence used for organizational attestation or formal reporting.</td></tr>
-          </tbody>
-        </table>
-      </div>
+      <details class="data-details">
+        <summary>View implementation detail table</summary>
+        <div class="matrix-table">
+          <table>
+            <thead><tr><th>Implementation element</th><th>Completed in the APE</th><th>Host validation required</th></tr></thead>
+            <tbody>
+              <tr><td>Problem definition</td><td>Access, navigation, capacity, wait-time, and rural or isolation signals are extracted from the 2025 CHNA and converted into a defined PFAC workstream.</td><td>Confirm which access pathway should be prioritized first.</td></tr>
+              <tr><td>Population and representation</td><td>Age, disability, poverty, geography, isolation, transportation, caregiver, and technology considerations are built into the representation and access logic.</td><td>Compare current PFAC composition and participation options with local service-area context.</td></tr>
+              <tr><td>Governance and action</td><td>A standing access and navigation agenda lane, leadership disposition, accountable owner, due date, escalation, and report-back requirement are specified.</td><td>Assign the actual executive sponsor and operational owners.</td></tr>
+              <tr><td>Measurement</td><td>Proposed measures include time to leadership disposition, action closure, report-back completion, and representation or access barriers mitigated.</td><td>Select locally available data sources and review cadence.</td></tr>
+              <tr><td>Domain 5 traceability</td><td>The workstream is connected to patient and family engagement infrastructure, local evidence, accountable roles, actions, and validation sources.</td><td>Validate any evidence used for organizational attestation or formal reporting.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
       <p><a class="resource-link" href="/upper-valley-access-implementation.csv">Open the populated implementation case</a></p>
     </section>
 
