@@ -6,32 +6,38 @@ ROOT = Path(__file__).resolve().parents[1]
 
 REQUIRED = {
     "web/evidence-summary.html": [
-        "PSSM Domain 5",
-        "evidence remains limited",
-        "separate ILE",
+        "CMS Patient Safety Structural Measure",
+        "Domain 5: Patient and Family Engagement",
+        "evidence base remains limited",
+        "leadership support",
     ],
     "web/research-plan.html": [
         "non-research APE",
         "Search lane 1",
         "Screening workflow",
         "confirmation bias",
+        "conflicting, null, or negative findings",
     ],
     "web/evidence-matrix.html": [
-        "PSSM Domain 5",
+        "Domain 5: Patient and Family Engagement",
         "Evidence strength / limitation",
         "Anticipated patient benefit",
-        "Rramani Dervishi",
+        "Lewis et al, 2025",
+        "Lewis et al, 2026",
+        "Rramani Dervishi et al, 2026",
     ],
     "web/story.html": [
         "lived-experience anchor",
         "does not imply endorsement",
         "not research evidence",
+        "not representative evidence",
     ],
     "web/deliverables.html": [
         "two practical deliverables",
         "CEPH 4",
         "CEPH 7",
         "Dartmouth Program-Specific Competency 4",
+        "Deliverable 2 tools",
     ],
 }
 
@@ -41,15 +47,27 @@ FORBIDDEN = {
         "McDonald",
         "Patients over payers",
         "industry-grade",
+        "APE/ILE",
+        "Integrated Learning Experience",
     ],
     "web/story.html": [
         "Patients over payers",
+        "patient-safety source",
     ],
     "web/evidence-matrix.html": [
         "Patient advisors can influence health care outcomes when linked to action and measurement",
         "Improves communication, discharge readiness",
     ],
 }
+
+PUBLIC_FORBIDDEN = [
+    "APE/ILE",
+    "Integrated Learning Experience",
+    "industry-grade",
+    "Chick-fil-A",
+    "McDonald’s thesis",
+    "Patients over payers",
+]
 
 
 def read(path: str) -> str:
@@ -71,6 +89,12 @@ def main() -> int:
             if fragment.lower() in text.lower():
                 failures.append(f"{path}: prohibited faculty-facing phrasing {fragment!r}")
 
+    for page in sorted((ROOT / "web").glob("*.html")):
+        text = page.read_text(encoding="utf-8")
+        for fragment in PUBLIC_FORBIDDEN:
+            if fragment.lower() in text.lower():
+                failures.append(f"{page.relative_to(ROOT)}: public spillover {fragment!r}")
+
     if failures:
         print("FACULTY REVIEW: FAIL")
         for failure in failures:
@@ -78,7 +102,7 @@ def main() -> int:
         return 1
 
     print("FACULTY REVIEW: PASS")
-    print("Core APE pages meet the automated faculty-content gates.")
+    print("Core APE pages meet evidence, scope, and public-spillover gates.")
     return 0
 
 
