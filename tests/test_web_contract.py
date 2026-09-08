@@ -64,7 +64,7 @@ class WebContractTests(unittest.TestCase):
                 "Search lane 2",
                 "Search lane 3",
                 "Screening workflow",
-                "conflicting, null, or negative findings",
+                "Conflicting, null, or negative findings",
             ],
             "/surveillance-method.html": ["Research Surveillance Method", "PubMed/MyNCBI", "Outlook folders", "Zotero collections", "Weekly review", "Example SQL"],
             "/bibliography.html": ["AMA 11", "Core research evidence", "Implementation toolkits and benchmark resources", "Open data and public resource sources", "Story and acknowledgement resources"],
