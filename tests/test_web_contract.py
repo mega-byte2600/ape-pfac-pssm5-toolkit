@@ -23,8 +23,6 @@ def request(path: str):
 
 def public_html_paths() -> list[str]:
     web_dir = Path("web")
-    if not web_dir.is_dir():
-        return ["/"]
     paths = ["/"]
     paths.extend(f"/{item.name}" for item in sorted(web_dir.glob("*.html")) if item.name != "index.html")
     return paths
@@ -43,63 +41,19 @@ class WebContractTests(unittest.TestCase):
         required_pages = {
             "/": ["Turn patient voice into better care.", "Evidence-Based PFAC Summary", "DH benchmark", "Applied Analysis", "APE deliverables"],
             "/evidence.html": ["Evidence Launch Page", "Evidence-Based PFAC Summary", "PubMed search protocol", "Evidence matrix", "AMA 11 source layer"],
-            "/evidence-summary.html": [
-                "Evidence-Based PFAC Summary",
-                "CMS Patient Safety Structural Measure",
-                "Domain 5: Patient and Family Engagement",
-                "evidence base remains limited",
-                "203 respondents",
-            ],
-            "/dh-benchmark.html": [
-                "Benchmark assessment framework",
-                "not a scored evaluation",
-                "Evidence-backed preliminary findings",
-                "Evidence needed before scoring",
-                "Not yet scored",
-                "Reusable evidence table",
-            ],
-            "/applied-analysis.html": [
-                "Original local analysis",
-                "72,736",
-                "48.4%",
-                "60.5%",
-                "47.9%",
-                "Implementation demonstration",
-                "Host validation required",
-            ],
-            "/research-plan.html": [
-                "non-research APE",
-                "confirmation bias",
-                "Search lane 1",
-                "Search lane 2",
-                "Search lane 3",
-                "Screening workflow",
-                "Conflicting, null, or negative findings",
-            ],
+            "/evidence-summary.html": ["Evidence-Based PFAC Summary", "CMS Patient Safety Structural Measure", "Domain 5: Patient and Family Engagement", "evidence base remains limited", "203 respondents"],
+            "/dh-benchmark.html": ["Benchmark assessment framework", "not a scored evaluation", "Evidence-backed preliminary findings", "Evidence needed before scoring", "Not yet scored", "Reusable evidence table"],
+            "/applied-analysis.html": ["Original local analysis", "72,736", "48.4%", "60.5%", "47.9%", "Explore the local data", "Implementation demonstration", "Host validation required"],
+            "/research-plan.html": ["non-research APE", "confirmation bias", "Search lane 1", "Search lane 2", "Search lane 3", "Screening workflow", "Conflicting, null, or negative findings"],
             "/surveillance-method.html": ["Research Surveillance Method", "PubMed/MyNCBI", "Outlook folders", "Zotero collections", "Weekly review", "Example SQL"],
-            "/bibliography.html": ["AMA 11", "Core research evidence", "Implementation toolkits and benchmark resources", "Open data and public resource sources", "Story and acknowledgement resources"],
-            "/hai-alert.html": ["HAI", "MRSA", "PFAC", "infection", "escalation"],
+            "/bibliography.html": ["AMA 11", "Core research evidence", "Federal and implementation guidance", "Open data and public resources", "Story and acknowledgement resources", "Validation note"],
+            "/hai-alert.html": ["HAI", "MRSA", "PFAC", "infection", "escalation", "Evidence synthesis summary"],
             "/story.html": ["Rosie Bartel", "lived-experience anchor", "does not imply endorsement", "not representative evidence"],
             "/about.html": ["Michael Bolton", "LinkedIn profile", "mailto:michael.bolton.ph@dartmouth.edu", "Notion workspace", "Research surveillance how-to"],
-            "/collaboration.html": ["Collaboration Layer", "Open Notion workspace", "Source Intake", "Evidence Review", "Toolkit Backlog"],
-            "/deliverables.html": [
-                "Two practical deliverables",
-                "Environmental scan and annotated bibliography",
-                "Deliverable 2 tools",
-                "CEPH 4",
-                "CEPH 7",
-                "Dartmouth Program-Specific Competency 4",
-                "Demonstrated.",
-            ],
-            "/toolkit-tools.html": [
-                "Tools leaders can use immediately.",
-                "PFAC current-state assessment",
-                "Closed-loop action tracker",
-                "Representation and access check",
-                "Measurement plan",
-                "Domain 5 traceability",
-            ],
-            "/mvp-one.html": ["Reviewer Readiness", "What reviewers can inspect now", "Surveillance how-to"],
+            "/collaboration.html": ["Collaboration Layer", "Open Notion workspace", "Source Intake", "Evidence Review", "Toolkit Backlog", "Do not submit"],
+            "/deliverables.html": ["Two practical deliverables", "Environmental scan and annotated bibliography", "Deliverable 2 tools", "CEPH 4", "CEPH 7", "Dartmouth Program-Specific Competency 4", "Demonstrated."],
+            "/toolkit-tools.html": ["Tools leaders can use immediately.", "PFAC current-state assessment", "Closed-loop action tracker", "Representation and access check", "Measurement plan", "Domain 5 traceability"],
+            "/mvp-one.html": ["Reviewer Guide", "Recommended sequence", "local analysis", "Leadership tools"],
         }
         for path, expected in required_pages.items():
             with self.subTest(path=path):
@@ -114,24 +68,18 @@ class WebContractTests(unittest.TestCase):
                 if path != "/":
                     self.assertNotIn("Turn patient voice into better care.", body, f"{path} appears to be falling back to homepage")
 
-    def test_public_pages_do_not_expose_prompt_admin_or_scope_spillover(self):
+    def test_public_pages_have_no_internal_or_generation_spillover(self):
         forbidden_fragments = [
             "GitHub",
-            "Private</span>",
             "Private repository",
             "repository stays private",
-            "private project administration",
             "Code, deployment, drafts, and project administration",
             "Acceptance criteria",
-            "What MVP 1 must do well",
-            "MVP 1 reviewer portal",
-            "Reviewer portal acceptance criteria",
-            "No prompt spillover",
+            "MVP 1",
             "prompt spillover",
             "internal instructions",
             "code repository",
             "source control",
-            "The Agreement defines",
             "CI/CD",
             "regression checks",
             "APE/ILE",
@@ -140,29 +88,67 @@ class WebContractTests(unittest.TestCase):
             "Chick-fil-A",
             "McDonald’s thesis",
             "Patients over payers",
+            "system prompt",
+            "developer message",
+            "tool call",
+            "chain of thought",
+            "ChatGPT",
+            "OpenAI",
+            "Anthropic",
+            "Claude",
+            "Codex",
+            "large language model",
         ]
         for path in public_html_paths():
             with self.subTest(path=path):
                 status, _, body = request(path)
                 self.assertEqual(status, "200 OK")
                 for fragment in forbidden_fragments:
-                    self.assertNotIn(fragment.lower(), body.lower(), f"{path} exposes {fragment!r}")
+                    self.assertNotIn(fragment.casefold(), body.casefold(), f"{path} exposes {fragment!r}")
+
+    def test_public_pages_have_no_placeholder_or_build_state_language(self):
+        forbidden = [
+            "Reserved for the synthesis text",
+            "Drop the final synthesis here",
+            "Loading HAI dashboard",
+            "Reviewer Readiness",
+            "public release",
+            "acceptance criteria",
+            "coming soon",
+            "placeholder",
+        ]
+        for path in public_html_paths():
+            with self.subTest(path=path):
+                _, _, body = request(path)
+                for fragment in forbidden:
+                    self.assertNotIn(fragment.casefold(), body.casefold(), f"{path} contains unfinished language {fragment!r}")
 
     def test_evidence_matrix_carries_limitations_and_current_evidence(self):
         body = self.assert_page_contains(
             "/evidence-matrix.html",
-            [
-                "Evidence strength / limitation",
-                "Anticipated patient benefit",
-                "Lewis et al, 2025",
-                "Lewis et al, 2026",
-                "Rramani Dervishi et al, 2026",
-                "Leia et al, 2025",
-                "cross-sectional associations do not establish causality",
-            ],
+            ["Evidence strength / limitation", "Anticipated patient benefit", "Lewis et al, 2025", "Lewis et al, 2026", "Rramani Dervishi et al, 2026", "Leia et al, 2025", "cross-sectional associations do not establish causality"],
         )
         self.assertNotIn("Patient advisors can influence health care outcomes when linked to action and measurement", body)
         self.assertNotIn("Improves communication, discharge readiness", body)
+
+    def test_bibliography_contains_current_matrix_sources_and_validation_note(self):
+        body = self.assert_page_contains(
+            "/bibliography.html",
+            ["Lewis B, Cochran C, Marquez E", "Lewis B, Cochran C, Shoemaker S", "Rramani Dervishi Q", "Leia MP", "Validation note"],
+        )
+        self.assertIn("not treated as peer-reviewed evidence", body)
+
+    def test_hai_page_is_finished_and_table_first(self):
+        body = self.assert_page_contains(
+            "/hai-alert.html",
+            ["Evidence signal", "Evidence synthesis summary", "Infection prevention is also a communication and escalation problem.", "What PFAC should ask locally", "Leadership follow-through"],
+        )
+        lowered = body.casefold()
+        self.assertNotIn("loading hai dashboard", lowered)
+        self.assertNotIn("reserved for the synthesis text", lowered)
+        self.assertNotIn("drop the final synthesis here", lowered)
+        self.assertNotIn("plotly", lowered)
+        self.assertNotIn("<canvas", lowered)
 
     def test_toolkit_download_templates_are_real_static_assets(self):
         templates = {
@@ -199,23 +185,24 @@ class WebContractTests(unittest.TestCase):
             population = sum(int(row["2023 population"]) for row in rows if row[field] == "Yes")
             self.assertAlmostEqual(population / total * 100, expected, places=1, msg=field)
 
-    def test_applied_analysis_is_local_and_not_outcome_claiming(self):
+    def test_applied_analysis_is_local_interactive_and_not_outcome_claiming(self):
         body = self.assert_page_contains(
             "/applied-analysis.html",
-            [
-                "Planning analysis, not a risk score",
-                "42%",
-                "72%",
-                "59%",
-                "55%",
-                "not a claim that Dartmouth Health has adopted",
-                "CEPH 4",
-                "CEPH 7",
-                "descriptive approximations",
-            ],
+            ["Planning analysis, not a risk score", "42%", "72%", "59%", "55%", "not a claim that Dartmouth Health has adopted", "CEPH 4", "CEPH 7", "descriptive approximations", 'id="analysis-metric"', 'id="analysis-threshold"', 'id="analysis-sort"', 'id="analysis-search"', "/applied-analysis.js"],
         )
         self.assertNotIn("Dartmouth Health implemented", body)
-        self.assertNotIn("improved patient outcomes", body.lower())
+        self.assertNotIn("improved patient outcomes", body.casefold())
+        self.assertNotIn("<canvas", body.casefold())
+        self.assertNotIn("<svg", body.casefold())
+
+    def test_applied_analysis_script_is_served(self):
+        status, headers, body = request("/applied-analysis.js")
+        self.assertEqual(status, "200 OK")
+        self.assertIn("javascript", headers["Content-Type"])
+        self.assertIn("/upper-valley-local-analysis.csv", body)
+        self.assertIn("Poverty percent", body)
+        self.assertIn("Disability percent", body)
+        self.assertIn("Age 65+ percent", body)
 
     def test_applied_implementation_case_is_populated(self):
         status, headers, body = request("/upper-valley-access-implementation.csv")
@@ -229,25 +216,13 @@ class WebContractTests(unittest.TestCase):
     def test_dh_benchmark_discloses_evidence_state(self):
         body = self.assert_page_contains(
             "/dh-benchmark.html",
-            [
-                "The framework is real as a structured assessment method.",
-                "It is not yet real as a scored benchmark",
-                "Scoring should occur only after reviewing public materials",
-                "Publicly supported",
-                "Not yet validated",
-                "Insufficient evidence",
-                "Preliminary finding",
-                'id="evidence-status"',
-                'class="evidence-status-table"',
-                'id="evidence-table"',
-                'class="benchmark-evidence-table"',
-            ],
+            ["The framework is real as a structured assessment method.", "It is not yet real as a scored benchmark", "Scoring should occur only after reviewing public materials", "Publicly supported", "Not yet validated", "Insufficient evidence", "Preliminary finding", 'id="evidence-status"', 'class="evidence-status-table"', 'id="evidence-table"', 'class="benchmark-evidence-table"'],
         )
         self.assertNotIn("Benchmark maturity model", body)
         self.assertNotIn("View maturity model", body)
-        self.assertNotIn("maturity score", body.lower())
-        self.assertNotIn("completed scorecard", body.lower())
-        self.assertNotIn("completed evaluation", body.lower())
+        self.assertNotIn("maturity score", body.casefold())
+        self.assertNotIn("completed scorecard", body.casefold())
+        self.assertNotIn("completed evaluation", body.casefold())
 
     def test_dh_benchmark_uses_plan_evidence_fields(self):
         body = self.assert_page_contains(
@@ -268,19 +243,18 @@ class WebContractTests(unittest.TestCase):
             self.assertEqual(len(statuses), 1, row)
 
     def test_public_pages_do_not_render_markdown_artifacts(self):
-        forbidden_markdown = ["**", "```", "### ", "## "]
         for path in public_html_paths():
             with self.subTest(path=path):
                 status, _, body = request(path)
                 self.assertEqual(status, "200 OK")
-                for fragment in forbidden_markdown:
+                for fragment in ("**", "```", "### ", "## "):
                     self.assertNotIn(fragment, body, f"{path} contains raw markdown artifact {fragment!r}")
 
     def test_reviewer_flow_stays_on_public_pages(self):
         body = self.assert_page_contains("/", ["/evidence-summary.html", "/dh-benchmark.html", "/applied-analysis.html", "/deliverables.html"])
         self.assertIn('/research-plan.html', body)
         self.assertIn('/toolkit-tools.html', body)
-        self.assertNotIn("github.com", body.lower())
+        self.assertNotIn("github.com", body.casefold())
 
     def test_story_and_evidence_are_separated(self):
         research_plan = self.assert_page_contains("/research-plan.html", ["not an inclusion requirement"])
@@ -290,13 +264,13 @@ class WebContractTests(unittest.TestCase):
         self.assertIn("does not imply endorsement", story)
         self.assertIn("confirmation bias", research_plan)
 
-    def test_hai_dashboard_endpoint_returns_chart_data(self):
+    def test_hai_dashboard_endpoint_still_returns_data_for_reuse(self):
         status, _, body = request("/api/hai-dashboard")
         self.assertEqual(status, "200 OK")
         self.assertIn('"measures"', body)
         self.assertIn('"executive_actions"', body)
 
-    def test_hai_dashboard_exposes_executive_actions(self):
+    def test_hai_dashboard_payload_remains_valid(self):
         dashboard = build_hai_dashboard()
         self.assertEqual(dashboard["status"], "ok")
         self.assertGreaterEqual(len(dashboard["measures"]), 7)
