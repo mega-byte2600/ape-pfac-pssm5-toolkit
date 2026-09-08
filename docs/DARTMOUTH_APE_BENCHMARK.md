@@ -57,7 +57,8 @@ Faculty-ready when it includes:
 - critical appraisal or evidence-strength judgment;
 - explicit contradictory/uncertain evidence;
 - comparative findings across engagement approaches;
-- an executive synthesis that states what Dartmouth Health can reasonably learn and what cannot yet be concluded.
+- an executive synthesis that states what Dartmouth Health can reasonably learn and what cannot yet be concluded;
+- a transparent local descriptive analysis tied to a defined service area and current host-site/public-health data.
 
 ### Deliverable 2: PFAC leadership toolkit/playbook
 
@@ -71,19 +72,20 @@ Faculty-ready when it includes actual reusable tools, not only explanatory webpa
 - patient-first decision screen;
 - closed-loop action tracker;
 - measurement/reassessment guide;
-- implementation instructions and ownership.
+- implementation instructions and ownership;
+- at least one populated implementation case showing how the toolkit is used against a real health-system problem.
 
-## What would place this project above the public examples
+## What places this project above many public examples
 
-1. **Evidence calibration.** Explicitly state where PFAC outcome evidence is weak or uncertain instead of advocating beyond the literature.
-2. **Local applicability without overclaiming.** Benchmark Dartmouth Health assets using evidence-state labels and publish only what can be supported.
-3. **True toolkit usability.** Provide downloadable or directly usable assessment/checklist/tracker artifacts rather than relying on narrative pages.
-4. **Visible competency evidence.** For each selected competency, point to a specific completed analysis, comparison, decision tool, or applied artifact.
-5. **Scope discipline.** Keep every public and internal APE artifact focused on the approved site work, two practical deliverables, and competency attainment.
-6. **Host-site handoff.** End with a concise 'what Dartmouth Health can do next' page showing owner, action, evidence needed, and implementation sequence.
+1. **Evidence calibration.** It explicitly states where PFAC outcome evidence is weak or uncertain instead of advocating beyond the literature.
+2. **Local applicability without overclaiming.** Dartmouth Health assets and Upper Valley population/access data are analyzed using explicit evidence-state and calculation rules.
+3. **True toolkit usability.** Downloadable assessment, tracker, representation, measurement, traceability, local-analysis, and populated implementation artifacts are available.
+4. **Visible competency evidence.** CEPH 4 now has a reproducible local data analysis with calculations and interpretation; CEPH 7 now has a defined 72,736-person, 19-municipality population context translated into engagement requirements.
+5. **Applied implementation proof.** The toolkit is populated against a current Upper Valley access/navigation problem with ownership, measures, report-back logic, and host-validation steps.
+6. **Scope discipline.** Every public and internal APE artifact remains focused on the approved site work, two practical deliverables, and competency attainment.
 
 ## Current faculty judgment
 
-The project already exceeds typical public Dartmouth examples in technical architecture, transparency of evidence status, reproducibility infrastructure, and breadth of reusable resources. It does **not yet clearly exceed the strongest examples in applied public-health proof** because the current site still has incomplete local assessment evidence, incomplete population needs/assets evidence, and insufficiently explicit data-analysis proof for CEPH 4.
+The previous weaknesses in local assessment evidence, population needs/assets evidence, and explicit CEPH 4 data-analysis proof are now materially closed. The project includes original descriptive re-analysis of the 2025 DHMC-APD Community Health Needs Assessment, a reproducible 19-municipality dataset, calculated service-area population shares, and an applied Upper Valley access/navigation implementation case.
 
-The goal is therefore not to add more pages. The goal is to finish the evidence-to-decision chain and make the two approved deliverables unmistakably usable by the host site.
+At this stage, the remaining distinction between an excellent APE and a fully host-implemented project is **organizational validation and use**, not missing student analysis or missing toolkit structure. The APE should not claim Dartmouth Health adoption, implementation outcomes, or formal organizational endorsement unless those events occur and are documented.

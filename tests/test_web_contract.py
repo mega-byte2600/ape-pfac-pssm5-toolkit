@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import csv
 import unittest
 from pathlib import Path
 
@@ -40,7 +41,7 @@ class WebContractTests(unittest.TestCase):
 
     def test_core_public_pages_serve_expected_content(self):
         required_pages = {
-            "/": ["Turn patient voice into better care.", "Evidence-Based PFAC Summary", "DH benchmark", "APE deliverables", "Collaboration"],
+            "/": ["Turn patient voice into better care.", "Evidence-Based PFAC Summary", "DH benchmark", "Applied Analysis", "APE deliverables"],
             "/evidence.html": ["Evidence Launch Page", "Evidence-Based PFAC Summary", "PubMed search protocol", "Evidence matrix", "AMA 11 source layer"],
             "/evidence-summary.html": [
                 "Evidence-Based PFAC Summary",
@@ -56,6 +57,15 @@ class WebContractTests(unittest.TestCase):
                 "Evidence needed before scoring",
                 "Not yet scored",
                 "Reusable evidence table",
+            ],
+            "/applied-analysis.html": [
+                "Original local analysis",
+                "72,736",
+                "48.4%",
+                "60.5%",
+                "47.9%",
+                "Implementation demonstration",
+                "Host validation required",
             ],
             "/research-plan.html": [
                 "non-research APE",
@@ -79,6 +89,7 @@ class WebContractTests(unittest.TestCase):
                 "CEPH 4",
                 "CEPH 7",
                 "Dartmouth Program-Specific Competency 4",
+                "Demonstrated.",
             ],
             "/toolkit-tools.html": [
                 "Tools leaders can use immediately.",
@@ -160,6 +171,8 @@ class WebContractTests(unittest.TestCase):
             "/pfac-representation-access.csv": "Participation barrier",
             "/pfac-measurement-plan.csv": "Interpretation caution",
             "/pssm-domain5-traceability.csv": "Validation source",
+            "/upper-valley-local-analysis.csv": "Above service-area poverty average",
+            "/upper-valley-access-implementation.csv": "Implemented in APE case packet",
         }
         for path, fragment in templates.items():
             with self.subTest(path=path):
@@ -168,6 +181,50 @@ class WebContractTests(unittest.TestCase):
                 self.assertIn("text/csv", headers["Content-Type"])
                 self.assertIn(fragment, body)
                 self.assertNotIn("Turn patient voice into better care.", body)
+
+    def test_local_analysis_recomputes_from_source_table(self):
+        with Path("web/upper-valley-local-analysis.csv").open(encoding="utf-8", newline="") as handle:
+            rows = list(csv.DictReader(handle))
+
+        self.assertEqual(len(rows), 19)
+        total = sum(int(row["2023 population"]) for row in rows)
+        self.assertEqual(total, 72736)
+
+        calculations = {
+            "Above service-area poverty average (8%)": 48.4,
+            "Above service-area disability average (12%)": 60.5,
+            "Above service-area age 65+ average (22%)": 47.9,
+        }
+        for field, expected in calculations.items():
+            population = sum(int(row["2023 population"]) for row in rows if row[field] == "Yes")
+            self.assertAlmostEqual(population / total * 100, expected, places=1, msg=field)
+
+    def test_applied_analysis_is_local_and_not_outcome_claiming(self):
+        body = self.assert_page_contains(
+            "/applied-analysis.html",
+            [
+                "Planning analysis, not a risk score",
+                "42%",
+                "72%",
+                "59%",
+                "55%",
+                "not a claim that Dartmouth Health has adopted",
+                "CEPH 4",
+                "CEPH 7",
+                "descriptive approximations",
+            ],
+        )
+        self.assertNotIn("Dartmouth Health implemented", body)
+        self.assertNotIn("improved patient outcomes", body.lower())
+
+    def test_applied_implementation_case_is_populated(self):
+        status, headers, body = request("/upper-valley-access-implementation.csv")
+        self.assertEqual(status, "200 OK")
+        self.assertIn("text/csv", headers["Content-Type"])
+        self.assertIn("Access and navigation", body)
+        self.assertIn("Host validation required", body)
+        self.assertIn("Implemented in APE case packet", body)
+        self.assertIn("Domain 5 alignment", body)
 
     def test_dh_benchmark_discloses_evidence_state(self):
         body = self.assert_page_contains(
@@ -220,10 +277,9 @@ class WebContractTests(unittest.TestCase):
                     self.assertNotIn(fragment, body, f"{path} contains raw markdown artifact {fragment!r}")
 
     def test_reviewer_flow_stays_on_public_pages(self):
-        body = self.assert_page_contains("/", ["/evidence-summary.html", "/dh-benchmark.html", "/deliverables.html"])
+        body = self.assert_page_contains("/", ["/evidence-summary.html", "/dh-benchmark.html", "/applied-analysis.html", "/deliverables.html"])
         self.assertIn('/research-plan.html', body)
-        self.assertIn('/surveillance-method.html', body)
-        self.assertIn('/collaboration.html', body)
+        self.assertIn('/toolkit-tools.html', body)
         self.assertNotIn("github.com", body.lower())
 
     def test_story_and_evidence_are_separated(self):

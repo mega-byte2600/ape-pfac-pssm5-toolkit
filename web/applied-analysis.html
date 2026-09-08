@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Original local analysis and applied implementation demonstration for the APE PFAC leadership toolkit.">
+  <title>Applied Analysis | APE PFAC Leadership Toolkit</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to main content</a>
+  <header class="site-header enterprise-header">
+    <div class="brand"><span class="mark">AA</span><div><strong>Applied Analysis</strong><small>Local population context and implementation proof</small></div></div>
+    <nav aria-label="Primary"><a href="/">Overview</a><a href="/deliverables.html">Deliverables</a><a href="/dh-benchmark.html">DH Benchmark</a><a href="/toolkit-tools.html">Tools</a><a href="/evidence-matrix.html">Evidence</a></nav>
+  </header>
+
+  <main id="main">
+    <section class="hero hero-executive">
+      <div class="hero-copy">
+        <p class="eyebrow">Original local analysis • Upper Valley • applied implementation</p>
+        <h1>Use local evidence to decide who must be heard and what leaders should do next.</h1>
+        <p class="lead">This page applies the APE toolkit to Dartmouth Hitchcock Medical Center and Alice Peck Day Memorial Hospital's 2025 Upper Valley service-area data. It adds original descriptive analysis and a completed implementation demonstration without claiming Dartmouth Health adoption or downstream outcomes.</p>
+        <div class="actions">
+          <a class="button" href="/upper-valley-local-analysis.csv">Download analysis data</a>
+          <a class="button secondary" href="/upper-valley-access-implementation.csv">Download implementation case</a>
+          <a class="button secondary" href="/toolkit-tools.html">Open reusable tools</a>
+        </div>
+      </div>
+      <aside class="hero-dashboard" aria-label="Applied analysis highlights">
+        <div class="dash-card dark"><span>Service area</span><strong>72,736</strong><p>Residents across 19 Upper Valley municipalities in the 2025 CHNA.</p></div>
+        <div class="dash-card"><span>Local analysis</span><strong>19 towns</strong><p>Town-level age, disability, poverty, and population data re-analyzed for PFAC representation planning.</p></div>
+        <div class="dash-card"><span>Implementation</span><strong>Access</strong><p>Real CHNA access and navigation signals are translated into PFAC actions, owners, measures, and validation steps.</p></div>
+      </aside>
+    </section>
+
+    <section class="panel executive-summary highlight-panel">
+      <div class="section-title"><p class="eyebrow">Why this matters</p><h2>Population context changes PFAC design.</h2></div>
+      <p class="lede">A PFAC can be structurally present and still miss the people most affected by access barriers. The 2025 CHNA defines a 72,736-person primary service area and explicitly emphasizes populations facing barriers related to income, age, disability, and social or physical isolation. This analysis converts those local data into recruitment, participation, agenda, and accountability requirements.</p>
+    </section>
+
+    <section class="panel">
+      <div class="section-title"><p class="eyebrow">Method</p><h2>A reproducible descriptive re-analysis of public local data.</h2></div>
+      <div class="card-grid">
+        <article class="card premium-card"><span class="tag">Source</span><h3>2025 Community Health Needs Assessment</h3><p>Town-level population, age, poverty, disability, and community access findings were extracted from the DHMC-APD fiscal year 2025 CHNA.</p></article>
+        <article class="card premium-card"><span class="tag">Calculation</span><h3>Population-weighted exposure to above-average local conditions</h3><p>For each of 19 municipalities, the analysis flags whether poverty, disability, or age 65+ exceeds the corresponding service-area average, then sums the populations of those municipalities and divides by the 72,736-person service-area population.</p></article>
+        <article class="card premium-card"><span class="tag">Boundary</span><h3>Planning analysis, not a risk score</h3><p>The derived percentages are descriptive screening signals for PFAC representation and access planning. They are not validated cut points, clinical risk estimates, causal findings, or measures of PFAC effectiveness.</p></article>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="section-title"><p class="eyebrow">Original local analysis</p><h2>Three findings that materially change engagement design.</h2></div>
+      <div class="matrix-table">
+        <table>
+          <thead><tr><th>Characteristic</th><th>Service-area benchmark</th><th>Re-analysis</th><th>Interpretation for PFAC design</th></tr></thead>
+          <tbody>
+            <tr><td>Poverty</td><td>8% of service-area residents</td><td><strong>48.4%</strong> of residents live in 6 municipalities where the poverty percentage is above the service-area average.</td><td>Recruitment and participation design should account for cost, compensation, transportation, time, and other economic barriers rather than relying only on geographic representation.</td></tr>
+            <tr><td>Disability</td><td>12% of service-area residents</td><td><strong>60.5%</strong> of residents live in 10 municipalities where the disability percentage is above the service-area average.</td><td>Accessible meeting formats, communication methods, remote participation, caregiver input, and disability access should be treated as core operating requirements.</td></tr>
+            <tr><td>Age 65+</td><td>22% of service-area residents</td><td><strong>47.9%</strong> of residents live in 11 municipalities where the age 65+ percentage is above the service-area average.</td><td>Older-adult and caregiver perspectives should be intentionally reachable, especially where transportation, isolation, technology, and aging-in-place barriers overlap.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>The CHNA also shows substantial economic variation: median household income ranges from $58,750 in Dorchester to $163,654 in Hanover, approximately a 2.8-fold difference. The purpose of this comparison is not to label communities; it is to prevent a single engagement model from being treated as equally accessible across the service area.</p>
+      <p><a class="resource-link" href="/upper-valley-local-analysis.csv">Inspect the 19-municipality calculation file</a></p>
+    </section>
+
+    <section class="panel patient-first">
+      <div>
+        <p class="eyebrow">Local access signals</p>
+        <h2>The strongest operational signal is not abstract engagement. It is access and navigation.</h2>
+        <p>The CHNA reports that 42% of community respondents had difficulty accessing primary care, while 54% of residents and 58% of community leaders said primary-care access had worsened. Mental health access was difficult for 35% of respondents; among those reporting difficulty, 68% cited long waits and 62% cited practices not accepting new patients.</p>
+      </div>
+      <div class="question-stack">
+        <div class="question"><strong>72%</strong> of community leaders and service providers identified insufficient local capacity as an access barrier.</div>
+        <div class="question"><strong>59%</strong> identified difficulty navigating the health care system.</div>
+        <div class="question"><strong>55%</strong> identified isolated populations, including homebound or very rural residents, as not adequately served by local resources.</div>
+      </div>
+    </section>
+
+    <section id="implementation" class="panel">
+      <div class="section-title"><p class="eyebrow">Implementation demonstration</p><h2>The toolkit is applied to a real Upper Valley access and navigation use case.</h2></div>
+      <p class="lede">This is implementation of the APE method, not a claim that Dartmouth Health has adopted the recommendations. The local problem, population context, PFAC workstream, measurement logic, and validation steps are already populated so a health-system leader can move directly into host review.</p>
+      <div class="matrix-table">
+        <table>
+          <thead><tr><th>Implementation element</th><th>Completed in the APE</th><th>Host validation required</th></tr></thead>
+          <tbody>
+            <tr><td>Problem definition</td><td>Access, navigation, capacity, wait-time, and rural/isolation signals are extracted from the 2025 CHNA and converted into a defined PFAC workstream.</td><td>Confirm which access pathway should be prioritized first.</td></tr>
+            <tr><td>Population and representation</td><td>Age, disability, poverty, geography, isolation, transportation, caregiver, and technology considerations are built into the representation and access logic.</td><td>Compare current PFAC composition and participation options with local service-area context.</td></tr>
+            <tr><td>Governance and action</td><td>A standing access/navigation agenda lane, leadership disposition, accountable owner, due date, escalation, and report-back requirement are specified.</td><td>Assign the actual executive sponsor and operational owners.</td></tr>
+            <tr><td>Measurement</td><td>Proposed measures include time to leadership disposition, action closure, report-back completion, and representation/access barriers mitigated.</td><td>Select locally available data sources and review cadence.</td></tr>
+            <tr><td>Domain 5 traceability</td><td>The workstream is connected to patient/family engagement infrastructure, local evidence, accountable roles, actions, and validation sources.</td><td>Validate any evidence used for organizational attestation or formal reporting.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><a class="resource-link" href="/upper-valley-access-implementation.csv">Download the populated implementation case</a></p>
+    </section>
+
+    <section class="panel alert-band">
+      <div class="section-title"><p class="eyebrow">Applied proof</p><h2>What changed in the APE.</h2></div>
+      <p><strong>CEPH 4:</strong> the project now includes a transparent, reproducible local data analysis with calculations and interpretation for public health practice.</p>
+      <p><strong>CEPH 7:</strong> the target population is now explicitly defined using the 19-municipality Upper Valley service area, and local needs, assets, and participation barriers are translated into PFAC design requirements.</p>
+      <p><strong>Implementation:</strong> the reusable toolkit is no longer only a set of blank templates; it is demonstrated against a current Dartmouth Health service-area problem using real public evidence.</p>
+    </section>
+
+    <section class="panel references">
+      <div class="section-title"><p class="eyebrow">Sources and validation</p><h2>Public evidence used for the local analysis.</h2></div>
+      <ol>
+        <li>Dartmouth Hitchcock Medical Center, Alice Peck Day Memorial Hospital, and Visiting Nurse and Hospice for Vermont and New Hampshire. <em>Fiscal Year 2025 Community Health Needs Assessment.</em> Dartmouth Health. Accessed September 7, 2026. <a href="https://www.dartmouth-hitchcock.org/sites/default/files/2025-03/2025-community-health-needs-assessment.pdf">Source</a>.</li>
+        <li>Dartmouth Health. <em>Strategic Plan 2030.</em> Strategic Goal 2 identifies value, safety, quality, access, patient experience, and system-wide improvement as priorities. Accessed September 7, 2026. <a href="https://www.dartmouth-health.org/2030">Source</a>.</li>
+      </ol>
+      <p><strong>Validation note:</strong> all percentages shown as original re-analysis were recalculated from the municipality-level values and 2023 population estimates published in the 2025 CHNA. Because source percentages are rounded, derived population shares should be interpreted as descriptive approximations.</p>
+    </section>
+  </main>
+
+  <footer><span>APE Applied Analysis</span><span>Local evidence to leadership action</span></footer>
+</body>
+</html>
