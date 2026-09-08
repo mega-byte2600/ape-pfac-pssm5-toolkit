@@ -46,10 +46,24 @@ REQUIRED = {
         "48.4%",
         "60.5%",
         "47.9%",
+        "Explore the local data",
+        'id="analysis-metric"',
+        'id="analysis-threshold"',
+        'id="analysis-sort"',
+        'id="analysis-search"',
+        "/applied-analysis.js",
         "Implementation demonstration",
         "Host validation required",
         "Planning analysis, not a risk score",
         "not a claim that Dartmouth Health has adopted",
+    ],
+    "web/applied-analysis.js": [
+        "/upper-valley-local-analysis.csv",
+        "72,736",
+        "48.4",
+        "60.5",
+        "47.9",
+        "Above service-area average",
     ],
 }
 
@@ -84,6 +98,18 @@ PUBLIC_FORBIDDEN = [
     "Chick-fil-A",
     "McDonald’s thesis",
     "Patients over payers",
+    "system prompt",
+    "developer message",
+    "tool call",
+    "chain of thought",
+    "ChatGPT",
+    "OpenAI",
+    "Anthropic",
+    "Claude",
+    "Codex",
+    "large language model",
+    "prompt spillover",
+    "internal instructions",
 ]
 
 
