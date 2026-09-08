@@ -1,6 +1,6 @@
 # Dartmouth / Geisel APE Benchmark Standard
 
-This benchmark is for the Applied Practice Experience only. The later Integrative Learning Experience is a separate academic product and should not be used as the standard for judging whether this APE is complete.
+This benchmark applies only to the Applied Practice Experience and judges whether the APE is complete, useful to the host site, methodologically defensible, and demonstrably tied to the selected competencies.
 
 ## What Dartmouth publicly emphasizes for APE work
 
@@ -79,7 +79,7 @@ Faculty-ready when it includes actual reusable tools, not only explanatory webpa
 2. **Local applicability without overclaiming.** Benchmark Dartmouth Health assets using evidence-state labels and publish only what can be supported.
 3. **True toolkit usability.** Provide downloadable or directly usable assessment/checklist/tracker artifacts rather than relying on narrative pages.
 4. **Visible competency evidence.** For each selected competency, point to a specific completed analysis, comparison, decision tool, or applied artifact.
-5. **APE/ILE separation.** Keep the public APE product focused on site service and competency attainment. Reserve manuscript-level generalizable argument and independent scholarly contribution for the later ILE.
+5. **Scope discipline.** Keep every public and internal APE artifact focused on the approved site work, two practical deliverables, and competency attainment.
 6. **Host-site handoff.** End with a concise 'what Dartmouth Health can do next' page showing owner, action, evidence needed, and implementation sequence.
 
 ## Current faculty judgment
