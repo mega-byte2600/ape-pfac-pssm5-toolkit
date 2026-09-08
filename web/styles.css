@@ -413,10 +413,3 @@ footer {
   .hero { min-height: auto; }
   h1 { font-size: clamp(2.15rem, 13vw, 3.55rem); }
 }
-
-/* Global navigation current-page state */
-nav[data-global-nav="true"] a[aria-current="page"] {
-  color: var(--dartmouth-green);
-  background: rgba(0, 105, 62, .10);
-  box-shadow: inset 0 0 0 1px rgba(0, 105, 62, .14);
-}
