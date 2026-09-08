@@ -7,6 +7,8 @@
   const sortSelect = root.querySelector('#analysis-sort');
   const searchInput = root.querySelector('#analysis-search');
   const tableBody = root.querySelector('#analysis-body');
+  const chartTarget = root.querySelector('#analysis-chart');
+  const chartTitle = root.querySelector('#analysis-chart-title');
   const resultCount = root.querySelector('#analysis-result-count');
   const populationShown = root.querySelector('#analysis-population-shown');
   const aboveShare = root.querySelector('#analysis-above-share');
@@ -50,8 +52,48 @@
   const number = (value) => Number.parseFloat(value) || 0;
   const integer = (value) => Number.parseInt(value, 10) || 0;
   const fmt = new Intl.NumberFormat('en-US');
-
   let rows = [];
+
+  function renderChart(visible, metric) {
+    if (!chartTarget || !window.Plotly) return;
+    chartTitle.textContent = `${metric.label} by municipality`;
+
+    if (!visible.length) {
+      Plotly.react(chartTarget, [], {
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        annotations: [{ text: 'No municipalities match the current filters.', showarrow: false, x: 0.5, y: 0.5, xref: 'paper', yref: 'paper' }],
+        margin: { t: 20, r: 20, b: 45, l: 20 }
+      }, { displayModeBar: false, responsive: true });
+      return;
+    }
+
+    const chartRows = [...visible].reverse();
+    const values = chartRows.map((row) => number(row[metric.field]));
+    const names = chartRows.map((row) => row.Municipality);
+    const populations = chartRows.map((row) => fmt.format(integer(row['2023 population'])));
+    const comparisons = chartRows.map((row) => row[metric.flag] === 'Yes' ? 'Above service-area average' : 'At or below service-area average');
+
+    Plotly.react(chartTarget, [{
+      type: 'bar',
+      orientation: 'h',
+      y: names,
+      x: values,
+      marker: { color: chartRows.map((row) => row[metric.flag] === 'Yes' ? '#c49a3a' : '#00693e') },
+      customdata: populations.map((population, index) => [population, comparisons[index]]),
+      hovertemplate: '<b>%{y}</b><br>' + metric.label + ': %{x}%<br>Population: %{customdata[0]}<br>%{customdata[1]}<extra></extra>'
+    }], {
+      paper_bgcolor: 'rgba(0,0,0,0)',
+      plot_bgcolor: 'rgba(0,0,0,0)',
+      font: { color: '#17211f', family: 'ui-sans-serif, system-ui, -apple-system, Segoe UI, Arial' },
+      margin: { t: 24, r: 30, b: 60, l: 115 },
+      xaxis: { title: `${metric.label} percent`, gridcolor: '#e4ece8', rangemode: 'tozero', ticksuffix: '%' },
+      yaxis: { automargin: true },
+      shapes: [{ type: 'line', x0: metric.benchmark, x1: metric.benchmark, y0: -0.5, y1: chartRows.length - 0.5, line: { color: '#8a3a2b', width: 2, dash: 'dash' } }],
+      annotations: [{ x: metric.benchmark, y: 1.04, xref: 'x', yref: 'paper', text: `Service-area average ${metric.benchmark}%`, showarrow: false, font: { color: '#8a3a2b', size: 12 } }],
+      showlegend: false
+    }, { displayModeBar: false, responsive: true });
+  }
 
   function render() {
     const metric = METRICS[metricSelect.value];
@@ -91,6 +133,8 @@
 
     readout.innerHTML = `<strong>${metric.label}:</strong> ${share.toFixed(1)}% of the ${fmt.format(totalPopulation)} service-area residents live in ${aboveRows.length} municipalities where the published ${metric.label.toLowerCase()} percentage is above the ${metric.benchmark}% service-area average. ${metric.implication}`;
 
+    renderChart(visible, metric);
+
     tableBody.innerHTML = visible.map((row) => {
       const isAbove = row[metric.flag] === 'Yes';
       return `<tr>
@@ -102,7 +146,7 @@
       </tr>`;
     }).join('');
 
-    status.textContent = visible.length ? `${visible.length} municipalities shown.` : 'No municipalities match the current filters.';
+    status.textContent = visible.length ? `${visible.length} municipalities shown in the chart and supporting table.` : 'No municipalities match the current filters.';
   }
 
   [metricSelect, thresholdSelect, sortSelect].forEach((control) => control.addEventListener('change', render));
@@ -118,7 +162,7 @@
       render();
     })
     .catch(() => {
-      status.textContent = 'Interactive table unavailable. The validated calculation file remains available below.';
+      status.textContent = 'Interactive analysis unavailable. The validated calculation file remains available below.';
       tableBody.innerHTML = '<tr><td colspan="5">Unable to load the local calculation file.</td></tr>';
     });
 })();

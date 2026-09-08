@@ -6,6 +6,8 @@
   <meta name="description" content="Healthcare-associated infection risk alert page for PFAC and PSSM Domain 5 leaders.">
   <title>HAI Risk Alert | PFAC Leadership Toolkit</title>
   <link rel="stylesheet" href="/styles.css">
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" defer></script>
+  <script src="/app.js" defer></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
@@ -40,19 +42,41 @@
       </div>
     </section>
 
+    <section class="panel dashboard-panel" aria-labelledby="hai-dashboard-title">
+      <div class="section-title">
+        <p class="eyebrow">Interactive HAI dashboard</p>
+        <h2 id="hai-dashboard-title">National HAI signal translated into PFAC action.</h2>
+        <p id="hai-headline">CDC national HAI progress data are shown as an interactive signal for discussion. Hover over each measure for the patient and family question attached to it.</p>
+      </div>
+      <div class="dashboard-grid">
+        <article class="chart-card">
+          <div class="chart-title"><span>2024 vs 2023</span><strong>Change in acute-care HAI SIR</strong></div>
+          <div id="hai-trend-chart" class="plotly-chart" role="img" aria-label="Interactive HAI SIR change by measure"></div>
+        </article>
+        <article class="chart-card">
+          <div class="chart-title"><span>2015 baseline</span><strong>Progress and remaining pressure</strong></div>
+          <div id="hai-baseline-chart" class="plotly-chart" role="img" aria-label="Interactive HAI SIR change versus baseline"></div>
+        </article>
+      </div>
+      <div id="hai-action-grid" class="action-grid" aria-label="HAI leadership actions"></div>
+    </section>
+
     <section class="panel">
       <div class="section-title"><p class="eyebrow">Evidence signal</p><h2>Use national HAI trends to frame the question, then ask for local data.</h2><p>The public evidence is useful for identifying the safety problem. It is not a substitute for local infection, readmission, complaint, call-center, or post-discharge data.</p></div>
-      <div class="matrix-table" role="region" aria-label="HAI evidence signal table" tabindex="0">
-        <table>
-          <thead><tr><th>Signal</th><th>What the public data support</th><th>What PFAC should ask locally</th><th>Leadership follow-through</th></tr></thead>
-          <tbody>
-            <tr><td>National HAI burden</td><td>Healthcare-associated infections remain a meaningful patient-safety risk.</td><td>Which infections create the greatest local burden, and which patients are most affected?</td><td>Bring the local trend, affected populations, and current prevention priorities to the PFAC.</td></tr>
-            <tr><td>2024 progress</td><td>CDC reported improvement in several acute-care HAI measures compared with 2023.</td><td>Did the same measures improve locally, and what changed in practice?</td><td>Separate national progress from local performance and document the local evidence source.</td></tr>
-            <tr><td>Not every measure improved</td><td>CDC reported that abdominal hysterectomy SSI moved in the wrong direction nationally.</td><td>Where are local exceptions, plateaus, or worsening signals being reviewed?</td><td>Escalate exceptions rather than averaging them into a reassuring overall story.</td></tr>
-            <tr><td>Post-discharge risk</td><td>Infection harm may become visible after the patient leaves the hospital.</td><td>Can patients recognize warning signs, reach the right person, and receive a timely response?</td><td>Review discharge instructions, escalation pathways, post-discharge contacts, and report-back.</td></tr>
-          </tbody>
-        </table>
-      </div>
+      <details class="data-details">
+        <summary>View evidence detail table</summary>
+        <div class="matrix-table" role="region" aria-label="HAI evidence signal table" tabindex="0">
+          <table>
+            <thead><tr><th>Signal</th><th>What the public data support</th><th>What PFAC should ask locally</th><th>Leadership follow-through</th></tr></thead>
+            <tbody>
+              <tr><td>National HAI burden</td><td>Healthcare-associated infections remain a meaningful patient-safety risk.</td><td>Which infections create the greatest local burden, and which patients are most affected?</td><td>Bring the local trend, affected populations, and current prevention priorities to the PFAC.</td></tr>
+              <tr><td>2024 progress</td><td>CDC reported improvement in several acute-care HAI measures compared with 2023.</td><td>Did the same measures improve locally, and what changed in practice?</td><td>Separate national progress from local performance and document the local evidence source.</td></tr>
+              <tr><td>Not every measure improved</td><td>CDC reported that abdominal hysterectomy SSI moved in the wrong direction nationally.</td><td>Where are local exceptions, plateaus, or worsening signals being reviewed?</td><td>Escalate exceptions rather than averaging them into a reassuring overall story.</td></tr>
+              <tr><td>Post-discharge risk</td><td>Infection harm may become visible after the patient leaves the hospital.</td><td>Can patients recognize warning signs, reach the right person, and receive a timely response?</td><td>Review discharge instructions, escalation pathways, post-discharge contacts, and report-back.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
     </section>
 
     <section class="panel">

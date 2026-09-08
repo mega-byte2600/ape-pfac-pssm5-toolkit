@@ -40,6 +40,16 @@ REQUIRED = {
         "Deliverable 2 tools",
         "Demonstrated.",
     ],
+    "web/hai-alert.html": [
+        "Interactive HAI dashboard",
+        "hai-trend-chart",
+        "hai-baseline-chart",
+        "plotly-2.35.2.min.js",
+        "/app.js",
+        "Evidence signal",
+        "Evidence synthesis summary",
+        "View evidence detail table",
+    ],
     "web/applied-analysis.html": [
         "Original local analysis",
         "72,736",
@@ -51,6 +61,9 @@ REQUIRED = {
         'id="analysis-threshold"',
         'id="analysis-sort"',
         'id="analysis-search"',
+        'id="analysis-chart"',
+        "plotly-2.35.2.min.js",
+        "View municipality data table",
         "/applied-analysis.js",
         "Implementation demonstration",
         "Host validation required",
@@ -64,6 +77,8 @@ REQUIRED = {
         "Age 65+ percent",
         "2023 population",
         "Above service-area average",
+        "Plotly.react",
+        "Service-area average",
     ],
 }
 
@@ -84,13 +99,17 @@ FORBIDDEN = {
         "Patient advisors can influence health care outcomes when linked to action and measurement",
         "Improves communication, discharge readiness",
     ],
+    "web/hai-alert.html": [
+        "Loading HAI dashboard",
+        "Reserved for the synthesis text",
+        "Drop the final synthesis here",
+    ],
     "web/applied-analysis.html": [
         "Dartmouth Health implemented",
         "improved patient outcomes",
         "validated risk score",
         "<canvas",
         "<svg",
-        "plotly",
     ],
 }
 
@@ -149,7 +168,7 @@ def main() -> int:
         return 1
 
     print("FACULTY REVIEW: PASS")
-    print("Core APE pages meet evidence, local-analysis, implementation, scope, and public-spillover gates.")
+    print("Core APE pages meet evidence, local-analysis, implementation, approved-visual, scope, and public-spillover gates.")
     return 0
 
 

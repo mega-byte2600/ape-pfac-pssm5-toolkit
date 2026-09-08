@@ -47,7 +47,7 @@ class WebContractTests(unittest.TestCase):
             "/research-plan.html": ["non-research APE", "confirmation bias", "Search lane 1", "Search lane 2", "Search lane 3", "Screening workflow", "Conflicting, null, or negative findings"],
             "/surveillance-method.html": ["Research Surveillance Method", "PubMed/MyNCBI", "Outlook folders", "Zotero collections", "Weekly review", "Example SQL"],
             "/bibliography.html": ["AMA 11", "Core research evidence", "Federal and implementation guidance", "Open data and public resources", "Story and acknowledgement resources", "Validation note"],
-            "/hai-alert.html": ["HAI", "MRSA", "PFAC", "infection", "escalation", "Evidence synthesis summary"],
+            "/hai-alert.html": ["HAI", "MRSA", "PFAC", "infection", "escalation", "Evidence synthesis summary", "Interactive HAI dashboard"],
             "/story.html": ["Rosie Bartel", "lived-experience anchor", "does not imply endorsement", "not representative evidence"],
             "/about.html": ["Michael Bolton", "LinkedIn profile", "mailto:michael.bolton.ph@dartmouth.edu", "Notion workspace", "Research surveillance how-to"],
             "/collaboration.html": ["Collaboration Layer", "Open Notion workspace", "Source Intake", "Evidence Review", "Toolkit Backlog", "Do not submit"],
@@ -137,16 +137,28 @@ class WebContractTests(unittest.TestCase):
         )
         self.assertIn("not treated as peer-reviewed evidence", body)
 
-    def test_hai_page_is_finished_and_table_first(self):
+    def test_hai_page_keeps_approved_interactive_dashboard_and_evidence_detail(self):
         body = self.assert_page_contains(
             "/hai-alert.html",
-            ["Evidence signal", "Evidence synthesis summary", "Infection prevention is also a communication and escalation problem.", "What PFAC should ask locally", "Leadership follow-through"],
+            [
+                "Interactive HAI dashboard",
+                'id="hai-trend-chart"',
+                'id="hai-baseline-chart"',
+                'id="hai-action-grid"',
+                "plotly-2.35.2.min.js",
+                "/app.js",
+                "Evidence signal",
+                "View evidence detail table",
+                "Evidence synthesis summary",
+                "Infection prevention is also a communication and escalation problem.",
+                "What PFAC should ask locally",
+                "Leadership follow-through",
+            ],
         )
         lowered = body.casefold()
         self.assertNotIn("loading hai dashboard", lowered)
         self.assertNotIn("reserved for the synthesis text", lowered)
         self.assertNotIn("drop the final synthesis here", lowered)
-        self.assertNotIn("plotly", lowered)
         self.assertNotIn("<canvas", lowered)
 
     def test_toolkit_download_templates_are_real_static_assets(self):
@@ -184,17 +196,36 @@ class WebContractTests(unittest.TestCase):
             population = sum(int(row["2023 population"]) for row in rows if row[field] == "Yes")
             self.assertAlmostEqual(population / total * 100, expected, places=1, msg=field)
 
-    def test_applied_analysis_is_local_interactive_and_not_outcome_claiming(self):
+    def test_applied_analysis_is_local_visual_interactive_and_not_outcome_claiming(self):
         body = self.assert_page_contains(
             "/applied-analysis.html",
-            ["Planning analysis, not a risk score", "42%", "72%", "59%", "55%", "not a claim that Dartmouth Health has adopted", "CEPH 4", "CEPH 7", "descriptive approximations", 'id="analysis-metric"', 'id="analysis-threshold"', 'id="analysis-sort"', 'id="analysis-search"', "/applied-analysis.js"],
+            [
+                "Planning analysis, not a risk score",
+                "42%",
+                "72%",
+                "59%",
+                "55%",
+                "not a claim that Dartmouth Health has adopted",
+                "CEPH 4",
+                "CEPH 7",
+                "descriptive approximations",
+                'id="analysis-metric"',
+                'id="analysis-threshold"',
+                'id="analysis-sort"',
+                'id="analysis-search"',
+                'id="analysis-chart"',
+                "plotly-2.35.2.min.js",
+                "View municipality data table",
+                "View implementation detail table",
+                "/applied-analysis.js",
+            ],
         )
         self.assertNotIn("Dartmouth Health implemented", body)
         self.assertNotIn("improved patient outcomes", body.casefold())
         self.assertNotIn("<canvas", body.casefold())
         self.assertNotIn("<svg", body.casefold())
 
-    def test_applied_analysis_script_is_served(self):
+    def test_applied_analysis_script_is_served_and_renders_plotly(self):
         status, headers, body = request("/applied-analysis.js")
         self.assertEqual(status, "200 OK")
         self.assertIn("javascript", headers["Content-Type"])
@@ -202,6 +233,9 @@ class WebContractTests(unittest.TestCase):
         self.assertIn("Poverty percent", body)
         self.assertIn("Disability percent", body)
         self.assertIn("Age 65+ percent", body)
+        self.assertIn("Plotly.react", body)
+        self.assertIn("analysis-chart", body)
+        self.assertIn("Service-area average", body)
 
     def test_applied_implementation_case_is_populated(self):
         status, headers, body = request("/upper-valley-access-implementation.csv")
@@ -275,6 +309,15 @@ class WebContractTests(unittest.TestCase):
         self.assertGreaterEqual(len(dashboard["measures"]), 7)
         self.assertGreaterEqual(len(dashboard["executive_actions"]), 4)
         self.assertTrue(any(item["measure"] == "SSI hysterectomy" for item in dashboard["measures"]))
+
+    def test_approved_visual_contract_cannot_be_silently_removed(self):
+        hai = self.assert_page_contains("/hai-alert.html", ["plotly", "/app.js", "hai-trend-chart", "hai-baseline-chart"])
+        analysis = self.assert_page_contains("/applied-analysis.html", ["plotly", "analysis-chart", "View municipality data table"])
+        script_status, _, script = request("/applied-analysis.js")
+        self.assertEqual(script_status, "200 OK")
+        self.assertIn("Plotly.react", script)
+        self.assertIn("View evidence detail table", hai)
+        self.assertIn("View implementation detail table", analysis)
 
     def test_payloads_have_content_for_rendered_sections(self):
         toolkit = build_toolkit()
