@@ -38,6 +38,18 @@ REQUIRED = {
         "CEPH 7",
         "Dartmouth Program-Specific Competency 4",
         "Deliverable 2 tools",
+        "Demonstrated.",
+    ],
+    "web/applied-analysis.html": [
+        "Original local analysis",
+        "72,736",
+        "48.4%",
+        "60.5%",
+        "47.9%",
+        "Implementation demonstration",
+        "Host validation required",
+        "Planning analysis, not a risk score",
+        "not a claim that Dartmouth Health has adopted",
     ],
 }
 
@@ -57,6 +69,11 @@ FORBIDDEN = {
     "web/evidence-matrix.html": [
         "Patient advisors can influence health care outcomes when linked to action and measurement",
         "Improves communication, discharge readiness",
+    ],
+    "web/applied-analysis.html": [
+        "Dartmouth Health implemented",
+        "improved patient outcomes",
+        "validated risk score",
     ],
 }
 
@@ -103,7 +120,7 @@ def main() -> int:
         return 1
 
     print("FACULTY REVIEW: PASS")
-    print("Core APE pages meet evidence, scope, and public-spillover gates.")
+    print("Core APE pages meet evidence, local-analysis, implementation, scope, and public-spillover gates.")
     return 0
 
 
