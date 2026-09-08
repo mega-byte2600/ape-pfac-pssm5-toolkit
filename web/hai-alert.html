@@ -3,28 +3,26 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Healthcare-associated infection risk alert page for PFAC and PSSM 5 leaders.">
-  <title>HAI Risk Alert | PFAC PSSM 5 Toolkit</title>
+  <meta name="description" content="Healthcare-associated infection risk alert page for PFAC and PSSM Domain 5 leaders.">
+  <title>HAI Risk Alert | PFAC Leadership Toolkit</title>
   <link rel="stylesheet" href="/styles.css">
-  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" defer></script>
-  <script src="/app.js" defer></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
   <header class="site-header">
     <div class="brand"><span class="mark">HAI</span><div><strong>HAI Risk Alert</strong><small>PFAC questions for patient safety</small></div></div>
-    <nav aria-label="Primary"><a href="/">Toolkit</a><a href="/story.html">Rosie Bartel</a><a href="/research-plan.html">Research Plan</a><a href="/evidence-matrix.html">Matrix</a><a href="/evidence.html">Evidence</a><a href="/about.html">About</a></nav>
+    <nav aria-label="Primary"><a href="/">Toolkit</a><a href="/story.html">Rosie Bartel</a><a href="/research-plan.html">Review Method</a><a href="/evidence-matrix.html">Matrix</a><a href="/evidence.html">Evidence</a><a href="/about.html">About</a></nav>
   </header>
 
   <main id="main">
     <section class="hero">
       <p class="eyebrow">Healthcare-associated infections • MRSA • PFAC safety questions</p>
       <h1>Risk alerts should be readable by the people most affected by them.</h1>
-      <p class="lead">This page translates HAI and MRSA risk into PFAC questions leaders can use before, during, and after care. It connects Rosie Bartel’s story to practical infection-prevention, communication, escalation, and follow-up work.</p>
+      <p class="lead">This page translates HAI and MRSA risk into PFAC questions leaders can use before, during, and after care. It connects lived experience to practical infection-prevention, communication, escalation, and follow-up work without treating a patient story as outcomes evidence.</p>
       <div class="stat-grid">
         <article class="stat"><strong>1 in 38</strong><span>hospital patients has at least one healthcare-associated infection on any given day, according to CDC summary data.</span></article>
-        <article class="stat"><strong>2024</strong><span>CDC progress data tracks CLABSI, CAUTI, VAE, SSI, MRSA bloodstream events, and C. difficile.</span></article>
-        <article class="stat"><strong>PFAC role</strong><span>Ask the questions patients and families need answered before harm is missed, delayed, or normalized.</span></article>
+        <article class="stat"><strong>2024</strong><span>CDC progress reporting tracks major acute-care HAI measures including MRSA bloodstream events.</span></article>
+        <article class="stat"><strong>PFAC role</strong><span>Test whether warning signs, escalation instructions, follow-up, and leadership response make sense to patients and families.</span></article>
       </div>
     </section>
 
@@ -42,31 +40,18 @@
       </div>
     </section>
 
-    <section class="panel dashboard-panel">
-      <div class="section-title">
-        <p class="eyebrow">Executive dashboard</p>
-        <h2>National HAI signal translated into PFAC action.</h2>
-        <p id="hai-headline">Loading HAI dashboard…</p>
-      </div>
-      <div class="dashboard-grid">
-        <article class="chart-card">
-          <div class="chart-title"><span>2024 vs 2023</span><strong>Change in acute-care HAI SIR</strong></div>
-          <div id="hai-trend-chart" class="plotly-chart" role="img" aria-label="HAI SIR change by measure"></div>
-        </article>
-        <article class="chart-card">
-          <div class="chart-title"><span>2015 baseline</span><strong>Progress and remaining pressure</strong></div>
-          <div id="hai-baseline-chart" class="plotly-chart" role="img" aria-label="HAI SIR change versus baseline"></div>
-        </article>
-      </div>
-      <div id="hai-action-grid" class="action-grid"></div>
-    </section>
-
     <section class="panel">
-      <div class="section-title"><p class="eyebrow">Current data signal</p><h2>Use national HAI trends as the conversation starter, then ask for local data.</h2></div>
-      <div class="card-grid">
-        <article class="risk-card"><span class="tag">National trend</span><h3>Several HAI measures improved from 2023 to 2024.</h3><p>CDC reported decreases in MRSA bacteremia, CLABSI, CAUTI, C. difficile, VAE, and colon surgery SSI among acute care hospitals.</p></article>
-        <article class="risk-card"><span class="tag">Exception</span><h3>Not every risk moved in the right direction.</h3><p>CDC reported an increase in abdominal hysterectomy SSI from 2023 to 2024, which reinforces why PFACs should ask about local patterns instead of assuming broad improvement.</p></article>
-        <article class="risk-card"><span class="tag">Local use</span><h3>PFACs should ask for the local dashboard.</h3><p>Use CDC data to open the conversation, then review the local HAI trend, affected populations, post-discharge calls, complaints, readmissions, and patient education gaps.</p></article>
+      <div class="section-title"><p class="eyebrow">Evidence signal</p><h2>Use national HAI trends to frame the question, then ask for local data.</h2><p>The public evidence is useful for identifying the safety problem. It is not a substitute for local infection, readmission, complaint, call-center, or post-discharge data.</p></div>
+      <div class="matrix-table" role="region" aria-label="HAI evidence signal table" tabindex="0">
+        <table>
+          <thead><tr><th>Signal</th><th>What the public data support</th><th>What PFAC should ask locally</th><th>Leadership follow-through</th></tr></thead>
+          <tbody>
+            <tr><td>National HAI burden</td><td>Healthcare-associated infections remain a meaningful patient-safety risk.</td><td>Which infections create the greatest local burden, and which patients are most affected?</td><td>Bring the local trend, affected populations, and current prevention priorities to the PFAC.</td></tr>
+            <tr><td>2024 progress</td><td>CDC reported improvement in several acute-care HAI measures compared with 2023.</td><td>Did the same measures improve locally, and what changed in practice?</td><td>Separate national progress from local performance and document the local evidence source.</td></tr>
+            <tr><td>Not every measure improved</td><td>CDC reported that abdominal hysterectomy SSI moved in the wrong direction nationally.</td><td>Where are local exceptions, plateaus, or worsening signals being reviewed?</td><td>Escalate exceptions rather than averaging them into a reassuring overall story.</td></tr>
+            <tr><td>Post-discharge risk</td><td>Infection harm may become visible after the patient leaves the hospital.</td><td>Can patients recognize warning signs, reach the right person, and receive a timely response?</td><td>Review discharge instructions, escalation pathways, post-discharge contacts, and report-back.</td></tr>
+          </tbody>
+        </table>
       </div>
     </section>
 
@@ -74,7 +59,7 @@
       <div class="section-title"><p class="eyebrow">PFAC discussion guide</p><h2>Questions for infection prevention and patient experience leaders.</h2></div>
       <div class="card-grid">
         <article class="risk-card"><span class="tag">Before surgery</span><h3>Preparation</h3><p>Do patients and families receive plain-language infection prevention expectations, warning signs, and escalation instructions?</p></article>
-        <article class="risk-card"><span class="tag">During care</span><h3>Listening</h3><p>How does the care team respond when the patient or family notices a change, pain, wound concern, fever, confusion, or other warning sign?</p></article>
+        <article class="risk-card"><span class="tag">During care</span><h3>Listening</h3><p>How does the care team respond when the patient or family notices a wound concern, fever, confusion, pain change, or another warning sign?</p></article>
         <article class="risk-card"><span class="tag">Discharge</span><h3>Transition risk</h3><p>What does the patient actually understand before leaving the hospital, and how is understanding checked?</p></article>
         <article class="risk-card"><span class="tag">Follow-up</span><h3>Escalation</h3><p>How quickly can a patient reach the right person after discharge if infection symptoms appear?</p></article>
         <article class="risk-card"><span class="tag">Equity</span><h3>Access barriers</h3><p>Which patients are less likely to get clear instructions, timely follow-up, transportation, language access, or trust from the system?</p></article>
@@ -84,23 +69,15 @@
 
     <section class="panel patient-first">
       <div>
-        <p class="eyebrow">Standing PFAC agenda item</p>
-        <h2>Translate infection prevention into patient-facing readiness.</h2>
-        <p>PFACs can review whether safety information is understandable, whether warning signs are clear, whether escalation pathways work after discharge, and whether leaders report back what changed.</p>
+        <p class="eyebrow">Evidence synthesis summary</p>
+        <h2>Infection prevention is also a communication and escalation problem.</h2>
+        <p>Healthcare-associated infection prevention is not only a technical safety program. For patients and families, it is also a communication, discharge readiness, trust, and escalation problem. PFACs can help leaders test whether infection warning signs are understandable, whether escalation pathways work after discharge, whether patient concerns are believed, and whether harm signals become system learning.</p>
       </div>
       <div class="question-stack">
         <div class="question">What would patients and families need to know before discharge?</div>
         <div class="question">Which warning signs are most likely to be missed?</div>
         <div class="question">What happens when a loved one says something is wrong?</div>
         <div class="question">Where has patient voice changed infection prevention practice?</div>
-      </div>
-    </section>
-
-    <section class="panel synthesis-slot">
-      <div class="section-title">
-        <p class="eyebrow">Evidence synthesis summary</p>
-        <h2>Reserved for the synthesis text.</h2>
-        <p>Drop the final synthesis here when ready. The dashboard above is already structured to connect that summary to executive decisions, PFAC questions, HAI metrics, and patient-facing follow-through.</p>
       </div>
     </section>
 
@@ -111,11 +88,11 @@
         <li><a href="https://arpsp.cdc.gov/profile/national-progress" target="_blank" rel="noopener noreferrer">CDC Antibiotic Resistance and Patient Safety Portal national progress profile</a></li>
         <li><a href="https://www.cdc.gov/mrsa/index.html" target="_blank" rel="noopener noreferrer">CDC MRSA information</a></li>
         <li><a href="https://www.ahrq.gov/hai/tools/mrsa-prevention/index.html" target="_blank" rel="noopener noreferrer">AHRQ MRSA Prevention Toolkit</a></li>
-        <li><a href="/story.html">Rosie Bartel story anchor</a></li>
+        <li><a href="/story.html">Rosie Bartel lived-experience anchor</a></li>
       </ol>
     </section>
   </main>
 
-  <footer><span>PFAC PSSM 5 Leadership Toolkit</span><span>HAI risk alert for patient and family engagement</span></footer>
+  <footer><span>PFAC Leadership Toolkit</span><span>HAI risk alert for patient and family engagement</span></footer>
 </body>
 </html>
