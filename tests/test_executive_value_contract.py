@@ -84,7 +84,6 @@ class ExecutiveValueContractTests(unittest.TestCase):
         )
         for fragment in forbidden:
             self.assertNotIn(fragment.casefold(), body.casefold())
-        self.assertIn("within Deliverable 2", body.replace("the ", "")) if False else None
         self.assertIn("Deliverable 2", body)
         self.assertIn("without claiming outcomes the evidence does not establish", body)
 
