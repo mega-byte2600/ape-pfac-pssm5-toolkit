@@ -3,9 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Original local analysis and applied implementation demonstration for the APE PFAC leadership toolkit.">
+  <meta name="description" content="Interactive Upper Valley local analysis and applied implementation demonstration for the APE PFAC leadership toolkit.">
   <title>Applied Analysis | APE PFAC Leadership Toolkit</title>
   <link rel="stylesheet" href="/styles.css">
+  <style>
+    .analysis-controls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.85rem;margin:1rem 0 1.2rem}.analysis-controls label{display:grid;gap:.4rem;color:var(--forest);font-weight:850;font-size:.88rem}.analysis-controls select,.analysis-controls input{width:100%;min-height:2.8rem;border:1px solid var(--line);border-radius:.8rem;padding:.7rem .8rem;background:white;color:var(--ink);font:inherit}.analysis-controls select:focus,.analysis-controls input:focus{outline:3px solid rgba(0,105,62,.16);border-color:var(--dartmouth-green)}.analysis-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.85rem;margin:0 0 1.15rem}.analysis-stat{border:1px solid var(--line);border-radius:1rem;background:#fff;padding:1rem}.analysis-stat span{display:block;color:var(--muted);font-size:.78rem;font-weight:850;text-transform:uppercase;letter-spacing:.06em}.analysis-stat strong{display:block;margin-top:.25rem;color:var(--forest);font-size:1.55rem;line-height:1.1}.analysis-readout{border-left:.35rem solid var(--dartmouth-green);background:#f4faf7;border-radius:.9rem;padding:1rem 1.1rem;margin:0 0 1.15rem}.analysis-readout p{margin:.25rem 0;max-width:none}.analysis-table{overflow-x:auto;border:1px solid var(--line);border-radius:1rem}.analysis-table table{min-width:760px}.status-pill{display:inline-block;border-radius:999px;padding:.2rem .55rem;font-size:.78rem;font-weight:900;background:#eef5f1;color:var(--forest)}.status-pill.above{background:#fff4e8;color:#6e3c00}.analysis-source-note{color:var(--muted);font-size:.9rem}.analysis-status{margin:.75rem 0 0;color:var(--muted);font-size:.9rem}@media(max-width:860px){.analysis-controls,.analysis-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.analysis-controls,.analysis-summary{grid-template-columns:1fr}}
+  </style>
 </head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
@@ -19,54 +22,98 @@
       <div class="hero-copy">
         <p class="eyebrow">Original local analysis • Upper Valley • applied implementation</p>
         <h1>Use local evidence to decide who must be heard and what leaders should do next.</h1>
-        <p class="lead">This page applies the APE toolkit to Dartmouth Hitchcock Medical Center and Alice Peck Day Memorial Hospital's 2025 Upper Valley service-area data. It adds original descriptive analysis and a completed implementation demonstration without claiming Dartmouth Health adoption or downstream outcomes.</p>
+        <p class="lead">This page applies the APE toolkit to Dartmouth Hitchcock Medical Center and Alice Peck Day Memorial Hospital's 2025 Upper Valley service-area data. Reviewers can inspect the municipality-level data, denominator, benchmark, calculation, interpretation, and limitation directly.</p>
         <div class="actions">
-          <a class="button" href="/upper-valley-local-analysis.csv">Download analysis data</a>
-          <a class="button secondary" href="/upper-valley-access-implementation.csv">Download implementation case</a>
-          <a class="button secondary" href="/toolkit-tools.html">Open reusable tools</a>
+          <a class="button" href="#explorer">Explore the local data</a>
+          <a class="button secondary" href="/upper-valley-local-analysis.csv">Open calculation file</a>
+          <a class="button secondary" href="/upper-valley-access-implementation.csv">Open implementation case</a>
         </div>
       </div>
       <aside class="hero-dashboard" aria-label="Applied analysis highlights">
         <div class="dash-card dark"><span>Service area</span><strong>72,736</strong><p>Residents across 19 Upper Valley municipalities in the 2025 CHNA.</p></div>
-        <div class="dash-card"><span>Local analysis</span><strong>19 towns</strong><p>Town-level age, disability, poverty, and population data re-analyzed for PFAC representation planning.</p></div>
-        <div class="dash-card"><span>Implementation</span><strong>Access</strong><p>Real CHNA access and navigation signals are translated into PFAC actions, owners, measures, and validation steps.</p></div>
+        <div class="dash-card"><span>CEPH 4</span><strong>Analysis</strong><p>Transparent calculation, denominator, result, interpretation, and limitation.</p></div>
+        <div class="dash-card"><span>CEPH 7</span><strong>Population</strong><p>Local needs and participation barriers translated into PFAC design requirements.</p></div>
       </aside>
     </section>
 
     <section class="panel executive-summary highlight-panel">
       <div class="section-title"><p class="eyebrow">Why this matters</p><h2>Population context changes PFAC design.</h2></div>
-      <p class="lede">A PFAC can be structurally present and still miss the people most affected by access barriers. The 2025 CHNA defines a 72,736-person primary service area and explicitly emphasizes populations facing barriers related to income, age, disability, and social or physical isolation. This analysis converts those local data into recruitment, participation, agenda, and accountability requirements.</p>
+      <p class="lede">A PFAC can be structurally present and still miss the people most affected by access barriers. The 2025 CHNA defines a 72,736-person primary service area and emphasizes populations facing barriers related to income, age, disability, and social or physical isolation. This analysis converts those local data into recruitment, participation, agenda, and accountability requirements.</p>
     </section>
 
     <section class="panel">
       <div class="section-title"><p class="eyebrow">Method</p><h2>A reproducible descriptive re-analysis of public local data.</h2></div>
       <div class="card-grid">
         <article class="card premium-card"><span class="tag">Source</span><h3>2025 Community Health Needs Assessment</h3><p>Town-level population, age, poverty, disability, and community access findings were extracted from the DHMC-APD fiscal year 2025 CHNA.</p></article>
-        <article class="card premium-card"><span class="tag">Calculation</span><h3>Population-weighted exposure to above-average local conditions</h3><p>For each of 19 municipalities, the analysis flags whether poverty, disability, or age 65+ exceeds the corresponding service-area average, then sums the populations of those municipalities and divides by the 72,736-person service-area population.</p></article>
+        <article class="card premium-card"><span class="tag">Calculation</span><h3>Population-weighted exposure to above-average local conditions</h3><p>For each of 19 municipalities, the analysis flags whether poverty, disability, or age 65+ exceeds the corresponding service-area average. It then sums the populations of those municipalities and divides by the 72,736-person service-area population.</p></article>
         <article class="card premium-card"><span class="tag">Boundary</span><h3>Planning analysis, not a risk score</h3><p>The derived percentages are descriptive screening signals for PFAC representation and access planning. They are not validated cut points, clinical risk estimates, causal findings, or measures of PFAC effectiveness.</p></article>
       </div>
     </section>
 
-    <section class="panel">
-      <div class="section-title"><p class="eyebrow">Original local analysis</p><h2>Three findings that materially change engagement design.</h2></div>
-      <div class="matrix-table">
+    <section id="explorer" class="panel" data-local-analysis>
+      <div class="section-title"><p class="eyebrow">Original local analysis</p><h2>Inspect the 19-municipality calculation directly.</h2><p>Select a characteristic, filter the municipalities, and sort the rows. The result statement always retains the full 72,736-person denominator so the faculty reviewer can see exactly how the finding was derived.</p></div>
+
+      <div class="analysis-controls" aria-label="Local analysis controls">
+        <label>Characteristic
+          <select id="analysis-metric">
+            <option value="poverty">Poverty</option>
+            <option value="disability">Disability</option>
+            <option value="age65">Age 65+</option>
+          </select>
+        </label>
+        <label>Benchmark status
+          <select id="analysis-threshold">
+            <option value="all">All municipalities</option>
+            <option value="above">Above service-area average</option>
+            <option value="not-above">At or below service-area average</option>
+          </select>
+        </label>
+        <label>Sort rows
+          <select id="analysis-sort">
+            <option value="population-desc">Population, largest first</option>
+            <option value="metric-desc">Selected percentage, highest first</option>
+            <option value="metric-asc">Selected percentage, lowest first</option>
+            <option value="town">Municipality, A to Z</option>
+          </select>
+        </label>
+        <label>Find municipality
+          <input id="analysis-search" type="search" autocomplete="off" placeholder="e.g., Lebanon">
+        </label>
+      </div>
+
+      <div class="analysis-summary" aria-label="Analysis summary">
+        <div class="analysis-stat"><span>Rows shown</span><strong id="analysis-result-count">19 of 19</strong></div>
+        <div class="analysis-stat"><span>Residents shown</span><strong id="analysis-population-shown">72,736</strong></div>
+        <div class="analysis-stat"><span>Residents in above-average towns</span><strong id="analysis-above-share">48.4%</strong></div>
+        <div class="analysis-stat"><span>Above-average municipalities</span><strong id="analysis-above-count">6 towns</strong></div>
+      </div>
+
+      <div class="analysis-readout" aria-live="polite">
+        <p id="analysis-readout"><strong>Poverty:</strong> 48.4% of the 72,736 service-area residents live in 6 municipalities where the published poverty percentage is above the 8% service-area average. Recruitment and participation should account for cost, compensation, transportation, time, and other economic barriers.</p>
+      </div>
+
+      <div class="analysis-table">
         <table>
-          <thead><tr><th>Characteristic</th><th>Service-area benchmark</th><th>Re-analysis</th><th>Interpretation for PFAC design</th></tr></thead>
-          <tbody>
-            <tr><td>Poverty</td><td>8% of service-area residents</td><td><strong>48.4%</strong> of residents live in 6 municipalities where the poverty percentage is above the service-area average.</td><td>Recruitment and participation design should account for cost, compensation, transportation, time, and other economic barriers rather than relying only on geographic representation.</td></tr>
-            <tr><td>Disability</td><td>12% of service-area residents</td><td><strong>60.5%</strong> of residents live in 10 municipalities where the disability percentage is above the service-area average.</td><td>Accessible meeting formats, communication methods, remote participation, caregiver input, and disability access should be treated as core operating requirements.</td></tr>
-            <tr><td>Age 65+</td><td>22% of service-area residents</td><td><strong>47.9%</strong> of residents live in 11 municipalities where the age 65+ percentage is above the service-area average.</td><td>Older-adult and caregiver perspectives should be intentionally reachable, especially where transportation, isolation, technology, and aging-in-place barriers overlap.</td></tr>
+          <thead><tr><th>Municipality</th><th>2023 population</th><th>Selected characteristic</th><th>Service-area average</th><th>Comparison</th></tr></thead>
+          <tbody id="analysis-body">
+            <tr><td>Canaan</td><td>3,801</td><td>13%</td><td>8%</td><td><span class="status-pill above">Above service-area average</span></td></tr>
+            <tr><td>Dorchester</td><td>431</td><td>17%</td><td>8%</td><td><span class="status-pill above">Above service-area average</span></td></tr>
+            <tr><td>Enfield</td><td>4,488</td><td>13%</td><td>8%</td><td><span class="status-pill above">Above service-area average</span></td></tr>
+            <tr><td>Fairlee</td><td>1,042</td><td>11%</td><td>8%</td><td><span class="status-pill above">Above service-area average</span></td></tr>
+            <tr><td>Hartford</td><td>10,713</td><td>11%</td><td>8%</td><td><span class="status-pill above">Above service-area average</span></td></tr>
+            <tr><td>Lebanon</td><td>14,759</td><td>9%</td><td>8%</td><td><span class="status-pill above">Above service-area average</span></td></tr>
           </tbody>
         </table>
       </div>
-      <p>The CHNA also shows substantial economic variation: median household income ranges from $58,750 in Dorchester to $163,654 in Hanover, approximately a 2.8-fold difference. The purpose of this comparison is not to label communities; it is to prevent a single engagement model from being treated as equally accessible across the service area.</p>
-      <p><a class="resource-link" href="/upper-valley-local-analysis.csv">Inspect the 19-municipality calculation file</a></p>
+      <p id="analysis-status" class="analysis-status" aria-live="polite">Interactive table loading all 19 municipalities.</p>
+      <p class="analysis-source-note">Three validated headline results remain fixed for review: <strong>48.4%</strong> for poverty, <strong>60.5%</strong> for disability, and <strong>47.9%</strong> for age 65+. The interactive controls reveal the municipality-level rows behind those estimates; they do not alter the underlying analysis.</p>
+      <p><a class="resource-link" href="/upper-valley-local-analysis.csv">Inspect the source calculation file</a></p>
     </section>
 
     <section class="panel patient-first">
       <div>
         <p class="eyebrow">Local access signals</p>
-        <h2>The strongest operational signal is not abstract engagement. It is access and navigation.</h2>
+        <h2>The strongest operational signal is access and navigation.</h2>
         <p>The CHNA reports that 42% of community respondents had difficulty accessing primary care, while 54% of residents and 58% of community leaders said primary-care access had worsened. Mental health access was difficult for 35% of respondents; among those reporting difficulty, 68% cited long waits and 62% cited practices not accepting new patients.</p>
       </div>
       <div class="question-stack">
@@ -78,27 +125,27 @@
 
     <section id="implementation" class="panel">
       <div class="section-title"><p class="eyebrow">Implementation demonstration</p><h2>The toolkit is applied to a real Upper Valley access and navigation use case.</h2></div>
-      <p class="lede">This is implementation of the APE method, not a claim that Dartmouth Health has adopted the recommendations. The local problem, population context, PFAC workstream, measurement logic, and validation steps are already populated so a health-system leader can move directly into host review.</p>
+      <p class="lede">This is implementation of the APE method, not a claim that Dartmouth Health has adopted the recommendations. The local problem, population context, PFAC workstream, measurement logic, and validation steps are populated so a health-system leader can move directly into host review.</p>
       <div class="matrix-table">
         <table>
           <thead><tr><th>Implementation element</th><th>Completed in the APE</th><th>Host validation required</th></tr></thead>
           <tbody>
-            <tr><td>Problem definition</td><td>Access, navigation, capacity, wait-time, and rural/isolation signals are extracted from the 2025 CHNA and converted into a defined PFAC workstream.</td><td>Confirm which access pathway should be prioritized first.</td></tr>
+            <tr><td>Problem definition</td><td>Access, navigation, capacity, wait-time, and rural or isolation signals are extracted from the 2025 CHNA and converted into a defined PFAC workstream.</td><td>Confirm which access pathway should be prioritized first.</td></tr>
             <tr><td>Population and representation</td><td>Age, disability, poverty, geography, isolation, transportation, caregiver, and technology considerations are built into the representation and access logic.</td><td>Compare current PFAC composition and participation options with local service-area context.</td></tr>
-            <tr><td>Governance and action</td><td>A standing access/navigation agenda lane, leadership disposition, accountable owner, due date, escalation, and report-back requirement are specified.</td><td>Assign the actual executive sponsor and operational owners.</td></tr>
-            <tr><td>Measurement</td><td>Proposed measures include time to leadership disposition, action closure, report-back completion, and representation/access barriers mitigated.</td><td>Select locally available data sources and review cadence.</td></tr>
-            <tr><td>Domain 5 traceability</td><td>The workstream is connected to patient/family engagement infrastructure, local evidence, accountable roles, actions, and validation sources.</td><td>Validate any evidence used for organizational attestation or formal reporting.</td></tr>
+            <tr><td>Governance and action</td><td>A standing access and navigation agenda lane, leadership disposition, accountable owner, due date, escalation, and report-back requirement are specified.</td><td>Assign the actual executive sponsor and operational owners.</td></tr>
+            <tr><td>Measurement</td><td>Proposed measures include time to leadership disposition, action closure, report-back completion, and representation or access barriers mitigated.</td><td>Select locally available data sources and review cadence.</td></tr>
+            <tr><td>Domain 5 traceability</td><td>The workstream is connected to patient and family engagement infrastructure, local evidence, accountable roles, actions, and validation sources.</td><td>Validate any evidence used for organizational attestation or formal reporting.</td></tr>
           </tbody>
         </table>
       </div>
-      <p><a class="resource-link" href="/upper-valley-access-implementation.csv">Download the populated implementation case</a></p>
+      <p><a class="resource-link" href="/upper-valley-access-implementation.csv">Open the populated implementation case</a></p>
     </section>
 
     <section class="panel alert-band">
-      <div class="section-title"><p class="eyebrow">Applied proof</p><h2>What changed in the APE.</h2></div>
-      <p><strong>CEPH 4:</strong> the project now includes a transparent, reproducible local data analysis with calculations and interpretation for public health practice.</p>
-      <p><strong>CEPH 7:</strong> the target population is now explicitly defined using the 19-municipality Upper Valley service area, and local needs, assets, and participation barriers are translated into PFAC design requirements.</p>
-      <p><strong>Implementation:</strong> the reusable toolkit is no longer only a set of blank templates; it is demonstrated against a current Dartmouth Health service-area problem using real public evidence.</p>
+      <div class="section-title"><p class="eyebrow">Applied proof</p><h2>What this demonstrates.</h2></div>
+      <p><strong>CEPH 4:</strong> the project includes a transparent, reproducible local data analysis with calculations and interpretation for public health practice.</p>
+      <p><strong>CEPH 7:</strong> the target population is defined using the 19-municipality Upper Valley service area, and local needs, assets, and participation barriers are translated into PFAC design requirements.</p>
+      <p><strong>Implementation:</strong> the reusable toolkit is demonstrated against a current Dartmouth Health service-area problem using public evidence while preserving the boundary between proposed action and completed organizational change.</p>
     </section>
 
     <section class="panel references">
@@ -112,5 +159,6 @@
   </main>
 
   <footer><span>APE Applied Analysis</span><span>Local evidence to leadership action</span></footer>
+  <script src="/applied-analysis.js" defer></script>
 </body>
 </html>
