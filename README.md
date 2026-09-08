@@ -1,71 +1,76 @@
-# APE PFAC PSSM 5 Leadership Toolkit
+# APE PFAC Leadership Toolkit
 
-This repository is an MPH Applied Practice Experience demo.
-
-## First acknowledgement and patient story anchor
-
-Rosie Bartel is the most important acknowledgement and lived-experience source for this project.
-
-Her story is the reason this toolkit stays patient-first. Public sources describe Rosie as a Wisconsin patient advocate and sepsis survivor whose routine total knee replacement was complicated by MRSA infection, repeated surgeries, hospitalizations, transfusions, amputation, and ongoing advocacy.
-
-The selected project anchor is:
-
-> What matters to a patient is to survive and to survive it with some dignity and respect.
-
-This project uses that lived-experience anchor as a design test:
-
-Would this process be safe enough for my mother before, during, and after total knee replacement?
-
-Would the patient or family know when to escalate infection warning signs?
-
-Would staff listen if the patient or family said something was wrong?
-
-Would the health system learn fast enough to protect the next patient?
+This repository contains an MPH Applied Practice Experience focused on Patient and Family Advisory Councils, patient and family engagement, and the CMS Patient Safety Structural Measure, Domain 5: Patient and Family Engagement.
 
 ## Purpose
 
-Build an industry-grade, evidence-based leadership toolkit that helps health systems deploy Patient and Family Advisory Councils as a practical structure for CMS PSSM 5 Patient and Family Engagement.
+The project translates current PFAC evidence, federal guidance, local population context, and patient experience considerations into two practical host-site deliverables:
 
-The toolkit is designed to help leaders improve patient experience metrics, including Press Ganey-style signals such as likelihood to recommend, overall rating, communication, teamwork, safety perception, trust, dignity, access, and equity.
+1. An environmental scan with executive synthesis and annotated bibliography.
+2. A PFAC leadership toolkit with reusable assessment, governance, representation, action-tracking, measurement, and Domain 5 traceability tools.
 
-## Patient-first motto
+The APE is a non-research applied practice project. It does not claim that PFAC presence alone causes better patient safety, experience, or clinical outcomes.
 
-Patients over payers, bureaucracy, internal convenience, and checkbox compliance.
+## Lived-experience anchor
 
-Every design decision begins with three questions:
+Rosie Bartel's public story is used as a lived-experience design lens for dignity, communication, escalation, infection prevention, and system learning. It is kept separate from peer-reviewed evidence and is not presented as representative evidence or proof of PFAC effectiveness.
 
-1. How does this benefit the patient or family?
-2. How could this hurt the patient or family if we get it wrong?
-3. Would this be acceptable if the patient were me, my mother, or someone I love?
+## Faculty-facing evidence discipline
+
+The project distinguishes among:
+
+- federal requirements and guidance;
+- empirical findings;
+- conceptual frameworks;
+- implementation recommendations;
+- local descriptive analysis;
+- proposed leadership actions;
+- lived-experience material.
+
+Current evidence supports PFACs as a formal patient and family engagement structure, while rigorous evidence directly linking PFACs to downstream safety, satisfaction, or clinical outcomes remains limited. Claims are therefore calibrated to the strength and design of their sources.
+
+## Applied local analysis
+
+The site includes a reproducible descriptive re-analysis of the Dartmouth Hitchcock Medical Center and Alice Peck Day Memorial Hospital 2025 Upper Valley service-area data. The analysis uses 19 municipalities and a 72,736-person denominator to examine age, disability, poverty, and access-related context relevant to PFAC representation and participation design.
+
+The analysis is presented as a clean interactive evidence table rather than a decorative dashboard. Reviewers can inspect the municipality-level rows, benchmarks, calculation logic, interpretation, and limitations directly.
 
 ## APE competency proof
 
-This demo is built to show practical attainment of the five competencies selected in the APE Agreement:
+The two deliverables demonstrate the five competencies selected in the APE Agreement:
 
-1. CEPH 4: interpret evidence for public health research, policy, or practice.
-2. CEPH 7: assess population needs, assets, and capacities.
-3. CEPH 16: apply leadership and management principles.
-4. CEPH 21: integrate perspectives from other sectors and professions.
-5. Dartmouth program-specific competency 4: compare engagement approaches in decision making, design, governance, and delivery of services, including effects on quality, safety, equity, and value.
+1. CEPH 4: interpret results of data analysis for public health research, policy, or practice.
+2. CEPH 7: assess population needs, assets, and capacities that affect communities' health.
+3. CEPH 16: apply leadership and management principles to address a relevant issue.
+4. CEPH 21: integrate perspectives from other sectors and professions to promote and advance population health.
+5. Dartmouth program-specific competency 4: compare approaches to engaging target populations in decision making, design, governance, and delivery of services, including implications for quality, safety, equity, and value.
 
 ## Comparative toolkit scan
 
-The project now includes a comparative scan of existing PFAC and patient/family engagement toolkits from AHRQ, IPFCC, AMA STEPS Forward, Betsy Lehman Center, academic medical center projects, and learning health system literature.
+The project compares established PFAC and patient/family engagement resources from AHRQ, IPFCC, AMA STEPS Forward, Betsy Lehman Center, health-system examples, and the learning health system literature. The goal is not to claim superiority over those resources. The APE adapts their strengths into a single leadership workflow with Domain 5 traceability, local population context, evidence limitations, action ownership, measurement, and report-back.
 
-The design conclusion is clear: existing toolkits are useful, but this APE product should improve on them by adding PSSM 5 traceability, Press Ganey-style patient experience metric logic, a Rosie Bartel lived-experience anchor, and a leadership action loop with visible follow-through.
+## Quality controls
 
-## Open resources
+A dedicated faculty review gate runs with the regression suite on each change to `main`. It checks core evidence language, competency traceability, APE scope, claim boundaries, patient-story separation, local-analysis integrity, unfinished-content language, and public-page spillover.
 
-This project includes an open resources layer so Dartmouth Health and other researchers can reuse, validate, benchmark, and improve the work.
+Key controls include:
+
+- no unsupported Dartmouth Health maturity or outcome claims;
+- no conflation of patient stories with empirical evidence;
+- no public build, model, prompt, or internal tooling language;
+- no unfinished public placeholders;
+- recomputation of the Upper Valley analysis from the source CSV;
+- regression coverage for the interactive analysis and public reviewer flow.
 
 ## Architecture
 
 - Python standard-library web service
-- Static website front end
+- Static HTML/CSS/JavaScript front end
 - JSON API routes
-- Supabase-backed demo data and intake
-- Separate Supabase project: `ape-pfac-pssm5-toolkit`
-- Separate Render service target: `ape-pfac-pssm5-toolkit`
+- Supabase-backed de-identified demonstration intake and toolkit data
+- Render deployment
+
+Legacy technical identifiers retain `pssm5` in package, repository, Supabase, and Render names to avoid breaking deployed infrastructure. Public-facing terminology uses **CMS Patient Safety Structural Measure, Domain 5: Patient and Family Engagement**.
 
 ## Local run
 
@@ -76,32 +81,25 @@ pssm5-toolkit-web
 
 Open `http://localhost:8765`.
 
-## API routes
+## Public service
 
-- `/api/health`
-- `/api/backend-status`
-- `/api/toolkit`
-- `/api/open-resources`
-- `/api/demo-intake`
+The Render service is deployed from the `main` branch and serves the public APE toolkit.
 
-## Demo backend
+## Data and privacy boundary
 
-The app reads live toolkit tables through the deployed Supabase Edge Function at:
-
-`https://vgquagonefygzgebgzyx.supabase.co/functions/v1/toolkit-data`
-
-The homepage demo intake form posts to the Python route `/api/demo-intake`, which forwards sanitized, de-identified notes to:
-
-`https://vgquagonefygzgebgzyx.supabase.co/functions/v1/demo-intake`
-
-The intake table has RLS enabled and does not grant direct anonymous table access. Do not enter PHI, MRNs, dates of birth, or private patient details in the demo form.
+The demonstration intake is limited to sanitized, de-identified notes. Do not enter PHI, MRNs, dates of birth, or private patient details. Supabase Row Level Security is enabled on public-schema tables used by the project.
 
 ## Key project files
 
-- `ACKNOWLEDGEMENT.md`
-- `docs/ROSIE_BARTEL_STORY_ANCHOR.md`
-- `docs/ROSIE_BARTEL_EXCERPT_SELECTION.md`
-- `docs/COMPARATIVE_TOOLKIT_SCAN.md`
-- `bibliography/APE_PFAC_PSSM5_BIBLIOGRAPHY.rtf`
-- `web/story.html`
-- `web/resources.html`
+- `docs/GEISEL_FACULTY_REVIEW_PROTOCOL.md`
+- `docs/GEISEL_FACULTY_SITE_REVIEW.md`
+- `scripts/faculty_review.py`
+- `tests/test_web_contract.py`
+- `tests/test_interactive_analysis.py`
+- `web/evidence-summary.html`
+- `web/research-plan.html`
+- `web/evidence-matrix.html`
+- `web/applied-analysis.html`
+- `web/upper-valley-local-analysis.csv`
+- `web/deliverables.html`
+- `web/toolkit-tools.html`
