@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import re
 import unittest
 from pathlib import Path
 
@@ -39,8 +40,8 @@ class WebContractTests(unittest.TestCase):
 
     def test_core_public_pages_serve_expected_content(self):
         required_pages = {
-            "/": ["Turn patient voice into better care.", "Evidence-Based PFAC Summary", "DH benchmark", "Applied Analysis", "APE deliverables"],
-            "/evidence.html": ["Evidence Launch Page", "Evidence-Based PFAC Summary", "PubMed search protocol", "Evidence matrix", "AMA 11 source layer"],
+            "/": ["Turn patient voice into accountable action.", "Evidence-Based PFAC Summary", "DH benchmark", "Applied Analysis", "APE deliverables", "/mvp-one.html"],
+            "/evidence.html": ["Evidence Launch Page", "Evidence-Based PFAC Summary", "PubMed search protocol", "Evidence matrix", "AMA 11 source layer", "/toolkit-scan.html"],
             "/evidence-summary.html": ["Evidence-Based PFAC Summary", "CMS Patient Safety Structural Measure", "Domain 5: Patient and Family Engagement", "evidence base remains limited", "203 respondents"],
             "/dh-benchmark.html": ["Benchmark assessment framework", "not a scored evaluation", "Evidence-backed preliminary findings", "Evidence needed before scoring", "Not yet scored", "Reusable evidence table"],
             "/applied-analysis.html": ["Original local analysis", "72,736", "48.4%", "60.5%", "47.9%", "Explore the local data", "Implementation demonstration", "Host validation required"],
@@ -66,7 +67,7 @@ class WebContractTests(unittest.TestCase):
                 self.assertEqual(status, "200 OK")
                 self.assertIn("text/html", headers["Content-Type"])
                 if path != "/":
-                    self.assertNotIn("Turn patient voice into better care.", body, f"{path} appears to be falling back to homepage")
+                    self.assertNotIn("Turn patient voice into accountable action.", body, f"{path} appears to be falling back to homepage")
 
     def test_public_pages_have_no_internal_or_generation_spillover(self):
         forbidden_fragments = [
@@ -105,6 +106,98 @@ class WebContractTests(unittest.TestCase):
                 self.assertEqual(status, "200 OK")
                 for fragment in forbidden_fragments:
                     self.assertNotIn(fragment.casefold(), body.casefold(), f"{path} exposes {fragment!r}")
+
+    def test_public_source_assets_have_no_generation_or_build_spillover(self):
+        public_assets = list(Path("web").glob("*.html")) + list(Path("web").glob("*.js")) + list(Path("web").glob("*.css")) + list(Path("web").glob("*.csv"))
+        forbidden_fragments = [
+            "ChatGPT",
+            "OpenAI",
+            "Anthropic",
+            "Claude",
+            "Codex",
+            r"\bLLM\b",
+            "large language model",
+            "AI generated",
+            "system prompt",
+            "developer message",
+            "tool call",
+            "chain of thought",
+            "prompt spillover",
+            "internal instructions",
+            "placeholder",
+            "TODO",
+            "FIXME",
+            "debug",
+            "test data",
+        ]
+        for asset in public_assets:
+            text = asset.read_text(encoding="utf-8")
+            with self.subTest(asset=str(asset)):
+                for fragment in forbidden_fragments:
+                    if fragment.startswith(r"\b"):
+                        self.assertIsNone(re.search(fragment, text, flags=re.IGNORECASE), f"{asset} exposes {fragment!r}")
+                    else:
+                        self.assertNotIn(fragment.casefold(), text.casefold(), f"{asset} exposes {fragment!r}")
+
+    def test_approved_pages_are_reachable_from_public_reviewer_path(self):
+        from html.parser import HTMLParser
+        from urllib.parse import urlparse
+
+        class LinkParser(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self.links = []
+
+            def handle_starttag(self, tag, attrs):
+                if tag != "a":
+                    return
+                for key, value in attrs:
+                    if key == "href" and value:
+                        self.links.append(value)
+
+        web_dir = Path("web")
+        route_to_file = {"/": web_dir / "index.html"}
+        route_to_file.update({f"/{item.name}": item for item in sorted(web_dir.glob("*.html")) if item.name != "index.html"})
+        graph = {}
+        for route, path in route_to_file.items():
+            parser = LinkParser()
+            parser.feed(path.read_text(encoding="utf-8"))
+            links = []
+            for href in parser.links:
+                parsed = urlparse(href)
+                if parsed.scheme or href.startswith("mailto:") or href.startswith("#"):
+                    continue
+                if parsed.path in route_to_file:
+                    links.append(parsed.path)
+            graph[route] = links
+
+        reachable = {"/"}
+        stack = ["/"]
+        while stack:
+            route = stack.pop()
+            for next_route in graph[route]:
+                if next_route not in reachable:
+                    reachable.add(next_route)
+                    stack.append(next_route)
+
+        required_routes = {
+            "/story.html",
+            "/about.html",
+            "/hai-alert.html",
+            "/applied-analysis.html",
+            "/evidence-summary.html",
+            "/evidence-matrix.html",
+            "/bibliography.html",
+            "/dh-benchmark.html",
+            "/toolkit-tools.html",
+            "/research-plan.html",
+            "/deliverables.html",
+            "/executive-launch.html",
+            "/mvp-one.html",
+            "/toolkit-scan.html",
+            "/charter.html",
+        }
+        self.assertTrue(required_routes <= reachable, sorted(required_routes - reachable))
 
     def test_public_pages_have_no_placeholder_or_build_state_language(self):
         forbidden = [

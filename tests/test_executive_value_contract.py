@@ -37,7 +37,7 @@ class ExecutiveValueContractTests(unittest.TestCase):
         status, _, body = request("/")
         self.assertEqual(status, "200 OK")
         for fragment in (
-            "Turn patient voice into better care.",
+            "Turn patient voice into accountable action.",
             "Evidence-Based PFAC Summary",
             "DH benchmark",
             "Applied Analysis",
