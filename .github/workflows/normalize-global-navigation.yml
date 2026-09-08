@@ -1,0 +1,42 @@
+name: Normalize Global Navigation
+
+on:
+  push:
+    branches:
+      - normalize-global-navigation
+
+permissions:
+  contents: write
+
+jobs:
+  normalize:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v4
+        with:
+          ref: normalize-global-navigation
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Normalize only global navigation and active state
+        run: python scripts/normalize_global_navigation.py
+
+      - name: Verify clean patch syntax
+        run: git diff --check
+
+      - name: Commit normalized navigation
+        run: |
+          if git diff --quiet; then
+            echo "Navigation already normalized."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add web/*.html web/styles.css
+          git commit -m "Normalize global navigation across public pages"
+          git push origin HEAD:normalize-global-navigation
