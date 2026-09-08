@@ -11,7 +11,7 @@ The APE remains two practical, non-academic host-site deliverables:
 
 Supporting pages, surveillance workflows, code, dashboards, and collaboration tools are implementation infrastructure. They are not additional APE deliverables.
 
-The APE is not represented as human-subjects research. The separate ILE may use the same evidence backbone, but the APE and ILE must be described as distinct products with distinct academic purposes.
+The APE is not represented as human-subjects research. All public and internal APE artifacts should remain focused on the approved host-site work, selected competencies, and the two practical deliverables.
 
 ## 2. Federal terminology
 
