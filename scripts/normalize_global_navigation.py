@@ -67,7 +67,6 @@ def normalize_css() -> bool:
         return False
 
     addition = """
-
 /* Global navigation current-page state */
 nav[data-global-nav="true"] a[aria-current="page"] {
   color: var(--dartmouth-green);
@@ -75,7 +74,7 @@ nav[data-global-nav="true"] a[aria-current="page"] {
   box-shadow: inset 0 0 0 1px rgba(0, 105, 62, .14);
 }
 """
-    css_path.write_text(css.rstrip() + addition + "\n", encoding="utf-8")
+    css_path.write_text(css.rstrip() + "\n\n" + addition.strip() + "\n", encoding="utf-8")
     return True
 
 
