@@ -29,7 +29,9 @@ class InteractiveAnalysisTests(unittest.TestCase):
             'id="analysis-threshold"',
             'id="analysis-sort"',
             'id="analysis-search"',
+            'id="analysis-chart"',
             'id="analysis-body"',
+            'plotly-2.35.2.min.js',
             '/applied-analysis.js',
         ):
             self.assertIn(fragment, page)
@@ -41,14 +43,18 @@ class InteractiveAnalysisTests(unittest.TestCase):
         self.assertIn("Poverty percent", script)
         self.assertIn("Disability percent", script)
         self.assertIn("Age 65+ percent", script)
+        self.assertIn("Plotly.react", script)
 
-    def test_analysis_is_table_first_not_graphic(self):
+    def test_analysis_is_visual_first_with_supporting_table_drilldown(self):
         _, _, page = request("/applied-analysis.html")
         lowered = page.lower()
+        self.assertIn('id="analysis-chart"', lowered)
+        self.assertIn("plotly", lowered)
+        self.assertIn("view municipality data table", lowered)
+        self.assertIn("<details", lowered)
         self.assertIn("<table", lowered)
         self.assertNotIn("<canvas", lowered)
         self.assertNotIn("<svg", lowered)
-        self.assertNotIn("plotly", lowered)
 
     def test_headline_results_recompute_from_same_csv_used_by_interaction(self):
         with Path("web/upper-valley-local-analysis.csv").open(encoding="utf-8", newline="") as handle:
