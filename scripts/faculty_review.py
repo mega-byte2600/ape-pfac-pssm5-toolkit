@@ -79,20 +79,21 @@ def main() -> int:
 
     for path, fragments in REQUIRED.items():
         text = read(path)
+        folded = text.casefold()
         for fragment in fragments:
-            if fragment not in text:
+            if fragment.casefold() not in folded:
                 failures.append(f"{path}: missing faculty gate {fragment!r}")
 
     for path, fragments in FORBIDDEN.items():
-        text = read(path)
+        text = read(path).casefold()
         for fragment in fragments:
-            if fragment.lower() in text.lower():
+            if fragment.casefold() in text:
                 failures.append(f"{path}: prohibited faculty-facing phrasing {fragment!r}")
 
     for page in sorted((ROOT / "web").glob("*.html")):
-        text = page.read_text(encoding="utf-8")
+        text = page.read_text(encoding="utf-8").casefold()
         for fragment in PUBLIC_FORBIDDEN:
-            if fragment.lower() in text.lower():
+            if fragment.casefold() in text:
                 failures.append(f"{page.relative_to(ROOT)}: public spillover {fragment!r}")
 
     if failures:
