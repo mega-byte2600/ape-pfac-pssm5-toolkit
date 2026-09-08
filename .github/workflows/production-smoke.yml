@@ -1,0 +1,28 @@
+name: Production Smoke
+
+on:
+  workflow_dispatch:
+    inputs:
+      expected_sha:
+        description: Expected deployed Git commit prefix
+        required: false
+        type: string
+
+jobs:
+  deployed-site:
+    name: Verify deployed public site
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run production smoke
+        run: |
+          if [ -n "${{ inputs.expected_sha }}" ]; then
+            python scripts/production_smoke.py --expected-sha "${{ inputs.expected_sha }}"
+          else
+            python scripts/production_smoke.py
+          fi

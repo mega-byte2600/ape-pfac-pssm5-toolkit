@@ -16,6 +16,16 @@ CWD_ROOT = Path.cwd()
 WEB = CWD_ROOT / "web" if (CWD_ROOT / "web").is_dir() else PACKAGE_ROOT / "web"
 
 
+def _release_sha() -> str:
+    """Return the deployed source revision when the platform exposes it."""
+    return (
+        os.getenv("RENDER_GIT_COMMIT")
+        or os.getenv("GIT_COMMIT")
+        or os.getenv("SOURCE_VERSION")
+        or "local"
+    )
+
+
 def _json(start_response, payload, status="200 OK"):
     body = json.dumps(payload, indent=2).encode("utf-8")
     start_response(
@@ -25,6 +35,8 @@ def _json(start_response, payload, status="200 OK"):
             ("Content-Length", str(len(body))),
             ("Cache-Control", "no-store"),
             ("Access-Control-Allow-Origin", "*"),
+            ("X-Content-Type-Options", "nosniff"),
+            ("Referrer-Policy", "strict-origin-when-cross-origin"),
         ],
     )
     return [body]
@@ -41,6 +53,8 @@ def _asset(start_response, target: Path):
             ("Content-Type", content_type),
             ("Content-Length", str(len(body))),
             ("Cache-Control", "public, max-age=300"),
+            ("X-Content-Type-Options", "nosniff"),
+            ("Referrer-Policy", "strict-origin-when-cross-origin"),
         ],
     )
     return [body]
@@ -58,6 +72,7 @@ def application(environ, start_response):
                 "status": "ok",
                 "service": "ape-pfac-pssm5-toolkit",
                 "project_identity": "MPH Applied Practice Experience",
+                "release": _release_sha(),
             },
         )
     if path == "/api/backend-status":
