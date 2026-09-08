@@ -1,0 +1,27 @@
+name: Faculty Review
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  faculty-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install project
+        run: pip install .
+      - name: Run Geisel faculty review agent
+        run: python scripts/faculty_review.py
+      - name: Run web regression tests
+        run: python -m unittest discover -s tests -p 'test_*.py'
