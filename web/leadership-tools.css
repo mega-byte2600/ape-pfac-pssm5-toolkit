@@ -1,0 +1,148 @@
+.tool-workspace {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(0, 105, 62, .10), transparent 19rem),
+    linear-gradient(135deg, #ffffff 0%, #f6fbf8 100%);
+  border-color: rgba(0, 105, 62, .16);
+}
+
+.tool-workspace::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: .3rem;
+  background: linear-gradient(180deg, var(--dartmouth-green), var(--gold));
+}
+
+.tool-control-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.tool-field {
+  display: grid;
+  gap: .45rem;
+}
+
+.tool-field > span {
+  color: var(--forest);
+  font-size: .78rem;
+  font-weight: 950;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.tool-field select {
+  width: 100%;
+  min-height: 3.25rem;
+  padding: .8rem 2.6rem .8rem 1rem;
+  border: 1px solid rgba(18, 49, 43, .16);
+  border-radius: .9rem;
+  background: #fff;
+  color: var(--forest);
+  font: inherit;
+  font-weight: 800;
+  box-shadow: 0 8px 24px rgba(18, 49, 43, .05);
+}
+
+.tool-field select:focus-visible {
+  outline: 3px solid rgba(0, 105, 62, .22);
+  outline-offset: 2px;
+  border-color: var(--dartmouth-green);
+}
+
+.tool-summary {
+  margin-top: 1rem;
+  padding: 1.2rem;
+  border-radius: 1.1rem;
+  background: linear-gradient(135deg, var(--forest), var(--pine));
+  color: white;
+  box-shadow: 0 14px 34px rgba(18, 49, 43, .14);
+}
+
+.tool-summary:empty {
+  display: none;
+}
+
+.tool-summary h3 {
+  margin: 0 0 1rem;
+  color: white;
+  font-size: clamp(1.25rem, 2vw, 1.7rem);
+}
+
+.tool-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .8rem;
+}
+
+.tool-summary-item {
+  padding: .9rem;
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: .85rem;
+  background: rgba(255, 255, 255, .08);
+}
+
+.tool-summary-item span {
+  display: block;
+  margin-bottom: .35rem;
+  color: #bfe6d1;
+  font-size: .72rem;
+  font-weight: 950;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.tool-summary-item p {
+  margin: 0;
+  color: white;
+  line-height: 1.45;
+}
+
+.leadership-tool-panel {
+  scroll-margin-top: 6rem;
+}
+
+.audit-table-details {
+  margin: 1rem 0 0;
+  border: 1px solid rgba(18, 49, 43, .12);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, .78);
+  overflow: hidden;
+}
+
+.audit-table-details > summary {
+  cursor: pointer;
+  padding: .95rem 1rem;
+  color: var(--forest);
+  font-weight: 900;
+  list-style-position: inside;
+  background: linear-gradient(180deg, #fff, #f6faf8);
+}
+
+.audit-table-details[open] > summary {
+  border-bottom: 1px solid var(--line);
+}
+
+.audit-table-details .matrix-table {
+  border: 0;
+  border-radius: 0;
+}
+
+.leadership-tools-enhanced .leadership-tool-panel[hidden] {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .tool-control-grid,
+  .tool-summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tool-summary {
+    padding: 1rem;
+  }
+}
