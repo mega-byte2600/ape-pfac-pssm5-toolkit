@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import re
 import unittest
 from html.parser import HTMLParser
 from pathlib import Path
@@ -159,6 +160,46 @@ class WebContractTests(unittest.TestCase):
             "/charter.html",
         }
         self.assertTrue(required_routes <= reachable, sorted(required_routes - reachable))
+
+    def test_public_pages_share_reviewer_flow_without_replacing_context_nav(self):
+        expected_links = [
+            'href: "/"',
+            'href: "/mvp-one.html"',
+            'href: "/evidence-summary.html"',
+            'href: "/dh-benchmark.html"',
+            'href: "/applied-analysis.html"',
+            'href: "/toolkit-tools.html"',
+            'href: "/about.html"',
+        ]
+        status, headers, script = request("/review-flow.js")
+        self.assertEqual(status, "200 OK")
+        self.assertIn("javascript", headers["Content-Type"])
+        self.assertIn('aria-label", "Reviewer flow"', script)
+        self.assertIn("data-review-flow", script)
+        self.assertNotIn("github.com", script.casefold())
+        for link in expected_links:
+            self.assertIn(link, script)
+
+        for path in public_html_paths():
+            with self.subTest(path=path):
+                body = self.assert_page_contains(path, ['<script defer src="/review-flow.js"></script>', 'nav aria-label="Primary"'])
+                self.assertNotIn("github.com", body.casefold())
+
+    def test_dh_benchmark_contextual_navigation_sequence_is_preserved(self):
+        body = self.assert_page_contains("/dh-benchmark.html", ['nav aria-label="Primary"'])
+        primary_nav = re.search(r'<nav aria-label="Primary">(.*?)</nav>', body, flags=re.DOTALL)
+        self.assertIsNotNone(primary_nav)
+        links = re.findall(r'<a href="([^"]+)">([^<]+)</a>', primary_nav.group(1))
+        self.assertEqual(
+            links,
+            [
+                ("/evidence-summary.html", "Summary"),
+                ("/surveillance-method.html", "Method"),
+                ("/evidence-matrix.html", "Matrix"),
+                ("/hai-alert.html", "HAI Alert"),
+                ("/about.html", "About"),
+            ],
+        )
 
     def test_evidence_matrix_keeps_current_sources_and_claim_limits(self):
         body = self.assert_page_contains(

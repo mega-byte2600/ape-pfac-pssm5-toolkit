@@ -14,6 +14,7 @@ from .supabase_backend import backend_status, build_demo_payload, submit_demo_in
 PACKAGE_ROOT = Path(__file__).resolve().parents[1]
 CWD_ROOT = Path.cwd()
 WEB = CWD_ROOT / "web" if (CWD_ROOT / "web").is_dir() else PACKAGE_ROOT / "web"
+REVIEW_FLOW_SCRIPT = b'  <script defer src="/review-flow.js"></script>\n'
 
 
 def _release_sha() -> str:
@@ -47,6 +48,8 @@ def _asset(start_response, target: Path):
         return _json(start_response, {"error": "not_found"}, "404 Not Found")
     body = target.read_bytes()
     content_type = mimetypes.guess_type(str(target))[0] or "application/octet-stream"
+    if content_type == "text/html" and REVIEW_FLOW_SCRIPT not in body:
+        body = body.replace(b"</head>", REVIEW_FLOW_SCRIPT + b"</head>", 1)
     start_response(
         "200 OK",
         [
