@@ -11,6 +11,12 @@ The project translates current PFAC evidence, federal guidance, local population
 
 The APE is a non-research applied practice project. It does not claim that PFAC presence alone causes better patient safety, experience, or clinical outcomes.
 
+## APE to ILE scholarly bridge
+
+The public APE remains the applied practice product. A separate planning artifact, `docs/ILE_RESEARCH_BLUEPRINT.md`, defines a proposed scholarly bridge into the Integrative Learning Experience: a structured evidence synthesis examining the organizational, governance, and implementation conditions that help formal patient and family engagement translate into accountable health-system action.
+
+The ILE blueprint does not convert the APE into research, does not treat local APE observations as research findings, and is not a submitted ILE paper. It is a controlled research-planning layer intended for refinement with the ILE faculty mentor.
+
 ## Lived-experience anchor
 
 Rosie Bartel's public story is used as a lived-experience design lens for dignity, communication, escalation, infection prevention, and system learning. It is kept separate from peer-reviewed evidence and is not presented as representative evidence or proof of PFAC effectiveness.
@@ -91,6 +97,7 @@ The demonstration intake is limited to sanitized, de-identified notes. Do not en
 
 ## Key project files
 
+- `docs/ILE_RESEARCH_BLUEPRINT.md`
 - `docs/GEISEL_FACULTY_REVIEW_PROTOCOL.md`
 - `docs/GEISEL_FACULTY_SITE_REVIEW.md`
 - `scripts/faculty_review.py`
