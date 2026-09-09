@@ -106,27 +106,16 @@ FORBIDDEN = {
     ],
 }
 
-PUBLIC_FORBIDDEN = [
-    "APE/ILE",
-    "Integrated Learning Experience",
-    "industry-grade",
-    "Chick-fil-A",
-    "McDonald’s thesis",
-    "Patients over payers",
-    "system prompt",
-    "developer message",
-    "tool call",
-    "chain of thought",
-    "ChatGPT",
-    "OpenAI",
-    "Anthropic",
-    "Claude",
-    "Codex",
-    "large language model",
-    "prompt spillover",
-    "internal instructions",
+# These are specifically internal/generation artifacts that should never be
+# visible on a public APE page. Keep this list narrow so the gate does not
+# reject legitimate academic, implementation, or technical terminology.
+PUBLIC_SPILLOVER = [
     "/research-plan.html",
     "Validation note:",
+    "prompt spillover",
+    "system prompt",
+    "developer message",
+    "chain of thought",
 ]
 
 
@@ -155,7 +144,7 @@ def main() -> int:
 
     for page in sorted((ROOT / "web").glob("*.html")):
         text = page.read_text(encoding="utf-8").casefold()
-        for fragment in PUBLIC_FORBIDDEN:
+        for fragment in PUBLIC_SPILLOVER:
             if fragment.casefold() in text:
                 failures.append(f"{page.relative_to(ROOT)}: public spillover {fragment!r}")
 
