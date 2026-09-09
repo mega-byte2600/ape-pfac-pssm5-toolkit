@@ -22,7 +22,8 @@
     const headers = Array.from(table.querySelectorAll("thead th")).map((cell) => cell.textContent.trim());
     return Array.from(table.querySelectorAll("tbody tr")).map((row) => {
       const cells = Array.from(row.querySelectorAll("td")).map((cell) => cell.textContent.trim());
-      return { headers, cells };
+      const label = row.dataset.focusLabel || cells[0] || "Selected view";
+      return { headers, cells, label };
     });
   }
 
@@ -35,7 +36,7 @@
     if (!row || !row.cells.length) return;
 
     const heading = document.createElement("h3");
-    heading.textContent = row.cells[0] || "Selected view";
+    heading.textContent = row.label;
     summary.appendChild(heading);
 
     const grid = document.createElement("div");
@@ -55,7 +56,9 @@
       grid.appendChild(item);
     });
 
-    summary.appendChild(grid);
+    if (grid.children.length) {
+      summary.appendChild(grid);
+    }
   }
 
   function populateFocus(panel) {
@@ -72,7 +75,7 @@
     rows.forEach((row, index) => {
       const option = document.createElement("option");
       option.value = String(index);
-      option.textContent = row.cells[0] || `Item ${index + 1}`;
+      option.textContent = row.label;
       focusSelect.appendChild(option);
     });
 
