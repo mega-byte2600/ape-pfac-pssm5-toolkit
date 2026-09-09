@@ -66,7 +66,7 @@ Key controls include:
 - no public build, model, prompt, or internal tooling language;
 - no unfinished public placeholders;
 - recomputation of the Upper Valley analysis from the source CSV;
-- regression coverage for the interactive analysis and public reviewer flow.
+- regression coverage for the interactive analysis, contextual navigation, and retired-route guards.
 
 ## Architecture
 

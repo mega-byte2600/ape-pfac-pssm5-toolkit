@@ -42,7 +42,7 @@ class WebContractTests(unittest.TestCase):
 
     def test_core_public_pages_serve_expected_content(self):
         required_pages = {
-            "/": ["Turn patient voice into accountable action.", "Evidence-Based PFAC Summary", "DH benchmark", "Applied Analysis", "APE deliverables", "/mvp-one.html"],
+            "/": ["Turn patient voice into accountable action.", "Evidence-Based PFAC Summary", "DH benchmark", "Applied Analysis", "APE deliverables"],
             "/evidence.html": ["Evidence Launch Page", "Evidence-Based PFAC Summary", "Evidence matrix", "AMA 11 source layer", "/toolkit-scan.html"],
             "/evidence-summary.html": ["Evidence-Based PFAC Summary", "CMS Patient Safety Structural Measure", "Domain 5: Patient and Family Engagement", "evidence base remains limited", "203 respondents"],
             "/dh-benchmark.html": ["Benchmark assessment framework", "not a scored evaluation", "Evidence-backed preliminary findings", "Evidence needed before scoring", "Not yet scored", "Reusable evidence table"],
@@ -53,11 +53,23 @@ class WebContractTests(unittest.TestCase):
             "/about.html": ["Michael Bolton", "Silicon Valley engineer", "LinkedIn profile", "Notion workspace"],
             "/deliverables.html": ["Two practical deliverables", "Environmental scan and annotated bibliography", "Deliverable 2 tools", "CEPH 4", "CEPH 7", "Dartmouth Program-Specific Competency 4", "Demonstrated."],
             "/toolkit-tools.html": ["Tools leaders can use immediately.", "PFAC current-state assessment", "Closed-loop action tracker", "Representation and access check", "Measurement plan", "Domain 5 traceability"],
-            "/mvp-one.html": ["Reviewer Guide", "Recommended sequence", "local analysis", "Leadership tools"],
         }
         for path, expected in required_pages.items():
             with self.subTest(path=path):
                 self.assert_page_contains(path, expected)
+
+    def test_reviewer_guide_is_retired_and_blocked(self):
+        self.assertFalse(Path("web/mvp-one.html").exists())
+        self.assertFalse(Path("web/review-flow.js").exists())
+        for retired in ("/mvp-one.html", "/review-flow.js"):
+            status, _, body = request(retired)
+            self.assertEqual(status, "404 Not Found")
+            self.assertIn("not_found", body)
+        forbidden = ("Reviewer Guide", "/mvp-one.html", "review-flow.js", "Reviewer flow")
+        for page in sorted(Path("web").glob("*.html")):
+            text = page.read_text(encoding="utf-8")
+            for fragment in forbidden:
+                self.assertNotIn(fragment.casefold(), text.casefold(), f"{page} reintroduces retired reviewer-guide content {fragment!r}")
 
     def test_every_public_html_page_loads_without_homepage_fallback(self):
         for path in public_html_paths():
@@ -105,7 +117,7 @@ class WebContractTests(unittest.TestCase):
                 for fragment in forbidden:
                     self.assertNotIn(fragment.casefold(), folded, f"{path} exposes {fragment!r}")
 
-    def test_required_reviewer_routes_remain_reachable(self):
+    def test_required_public_routes_remain_reachable(self):
         class LinkParser(HTMLParser):
             def __init__(self):
                 super().__init__()
@@ -155,35 +167,10 @@ class WebContractTests(unittest.TestCase):
             "/toolkit-tools.html",
             "/deliverables.html",
             "/executive-launch.html",
-            "/mvp-one.html",
             "/toolkit-scan.html",
             "/charter.html",
         }
         self.assertTrue(required_routes <= reachable, sorted(required_routes - reachable))
-
-    def test_public_pages_share_reviewer_flow_without_replacing_context_nav(self):
-        expected_links = [
-            'href: "/"',
-            'href: "/mvp-one.html"',
-            'href: "/evidence-summary.html"',
-            'href: "/dh-benchmark.html"',
-            'href: "/applied-analysis.html"',
-            'href: "/toolkit-tools.html"',
-            'href: "/about.html"',
-        ]
-        status, headers, script = request("/review-flow.js")
-        self.assertEqual(status, "200 OK")
-        self.assertIn("javascript", headers["Content-Type"])
-        self.assertIn('aria-label", "Reviewer flow"', script)
-        self.assertIn("data-review-flow", script)
-        self.assertNotIn("github.com", script.casefold())
-        for link in expected_links:
-            self.assertIn(link, script)
-
-        for path in public_html_paths():
-            with self.subTest(path=path):
-                body = self.assert_page_contains(path, ['<script defer src="/review-flow.js"></script>', 'nav aria-label="Primary"'])
-                self.assertNotIn("github.com", body.casefold())
 
     def test_dh_benchmark_contextual_navigation_sequence_is_preserved(self):
         body = self.assert_page_contains("/dh-benchmark.html", ['nav aria-label="Primary"'])
@@ -219,20 +206,7 @@ class WebContractTests(unittest.TestCase):
     def test_hai_visual_contract_is_intact(self):
         body = self.assert_page_contains(
             "/hai-alert.html",
-            [
-                "Interactive HAI dashboard",
-                'id="hai-trend-chart"',
-                'id="hai-baseline-chart"',
-                'id="hai-action-grid"',
-                "plotly-2.35.2.min.js",
-                "/app.js",
-                "Evidence signal",
-                "View evidence detail table",
-                "Evidence synthesis summary",
-                "Infection prevention is also a communication and escalation problem.",
-                "What PFAC should ask locally",
-                "Leadership follow-through",
-            ],
+            ["Interactive HAI dashboard", 'id="hai-trend-chart"', 'id="hai-baseline-chart"', 'id="hai-action-grid"', "plotly-2.35.2.min.js", "/app.js", "Evidence signal", "View evidence detail table", "Evidence synthesis summary", "Infection prevention is also a communication and escalation problem.", "What PFAC should ask locally", "Leadership follow-through"],
         )
         lowered = body.casefold()
         self.assertNotIn("loading hai dashboard", lowered)
@@ -273,18 +247,7 @@ class WebContractTests(unittest.TestCase):
     def test_applied_analysis_visual_and_claim_boundaries_are_intact(self):
         body = self.assert_page_contains(
             "/applied-analysis.html",
-            [
-                "Planning analysis, not a risk score",
-                "42%", "72%", "59%", "55%",
-                "not a claim that Dartmouth Health has adopted",
-                "CEPH 4", "CEPH 7",
-                "descriptive approximations",
-                'id="analysis-metric"', 'id="analysis-threshold"', 'id="analysis-sort"', 'id="analysis-search"', 'id="analysis-chart"',
-                "plotly-2.35.2.min.js",
-                "View municipality data table",
-                "View implementation detail table",
-                "/applied-analysis.js",
-            ],
+            ["Planning analysis, not a risk score", "42%", "72%", "59%", "55%", "not a claim that Dartmouth Health has adopted", "CEPH 4", "CEPH 7", "descriptive approximations", 'id="analysis-metric"', 'id="analysis-threshold"', 'id="analysis-sort"', 'id="analysis-search"', 'id="analysis-chart"', "plotly-2.35.2.min.js", "View municipality data table", "View implementation detail table", "/applied-analysis.js"],
         )
         self.assertNotIn("Dartmouth Health implemented", body)
         self.assertNotIn("validated risk score", body.casefold())

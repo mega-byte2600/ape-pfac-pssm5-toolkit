@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import re
 import sys
 from html.parser import HTMLParser
 from io import BytesIO
@@ -39,6 +38,10 @@ PUBLIC_SPILLOVER = (
     "MVP 1",
     "APE/ILE",
     "Integrated Learning Experience",
+    "Reviewer Guide",
+    "/mvp-one.html",
+    "review-flow.js",
+    "Reviewer flow",
 )
 UNFINISHED_COPY = (
     "Reserved for the synthesis text",
@@ -50,6 +53,7 @@ UNFINISHED_COPY = (
     "debug",
 )
 RAW_MARKDOWN = ("**", "```", "### ", "## ")
+RETIRED_PUBLIC_FILES = (WEB / "research-plan.html", WEB / "mvp-one.html", WEB / "review-flow.js")
 
 
 class LinkParser(HTMLParser):
@@ -99,8 +103,13 @@ def assert_public_smoke() -> list[str]:
     failures: list[str] = []
     routes = public_routes()
 
-    if (WEB / "research-plan.html").exists():
-        failures.append("Retired public research-plan.html is present")
+    for retired in RETIRED_PUBLIC_FILES:
+        if retired.exists():
+            failures.append(f"Retired public asset is present: {retired}")
+    for retired_route in ("/mvp-one.html", "/review-flow.js"):
+        status, _, _ = request(retired_route)
+        if status != "404 Not Found":
+            failures.append(f"Retired route {retired_route} returned {status}")
 
     for route, path in routes.items():
         status, headers, body = request(route)
@@ -111,8 +120,6 @@ def assert_public_smoke() -> list[str]:
             failures.append(f"{route} did not return HTML")
         if route != "/" and "Turn patient voice into accountable action." in body:
             failures.append(f"{route} appears to fall back to the homepage")
-        if '<script defer src="/review-flow.js"></script>' not in body:
-            failures.append(f"{route} is missing reviewer-flow script")
 
         parser = LinkParser()
         parser.feed(body)
@@ -138,18 +145,12 @@ def assert_public_smoke() -> list[str]:
             if parsed.path not in routes and not (WEB / parsed.path.lstrip("/")).is_file():
                 failures.append(f"{route} links to missing internal target {href}")
 
-    for asset in ("/styles.css", "/app.js", "/applied-analysis.js", "/review-flow.js"):
-        status, headers, body = request(asset)
+    for asset in ("/styles.css", "/app.js", "/applied-analysis.js"):
+        status, headers, _ = request(asset)
         if status != "200 OK":
             failures.append(f"{asset} returned {status}")
         if asset.endswith(".js") and "javascript" not in headers.get("Content-Type", ""):
             failures.append(f"{asset} did not return JavaScript")
-        if asset == "/review-flow.js":
-            for href in re.findall(r'href: "([^"]+)"', body):
-                if href not in routes:
-                    failures.append(f"review-flow.js links to missing public route {href}")
-            if "github.com" in body.casefold():
-                failures.append("review-flow.js exposes a GitHub link")
 
     dh_body = request("/dh-benchmark.html")[2]
     for phrase in ("Benchmark maturity model", "maturity score", "completed scorecard"):
@@ -176,7 +177,7 @@ def main() -> int:
             print(f"- {failure}")
         return 1
     print("EXTENDED PUBLIC SMOKE: PASS")
-    print(f"Checked {len(public_routes())} public HTML routes, core assets, links, navigation shape, and spillover terms.")
+    print(f"Checked {len(public_routes())} public HTML routes, core assets, links, navigation shape, retired-route guards, and spillover terms.")
     return 0
 
 

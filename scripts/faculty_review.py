@@ -61,6 +61,10 @@ PUBLIC_SPILLOVER = (
     "system prompt",
     "developer message",
     "chain of thought",
+    "Reviewer Guide",
+    "/mvp-one.html",
+    "review-flow.js",
+    "Reviewer flow",
 )
 
 CLAIM_GUARDRAILS = {
@@ -81,12 +85,19 @@ CLAIM_GUARDRAILS = {
     ],
 }
 
+RETIRED_PUBLIC_ASSETS = (
+    ROOT / "web/research-plan.html",
+    ROOT / "web/mvp-one.html",
+    ROOT / "web/review-flow.js",
+)
+
 
 def main() -> int:
     failures: list[str] = []
 
-    if (ROOT / "web/research-plan.html").exists():
-        failures.append("web/research-plan.html: internal review-method page must not be published")
+    for retired in RETIRED_PUBLIC_ASSETS:
+        if retired.exists():
+            failures.append(f"{retired.relative_to(ROOT)}: retired public asset must not be published")
 
     for path, fragments in REQUIRED.items():
         text = (ROOT / path).read_text(encoding="utf-8")
@@ -114,7 +125,7 @@ def main() -> int:
         return 1
 
     print("FACULTY REVIEW: PASS")
-    print("Core APE evidence, scope, claim-boundary, visual, local-analysis, and public-content contracts are intact.")
+    print("Core APE evidence, scope, claim-boundary, visual, local-analysis, retired-route, and public-content contracts are intact.")
     return 0
 
 
