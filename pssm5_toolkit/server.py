@@ -14,7 +14,7 @@ from .supabase_backend import backend_status, build_demo_payload, submit_demo_in
 PACKAGE_ROOT = Path(__file__).resolve().parents[1]
 CWD_ROOT = Path.cwd()
 WEB = CWD_ROOT / "web" if (CWD_ROOT / "web").is_dir() else PACKAGE_ROOT / "web"
-REVIEW_FLOW_SCRIPT = b'  <script defer src="/review-flow.js"></script>\n'
+RETIRED_PUBLIC_ROUTES = {"/mvp-one.html", "/review-flow.js"}
 
 
 def _release_sha() -> str:
@@ -48,8 +48,6 @@ def _asset(start_response, target: Path):
         return _json(start_response, {"error": "not_found"}, "404 Not Found")
     body = target.read_bytes()
     content_type = mimetypes.guess_type(str(target))[0] or "application/octet-stream"
-    if content_type == "text/html" and REVIEW_FLOW_SCRIPT not in body:
-        body = body.replace(b"</head>", REVIEW_FLOW_SCRIPT + b"</head>", 1)
     start_response(
         "200 OK",
         [
@@ -68,6 +66,8 @@ def application(environ, start_response):
     method = environ.get("REQUEST_METHOD", "GET").upper()
     if method == "OPTIONS":
         return _json(start_response, {"status": "ok"})
+    if path in RETIRED_PUBLIC_ROUTES:
+        return _json(start_response, {"error": "not_found"}, "404 Not Found")
     if path == "/api/health":
         return _json(
             start_response,
