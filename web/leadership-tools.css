@@ -27,6 +27,10 @@
   gap: .45rem;
 }
 
+.tool-field[hidden] {
+  display: none;
+}
+
 .tool-field > span {
   color: var(--forest);
   font-size: .78rem;
