@@ -22,64 +22,105 @@
       <div class="command-strip" aria-label="Tool navigation"><a href="#assessment">Current state</a><a href="#action">Action tracker</a><a href="#representation">Representation</a><a href="#measurement">Measurement</a><a href="#traceability">Domain 5</a><a href="#launch">90-day plan</a></div>
     </section>
 
-    <section id="assessment" class="panel">
+    <section class="panel tool-workspace" aria-labelledby="leadership-workspace-title">
+      <div class="section-title">
+        <p class="eyebrow">Leadership workspace</p>
+        <h2 id="leadership-workspace-title">Choose the decision in front of you.</h2>
+        <p>Select one working tool, then focus on the domain or measure that needs attention. Full tables and downloadable templates remain available when deeper review is needed.</p>
+      </div>
+      <div class="tool-control-grid">
+        <label class="tool-field" for="leadership-tool-select"><span>Working tool</span>
+          <select id="leadership-tool-select">
+            <option value="assessment">1 · Current-state assessment</option>
+            <option value="action">2 · Closed-loop action tracker</option>
+            <option value="representation">3 · Representation and access</option>
+            <option value="measurement">4 · Measurement plan</option>
+            <option value="traceability">5 · Domain 5 traceability</option>
+            <option value="launch">6 · 90-day operating plan</option>
+          </select>
+        </label>
+        <label class="tool-field" id="leadership-focus-wrap" for="leadership-focus-select"><span>Focus area</span>
+          <select id="leadership-focus-select" aria-label="Select a focus area"></select>
+        </label>
+      </div>
+      <div id="leadership-tool-summary" class="tool-summary" aria-live="polite"></div>
+    </section>
+
+    <section id="assessment" class="panel leadership-tool-panel" data-leadership-tool="assessment">
       <div class="section-title"><p class="eyebrow">Tool 1</p><h2>PFAC current-state assessment.</h2></div>
       <p class="lede">Status refers to whether Dartmouth Health current-state evidence has been reviewed for each domain. The assessment structure is ready to use; local findings remain open until DH evidence is reviewed and validated.</p>
-      <div class="matrix-table"><table><thead><tr><th>Domain</th><th>Leadership question</th><th>Evidence to review</th><th>Status</th><th>Gap</th><th>Owner</th><th>Next action</th></tr></thead><tbody>
-        <tr><td>Executive sponsorship</td><td>Is a named executive accountable for PFAC integration and follow-through?</td><td>Charter, org structure, meeting records</td><td>DH current state not yet assessed</td><td></td><td></td><td></td></tr>
-        <tr><td>Decision rights</td><td>Where can PFAC input influence policy, safety, design, and operations?</td><td>Charter, committee pathways, examples</td><td>DH current state not yet assessed</td><td></td><td></td><td></td></tr>
-        <tr><td>Advisor readiness and onboarding</td><td>Are patient and family representatives matched to defined roles and prepared for the level of participation expected?</td><td>Role-tier criteria, role expectations, confidentiality requirements, orientation, volunteer requirements, role matching, representative database, monitoring process</td><td>DH onboarding process documented; implementation across locations not validated by this APE</td><td>Need site-level confirmation of adoption, consistency, advisor experience, and connection to PFAC governance</td><td></td><td>Use the documented onboarding process as an existing asset, then validate how it operates in practice</td></tr>
-        <tr><td>Agenda pipeline</td><td>Do departments bring substantive initiatives to the PFAC before decisions are final?</td><td>Agendas, project intake, meeting minutes</td><td>DH current state not yet assessed</td><td></td><td></td><td></td></tr>
-        <tr><td>Measurement</td><td>Are PFAC contributions and resulting actions measured?</td><td>Trackers, dashboards, project measures</td><td>DH current state not yet assessed</td><td></td><td></td><td></td></tr>
-        <tr><td>Report-back</td><td>Do patients and families learn what changed, what did not, and why?</td><td>Minutes, communications, action logs</td><td>DH current state not yet assessed</td><td></td><td></td><td></td></tr>
-      </tbody></table></div>
+      <details class="audit-table-details">
+        <summary>Inspect full working table</summary>
+        <div class="matrix-table"><table><thead><tr><th>Domain</th><th>Leadership question</th><th>Evidence to review</th><th>Status</th><th>Gap</th><th>Owner</th><th>Next action</th></tr></thead><tbody>
+          <tr><td>Executive sponsorship</td><td>Is a named executive accountable for PFAC integration and follow-through?</td><td>Charter, org structure, meeting records</td><td>DH current state not yet assessed</td><td></td><td></td><td></td></tr>
+          <tr><td>Decision rights</td><td>Where can PFAC input influence policy, safety, design, and operations?</td><td>Charter, committee pathways, examples</td><td>DH current state not yet assessed</td><td></td><td></td><td></td></tr>
+          <tr><td>Advisor readiness and onboarding</td><td>Are patient and family representatives matched to defined roles and prepared for the level of participation expected?</td><td>Role-tier criteria, role expectations, confidentiality requirements, orientation, volunteer requirements, role matching, representative database, monitoring process</td><td>DH onboarding process documented; implementation across locations not validated by this APE</td><td>Need site-level confirmation of adoption, consistency, advisor experience, and connection to PFAC governance</td><td></td><td>Use the documented onboarding process as an existing asset, then validate how it operates in practice</td></tr>
+          <tr><td>Agenda pipeline</td><td>Do departments bring substantive initiatives to the PFAC before decisions are final?</td><td>Agendas, project intake, meeting minutes</td><td>DH current state not yet assessed</td><td></td><td></td><td></td></tr>
+          <tr><td>Measurement</td><td>Are PFAC contributions and resulting actions measured?</td><td>Trackers, dashboards, project measures</td><td>DH current state not yet assessed</td><td></td><td></td><td></td></tr>
+          <tr><td>Report-back</td><td>Do patients and families learn what changed, what did not, and why?</td><td>Minutes, communications, action logs</td><td>DH current state not yet assessed</td><td></td><td></td><td></td></tr>
+        </tbody></table></div>
+      </details>
       <p class="lede">A Dartmouth Health Office of Care Experience onboarding job aid approved March 3, 2026 documents three participation tiers and a six-step process from expression of interest through ongoing monitoring. It is evidence of an existing onboarding structure, not proof that every location implements the process consistently or that PFAC decision authority, representation, and outcomes are established.</p>
       <p><a class="resource-link" href="/pfac-current-state-assessment.csv">Download CSV template</a> · <a class="resource-link" href="/pfac-governance-charter.html">Open governance charter starter</a> · <a class="resource-link" href="/charter.html">Review launch charter</a></p>
     </section>
 
-    <section id="action" class="panel">
+    <section id="action" class="panel leadership-tool-panel" data-leadership-tool="action">
       <div class="section-title"><p class="eyebrow">Tool 2</p><h2>Closed-loop action tracker.</h2></div>
-      <div class="matrix-table"><table><thead><tr><th>Date</th><th>Patient/family signal</th><th>Source</th><th>Leadership disposition</th><th>Owner</th><th>Due date</th><th>Status</th><th>Evidence of change</th><th>Report-back completed</th></tr></thead><tbody><tr><td></td><td></td><td>PFAC</td><td></td><td></td><td></td><td>Open</td><td></td><td>No</td></tr></tbody></table></div>
+      <p class="lede">Move a patient or family signal from discussion to disposition, ownership, evidence of change, and report-back.</p>
+      <details class="audit-table-details">
+        <summary>Inspect full working table</summary>
+        <div class="matrix-table"><table><thead><tr><th>Date</th><th>Patient/family signal</th><th>Source</th><th>Leadership disposition</th><th>Owner</th><th>Due date</th><th>Status</th><th>Evidence of change</th><th>Report-back completed</th></tr></thead><tbody><tr data-focus-label="Closed-loop workflow"><td></td><td></td><td>PFAC</td><td></td><td></td><td></td><td>Open</td><td></td><td>No</td></tr></tbody></table></div>
+      </details>
       <p><a class="resource-link" href="/pfac-action-tracker.csv">Download CSV template</a></p>
     </section>
 
-    <section id="representation" class="panel">
+    <section id="representation" class="panel leadership-tool-panel" data-leadership-tool="representation">
       <div class="section-title"><p class="eyebrow">Tool 3</p><h2>Representation and access check.</h2></div>
-      <div class="matrix-table"><table><thead><tr><th>Dimension</th><th>Current representation</th><th>Who may be missing</th><th>Participation barrier</th><th>Mitigation</th><th>Evidence source</th><th>Review date</th></tr></thead><tbody>
-        <tr><td>Geography / rurality</td><td></td><td></td><td>Travel, time, broadband</td><td></td><td></td><td></td></tr>
-        <tr><td>Language</td><td></td><td></td><td>Interpretation, translated materials</td><td></td><td></td><td></td></tr>
-        <tr><td>Disability access</td><td></td><td></td><td>Physical, sensory, cognitive, digital access</td><td></td><td></td><td></td></tr>
-        <tr><td>Socioeconomic access</td><td></td><td></td><td>Compensation, childcare, work schedule</td><td></td><td></td><td></td></tr>
-        <tr><td>Care setting / condition</td><td></td><td></td><td>Recruitment channel, specialty concentration</td><td></td><td></td><td></td></tr>
-      </tbody></table></div>
+      <p class="lede">Check whether the voices around the table reflect the population served and whether participation barriers are being actively addressed.</p>
+      <details class="audit-table-details">
+        <summary>Inspect full working table</summary>
+        <div class="matrix-table"><table><thead><tr><th>Dimension</th><th>Current representation</th><th>Who may be missing</th><th>Participation barrier</th><th>Mitigation</th><th>Evidence source</th><th>Review date</th></tr></thead><tbody>
+          <tr><td>Geography / rurality</td><td></td><td></td><td>Travel, time, broadband</td><td></td><td></td><td></td></tr>
+          <tr><td>Language</td><td></td><td></td><td>Interpretation, translated materials</td><td></td><td></td><td></td></tr>
+          <tr><td>Disability access</td><td></td><td></td><td>Physical, sensory, cognitive, digital access</td><td></td><td></td><td></td></tr>
+          <tr><td>Socioeconomic access</td><td></td><td></td><td>Compensation, childcare, work schedule</td><td></td><td></td><td></td></tr>
+          <tr><td>Care setting / condition</td><td></td><td></td><td>Recruitment channel, specialty concentration</td><td></td><td></td><td></td></tr>
+        </tbody></table></div>
+      </details>
       <p><a class="resource-link" href="/pfac-representation-access.csv">Download CSV template</a></p>
     </section>
 
-    <section id="measurement" class="panel">
+    <section id="measurement" class="panel leadership-tool-panel" data-leadership-tool="measurement">
       <div class="section-title"><p class="eyebrow">Tool 4</p><h2>Measurement plan.</h2></div>
       <p class="lede">The measurement design reflects the APE's structure, process, and outcome framing while adding implementation measures to show whether patient and family input entered accountable work. Depending on the workstream, leaders may interpret PFAC contribution alongside PREMs, PROMs, Press Ganey measures, access measures, safety signals, complaints, or other project-specific data already used to understand the problem.</p>
-      <div class="matrix-table"><table><thead><tr><th>Measure level</th><th>Example question</th><th>Metric</th><th>Data source</th><th>Frequency</th><th>Owner</th><th>Interpretation caution</th></tr></thead><tbody>
-        <tr><td>Structure</td><td>Is the PFAC connected to leadership and governance?</td><td>Named sponsor, charter, committee links</td><td>Governance records</td><td>Annual</td><td></td><td>Presence does not establish effectiveness.</td></tr>
-        <tr><td>Process</td><td>Is substantive work reaching the PFAC?</td><td>Agenda utilization, departments presenting</td><td>Agendas</td><td>Quarterly</td><td></td><td>Volume does not establish influence.</td></tr>
-        <tr><td>Implementation</td><td>Does input lead to documented action?</td><td>Recommendation adoption, action closure</td><td>Action tracker</td><td>Quarterly</td><td></td><td>Association does not establish downstream clinical effect.</td></tr>
-        <tr><td>Experience</td><td>Do patients/families perceive responsive engagement?</td><td>Selected experience signals</td><td>PREMs, Press Ganey, complaints, or other experience data as appropriate</td><td>Defined locally</td><td></td><td>Do not attribute system-level change to PFAC alone.</td></tr>
-        <tr><td>Outcome</td><td>Did a targeted project improve its intended result?</td><td>Project-specific outcome</td><td>PROMs, operational, clinical, access, safety, or other workstream-specific data</td><td>Project-specific</td><td></td><td>Use an appropriate evaluation design before causal attribution.</td></tr>
-      </tbody></table></div>
+      <details class="audit-table-details">
+        <summary>Inspect full working table</summary>
+        <div class="matrix-table"><table><thead><tr><th>Measure level</th><th>Example question</th><th>Metric</th><th>Data source</th><th>Frequency</th><th>Owner</th><th>Interpretation caution</th></tr></thead><tbody>
+          <tr><td>Structure</td><td>Is the PFAC connected to leadership and governance?</td><td>Named sponsor, charter, committee links</td><td>Governance records</td><td>Annual</td><td></td><td>Presence does not establish effectiveness.</td></tr>
+          <tr><td>Process</td><td>Is substantive work reaching the PFAC?</td><td>Agenda utilization, departments presenting</td><td>Agendas</td><td>Quarterly</td><td></td><td>Volume does not establish influence.</td></tr>
+          <tr><td>Implementation</td><td>Does input lead to documented action?</td><td>Recommendation adoption, action closure</td><td>Action tracker</td><td>Quarterly</td><td></td><td>Association does not establish downstream clinical effect.</td></tr>
+          <tr><td>Experience</td><td>Do patients/families perceive responsive engagement?</td><td>Selected experience signals</td><td>PREMs, Press Ganey, complaints, or other experience data as appropriate</td><td>Defined locally</td><td></td><td>Do not attribute system-level change to PFAC alone.</td></tr>
+          <tr><td>Outcome</td><td>Did a targeted project improve its intended result?</td><td>Project-specific outcome</td><td>PROMs, operational, clinical, access, safety, or other workstream-specific data</td><td>Project-specific</td><td></td><td>Use an appropriate evaluation design before causal attribution.</td></tr>
+        </tbody></table></div>
+      </details>
       <p><a class="resource-link" href="/pfac-measurement-plan.csv">Download CSV template</a></p>
     </section>
 
-    <section id="traceability" class="panel">
+    <section id="traceability" class="panel leadership-tool-panel" data-leadership-tool="traceability">
       <div class="section-title"><p class="eyebrow">Tool 5</p><h2>Domain 5 traceability.</h2></div>
       <p class="lede">Evidence status refers to Dartmouth Health evidence against each Domain 5 element. The traceability tool is ready to use; local findings remain open until DH evidence is reviewed and validated.</p>
-      <div class="matrix-table"><table><thead><tr><th>Requirement / guidance element</th><th>Local evidence</th><th>Evidence status</th><th>Gap</th><th>Accountable role</th><th>Action</th><th>Validation source</th></tr></thead><tbody>
-        <tr><td>Patient and family engagement structure</td><td></td><td>DH evidence not yet assessed</td><td></td><td></td><td></td><td>AHRQ/CMS source</td></tr>
-        <tr><td>Patient/family input into safety</td><td></td><td>DH evidence not yet assessed</td><td></td><td></td><td></td><td>AHRQ/CMS source</td></tr>
-        <tr><td>Leadership accountability and follow-through</td><td></td><td>DH evidence not yet assessed</td><td></td><td></td><td></td><td>Local governance evidence</td></tr>
-      </tbody></table></div>
+      <details class="audit-table-details">
+        <summary>Inspect full working table</summary>
+        <div class="matrix-table"><table><thead><tr><th>Requirement / guidance element</th><th>Local evidence</th><th>Evidence status</th><th>Gap</th><th>Accountable role</th><th>Action</th><th>Validation source</th></tr></thead><tbody>
+          <tr><td>Patient and family engagement structure</td><td></td><td>DH evidence not yet assessed</td><td></td><td></td><td></td><td>AHRQ/CMS source</td></tr>
+          <tr><td>Patient/family input into safety</td><td></td><td>DH evidence not yet assessed</td><td></td><td></td><td></td><td>AHRQ/CMS source</td></tr>
+          <tr><td>Leadership accountability and follow-through</td><td></td><td>DH evidence not yet assessed</td><td></td><td></td><td></td><td>Local governance evidence</td></tr>
+        </tbody></table></div>
+      </details>
       <p><a class="resource-link" href="/pssm-domain5-traceability.csv">Download CSV template</a></p>
     </section>
 
-    <section id="launch" class="panel">
+    <section id="launch" class="panel leadership-tool-panel" data-leadership-tool="launch">
       <div class="section-title"><p class="eyebrow">Tool 6</p><h2>90-day PFAC operating plan.</h2></div>
       <p class="lede">Sequence the first implementation cycle so leaders validate the current state, launch one bounded workstream, assign ownership, define measures, and close the first report-back loop before expanding scope.</p>
       <div class="card-grid">
@@ -91,5 +132,6 @@
     </section>
   </main>
   <footer><span>APE Deliverable 2</span><span>PFAC Leadership Tools</span></footer>
+  <script src="/leadership-tools.js" defer></script>
 </body>
 </html>
