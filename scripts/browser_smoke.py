@@ -85,6 +85,33 @@ def run_browser_smoke(screenshots_dir: Path | None = None) -> list[str]:
                         for forbidden in FORBIDDEN_COPY:
                             if forbidden.casefold() in body_text.casefold() or forbidden.casefold() in body_html.casefold():
                                 failures.append(f"{label} {route}: retired reviewer-guide content is visible: {forbidden}")
+
+                        if route == "/toolkit-tools.html":
+                            if page.locator("#leadership-tool-select").count() != 1:
+                                failures.append(f"{label} {route}: working-tool selector is missing")
+                            if page.locator("#leadership-focus-select").count() != 1:
+                                failures.append(f"{label} {route}: focus selector is missing")
+                            if page.locator("details.audit-table-details").count() < 5:
+                                failures.append(f"{label} {route}: full audit tables are not preserved")
+                            if not page.locator("#assessment").is_visible():
+                                failures.append(f"{label} {route}: default assessment tool is not visible")
+
+                            page.select_option("#leadership-tool-select", "measurement")
+                            if not page.locator("#measurement").is_visible():
+                                failures.append(f"{label} {route}: measurement tool did not activate")
+                            if page.locator("#assessment").is_visible():
+                                failures.append(f"{label} {route}: inactive assessment tool remained visible")
+                            page.select_option("#leadership-focus-select", "2")
+                            summary_text = page.locator("#leadership-tool-summary").inner_text()
+                            if "Association does not establish downstream clinical effect." not in summary_text:
+                                failures.append(f"{label} {route}: measurement caution did not render in focused summary")
+
+                            page.select_option("#leadership-tool-select", "launch")
+                            if not page.locator("#launch").is_visible():
+                                failures.append(f"{label} {route}: 90-day plan did not activate")
+                            if page.locator("#leadership-focus-wrap").is_visible():
+                                failures.append(f"{label} {route}: focus selector should hide for the 90-day plan")
+
                         overflow = page.evaluate("document.documentElement.scrollWidth > window.innerWidth + 2")
                         if overflow:
                             failures.append(f"{label} {route}: page has horizontal viewport overflow")
