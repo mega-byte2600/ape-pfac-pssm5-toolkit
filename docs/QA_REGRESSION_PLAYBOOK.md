@@ -10,7 +10,7 @@ The site should stay simple, inspectable, and elegant:
 - The lightweight Python server handles routing, API payloads, and security headers.
 - Evidence, calculations, and public copy stay testable as plain files.
 - Supabase integration stays behind the backend interface and must degrade cleanly for demo use.
-- Contextual page navigation should remain intact and important assets must stay discoverable.
+- Navigation improvements should add orientation without flattening contextual page navigation.
 - Internal review, source-control, build, and prompt language must remain outside the public site.
 - The retired `mvp-one.html` and `review-flow.js` assets must remain absent and their routes must return 404.
 
