@@ -1,0 +1,25 @@
+name: Browser Smoke
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  browser-smoke:
+    name: Desktop tablet and mobile interaction smoke
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install project and Playwright
+        run: |
+          python -m pip install . playwright
+          python -m playwright install --with-deps chromium
+      - name: Run browser smoke
+        run: python scripts/browser_smoke.py
