@@ -41,13 +41,12 @@ class WebContractTests(unittest.TestCase):
     def test_core_public_pages_serve_expected_content(self):
         required_pages = {
             "/": ["Turn patient voice into accountable action.", "Evidence-Based PFAC Summary", "DH benchmark", "Applied Analysis", "APE deliverables", "/mvp-one.html"],
-            "/evidence.html": ["Evidence Launch Page", "Evidence-Based PFAC Summary", "PubMed search protocol", "Evidence matrix", "AMA 11 source layer", "/toolkit-scan.html"],
+            "/evidence.html": ["Evidence Launch Page", "Evidence-Based PFAC Summary", "Evidence matrix", "AMA 11 source layer", "/toolkit-scan.html"],
             "/evidence-summary.html": ["Evidence-Based PFAC Summary", "CMS Patient Safety Structural Measure", "Domain 5: Patient and Family Engagement", "evidence base remains limited", "203 respondents"],
             "/dh-benchmark.html": ["Benchmark assessment framework", "not a scored evaluation", "Evidence-backed preliminary findings", "Evidence needed before scoring", "Not yet scored", "Reusable evidence table"],
             "/applied-analysis.html": ["Original local analysis", "72,736", "48.4%", "60.5%", "47.9%", "Explore the local data", "Implementation demonstration", "Host validation required"],
-            "/research-plan.html": ["non-research APE", "confirmation bias", "Search lane 1", "Search lane 2", "Search lane 3", "Screening workflow", "Conflicting, null, or negative findings"],
             "/surveillance-method.html": ["Research Surveillance Method", "PubMed/MyNCBI", "Outlook folders", "Zotero collections", "Weekly review", "Example SQL"],
-            "/bibliography.html": ["AMA 11", "Core research evidence", "Federal and implementation guidance", "Open data and public resources", "Story and acknowledgement resources", "Validation note"],
+            "/bibliography.html": ["AMA 11", "Core research evidence", "Federal and implementation guidance", "Open data and public resources", "Story and acknowledgement resources"],
             "/hai-alert.html": ["HAI", "MRSA", "PFAC", "infection", "escalation", "Evidence synthesis summary", "Interactive HAI dashboard"],
             "/story.html": ["Rosie Bartel", "lived-experience anchor", "does not imply endorsement", "not representative evidence"],
             "/about.html": ["Michael Bolton", "LinkedIn profile", "mailto:michael.bolton.ph@dartmouth.edu", "Notion workspace", "Research surveillance how-to"],
@@ -68,6 +67,13 @@ class WebContractTests(unittest.TestCase):
                 self.assertIn("text/html", headers["Content-Type"])
                 if path != "/":
                     self.assertNotIn("Turn patient voice into accountable action.", body, f"{path} appears to be falling back to homepage")
+
+    def test_internal_review_method_is_not_public(self):
+        self.assertFalse(Path("web/research-plan.html").exists())
+        for page in sorted(Path("web").glob("*.html")):
+            text = page.read_text(encoding="utf-8")
+            self.assertNotIn("/research-plan.html", text, f"{page} still links to the removed internal review method")
+            self.assertNotIn("Validation note:", text, f"{page} exposes internal validation-process copy")
 
     def test_public_pages_have_no_internal_or_generation_spillover(self):
         forbidden_fragments = [
@@ -190,7 +196,6 @@ class WebContractTests(unittest.TestCase):
             "/bibliography.html",
             "/dh-benchmark.html",
             "/toolkit-tools.html",
-            "/research-plan.html",
             "/deliverables.html",
             "/executive-launch.html",
             "/mvp-one.html",
@@ -223,10 +228,10 @@ class WebContractTests(unittest.TestCase):
         self.assertNotIn("Patient advisors can influence health care outcomes when linked to action and measurement", body)
         self.assertNotIn("Improves communication, discharge readiness", body)
 
-    def test_bibliography_contains_current_matrix_sources_and_validation_note(self):
+    def test_bibliography_contains_current_matrix_sources(self):
         body = self.assert_page_contains(
             "/bibliography.html",
-            ["Lewis B, Cochran C, Marquez E", "Lewis B, Cochran C, Shoemaker S", "Rramani Dervishi Q", "Leia MP", "Validation note"],
+            ["Lewis B, Cochran C, Marquez E", "Lewis B, Cochran C, Shoemaker S", "Rramani Dervishi Q", "Leia MP"],
         )
         self.assertIn("not treated as peer-reviewed evidence", body)
 
@@ -377,18 +382,15 @@ class WebContractTests(unittest.TestCase):
                     self.assertNotIn(fragment, body, f"{path} contains raw markdown artifact {fragment!r}")
 
     def test_reviewer_flow_stays_on_public_pages(self):
-        body = self.assert_page_contains("/", ["/evidence-summary.html", "/dh-benchmark.html", "/applied-analysis.html", "/deliverables.html"])
-        self.assertIn('/research-plan.html', body)
-        self.assertIn('/toolkit-tools.html', body)
+        body = self.assert_page_contains("/", ["/evidence-summary.html", "/dh-benchmark.html", "/applied-analysis.html", "/deliverables.html", "/toolkit-tools.html"])
+        self.assertNotIn('/research-plan.html', body)
         self.assertNotIn("github.com", body.casefold())
 
     def test_story_and_evidence_are_separated(self):
-        research_plan = self.assert_page_contains("/research-plan.html", ["not an inclusion requirement"])
         bibliography = self.assert_page_contains("/bibliography.html", ["Rosie Bartel", "not treated as peer-reviewed evidence"])
         story = self.assert_page_contains("/story.html", ["not research evidence", "not representative evidence"])
         self.assertIn("Core research evidence", bibliography)
         self.assertIn("does not imply endorsement", story)
-        self.assertIn("confirmation bias", research_plan)
 
     def test_hai_dashboard_endpoint_still_returns_data_for_reuse(self):
         status, _, body = request("/api/hai-dashboard")
