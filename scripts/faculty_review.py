@@ -11,13 +11,6 @@ REQUIRED = {
         "evidence base remains limited",
         "leadership support",
     ],
-    "web/research-plan.html": [
-        "non-research APE",
-        "Search lane 1",
-        "Screening workflow",
-        "confirmation bias",
-        "conflicting, null, or negative findings",
-    ],
     "web/evidence-matrix.html": [
         "Domain 5: Patient and Family Engagement",
         "Evidence strength / limitation",
@@ -132,6 +125,8 @@ PUBLIC_FORBIDDEN = [
     "large language model",
     "prompt spillover",
     "internal instructions",
+    "/research-plan.html",
+    "Validation note:",
 ]
 
 
@@ -141,6 +136,9 @@ def read(path: str) -> str:
 
 def main() -> int:
     failures: list[str] = []
+
+    if (ROOT / "web/research-plan.html").exists():
+        failures.append("web/research-plan.html: internal review-method page must not be published")
 
     for path, fragments in REQUIRED.items():
         text = read(path)
