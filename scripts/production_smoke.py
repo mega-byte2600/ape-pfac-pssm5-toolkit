@@ -21,13 +21,15 @@ HTML_CHECKS = {
     "/evidence-matrix.html": ["Evidence Matrix"],
     "/bibliography.html": ["Bibliography"],
     "/dh-benchmark.html": ["Benchmark assessment framework"],
-    "/toolkit-tools.html": ["Leadership Tools"],
+    "/toolkit-tools.html": ["Leadership Tools", "Leadership workspace", "leadership-tool-select", "Inspect full working table"],
     "/deliverables.html": ["APE deliverables"],
 }
 
 ASSET_CHECKS = {
     "/app.js": ["Plotly"],
     "/applied-analysis.js": ["Plotly.react"],
+    "/leadership-tools.js": ["leadership-tool-select", "data-leadership-tool", "history.replaceState"],
+    "/leadership-tools.css": [".tool-workspace", ".tool-summary-grid", ".audit-table-details"],
     "/upper-valley-local-analysis.csv": ["Municipality"],
 }
 
