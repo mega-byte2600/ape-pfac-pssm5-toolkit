@@ -28,9 +28,11 @@ HTML_CHECKS = {
 ASSET_CHECKS = {
     "/app.js": ["Plotly"],
     "/applied-analysis.js": ["Plotly.react"],
-    "/review-flow.js": ["Reviewer flow", "/dh-benchmark.html"],
     "/upper-valley-local-analysis.csv": ["Municipality"],
 }
+
+FORBIDDEN_PUBLIC_COPY = ("Reviewer Guide", "/mvp-one.html", "review-flow.js", "Reviewer flow")
+RETIRED_ROUTES = ("/mvp-one.html", "/review-flow.js")
 
 
 def fetch(base_url: str, path: str) -> tuple[int, str, str]:
@@ -39,6 +41,14 @@ def fetch(base_url: str, path: str) -> tuple[int, str, str]:
         content_type = response.headers.get("Content-Type", "")
         body = response.read().decode("utf-8", errors="replace")
         return response.status, content_type, body
+
+
+def fetch_status(base_url: str, path: str) -> tuple[int, str, str]:
+    try:
+        return fetch(base_url, path)
+    except HTTPError as exc:
+        body = exc.read().decode("utf-8", errors="replace")
+        return exc.code, exc.headers.get("Content-Type", ""), body
 
 
 def fail(message: str) -> None:
@@ -70,6 +80,10 @@ def main() -> int:
             if sentinel.casefold() not in body.casefold():
                 fail(f"{path} missing sentinel {sentinel!r}")
                 failures += 1
+        for forbidden in FORBIDDEN_PUBLIC_COPY:
+            if forbidden.casefold() in body.casefold():
+                fail(f"{path} reintroduces retired reviewer-guide content {forbidden!r}")
+                failures += 1
 
     for path, sentinels in ASSET_CHECKS.items():
         try:
@@ -85,6 +99,17 @@ def main() -> int:
             if sentinel.casefold() not in body.casefold():
                 fail(f"{path} missing sentinel {sentinel!r}")
                 failures += 1
+
+    for path in RETIRED_ROUTES:
+        try:
+            status, _, _ = fetch_status(args.base_url, path)
+        except (URLError, TimeoutError) as exc:
+            fail(f"{path} request error: {exc}")
+            failures += 1
+            continue
+        if status != 404:
+            fail(f"retired route {path} returned {status}, expected 404")
+            failures += 1
 
     try:
         status, content_type, body = fetch(args.base_url, "/api/health")
