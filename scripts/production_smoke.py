@@ -22,13 +22,13 @@ HTML_CHECKS = {
     "/bibliography.html": ["Bibliography"],
     "/dh-benchmark.html": ["Benchmark assessment framework"],
     "/toolkit-tools.html": ["Leadership Tools"],
-    "/research-plan.html": ["Review Method"],
     "/deliverables.html": ["APE deliverables"],
 }
 
 ASSET_CHECKS = {
     "/app.js": ["Plotly"],
     "/applied-analysis.js": ["Plotly.react"],
+    "/review-flow.js": ["Reviewer flow", "/dh-benchmark.html"],
     "/upper-valley-local-analysis.csv": ["Municipality"],
 }
 

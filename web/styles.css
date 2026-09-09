@@ -81,6 +81,45 @@ nav a {
   border-radius: 999px;
 }
 nav a:hover { color: var(--dartmouth-green); background: rgba(0, 105, 62, .08); }
+.review-flow {
+  display: flex;
+  justify-content: center;
+  gap: .45rem;
+  padding: .65rem clamp(1rem, 3vw, 3rem);
+  background: rgba(251, 250, 246, .94);
+  border-bottom: 1px solid rgba(18, 49, 43, .10);
+  backdrop-filter: blur(14px);
+  overflow-x: auto;
+}
+.review-flow a {
+  flex: 0 0 auto;
+  color: var(--forest);
+  background: white;
+  border: 1px solid rgba(18, 49, 43, .10);
+  box-shadow: 0 6px 18px rgba(18, 49, 43, .05);
+}
+.review-flow a::before {
+  content: attr(data-step);
+  display: inline-grid;
+  place-items: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-right: .35rem;
+  border-radius: 999px;
+  background: rgba(0, 105, 62, .10);
+  color: var(--dartmouth-green);
+  font-size: .72rem;
+  font-weight: 950;
+}
+.review-flow a[aria-current="page"] {
+  color: white;
+  background: var(--dartmouth-green);
+  border-color: var(--dartmouth-green);
+}
+.review-flow a[aria-current="page"]::before {
+  background: rgba(255, 255, 255, .22);
+  color: white;
+}
 
 main {
   width: min(1160px, calc(100% - 2rem));
@@ -409,6 +448,7 @@ footer {
 @media (max-width: 900px) {
   .site-header { align-items: flex-start; flex-direction: column; }
   nav { justify-content: flex-start; }
+  .review-flow { justify-content: flex-start; }
   .hero-executive, .hero-grid, .patient-first, .card-grid, .evidence-grid, .step-list, .stat-grid, .dashboard-grid, .action-grid { grid-template-columns: 1fr; }
   .hero { min-height: auto; }
   h1 { font-size: clamp(2.15rem, 13vw, 3.55rem); }
