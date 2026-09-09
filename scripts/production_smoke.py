@@ -22,6 +22,14 @@ HTML_CHECKS = {
     "/bibliography.html": ["Bibliography"],
     "/dh-benchmark.html": ["Benchmark assessment framework"],
     "/toolkit-tools.html": ["Leadership Tools", "Leadership workspace", "leadership-tool-select", "Inspect full working table"],
+    "/surveillance-method.html": [
+        "Build a literature surveillance system you can actually run every week.",
+        "APE_MASTER_PFAC_Inpatient_Experience_Safety",
+        "APE_ALERTS_MASTER",
+        "APE_HIGH_VALUE",
+        "Bolton TDI APE 27",
+        "Keep the architecture. Change the topic.",
+    ],
     "/deliverables.html": ["APE deliverables"],
 }
 
