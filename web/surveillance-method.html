@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Reusable research surveillance and evidence cataloging method for PubMed, MyNCBI, Outlook, Zotero, SQL-based evidence tracking, and collaborative review.">
+  <meta name="description" content="Step-by-step reproducible evidence surveillance setup using PubMed, My NCBI, Outlook rules, My NCBI collections, and a shared Zotero library.">
   <title>Surveillance Method | PFAC PSSM 5 Toolkit</title>
   <link rel="stylesheet" href="/styles.css">
 </head>
@@ -17,160 +17,225 @@
   <main id="main">
     <section class="hero hero-executive">
       <div class="hero-copy">
-        <p class="eyebrow">Reusable method • PubMed/MyNCBI • Outlook • Zotero • SQL • Notion-ready</p>
-        <h1>Build a living evidence system other researchers can reuse.</h1>
-        <p class="lead">This method shows how to turn literature alerts into a structured evidence catalog that supports research, public health practice, quality improvement, collaboration, and implementation decisions.</p>
+        <p class="eyebrow">How-to • PubMed • My NCBI • Outlook • Zotero</p>
+        <h1>Build a literature surveillance system you can actually run every week.</h1>
+        <p class="lead">This guide shows exactly how to create a repeatable evidence pipeline: build saved PubMed searches, turn them into My NCBI alerts, route the alerts automatically in Outlook, curate high-value studies into My NCBI collections, and maintain a shared Zotero library.</p>
         <div class="actions">
-          <a class="button" href="#architecture">View architecture</a>
-          <a class="button secondary" href="#sql">Example SQL</a>
-          <a class="button secondary" href="/collaboration.html">Collaboration layer</a>
+          <a class="button" href="#setup">Start setup</a>
+          <a class="button secondary" href="#sample-query">Copy sample query</a>
+          <a class="button secondary" href="#weekly">Weekly workflow</a>
         </div>
       </div>
       <aside class="hero-dashboard" aria-label="Method highlights">
-        <div class="dash-card dark"><span>Input</span><strong>Alerts</strong><p>PubMed and MyNCBI searches become continuous evidence feeds.</p></div>
-        <div class="dash-card"><span>Processing</span><strong>Triage</strong><p>Outlook folders and rules separate signal from noise.</p></div>
-        <div class="dash-card"><span>Output</span><strong>Action</strong><p>Zotero, SQL, Notion, and the matrix convert sources into decisions.</p></div>
+        <div class="dash-card dark"><span>1</span><strong>Capture</strong><p>Saved PubMed searches continuously watch the literature.</p></div>
+        <div class="dash-card"><span>2</span><strong>Route</strong><p>Outlook rules automatically sort each alert stream.</p></div>
+        <div class="dash-card"><span>3</span><strong>Curate</strong><p>My NCBI collections and Zotero keep only what matters.</p></div>
       </aside>
     </section>
 
     <section class="panel executive-summary highlight-panel">
-      <div class="section-title"><p class="eyebrow">Standalone contribution</p><h2>This is a method others can apply to their own research topics.</h2></div>
-      <p class="lede">The surveillance system is a repeatable method for students, researchers, analysts, PFAC members, patients, care partners, and health system teams who need to monitor literature, organize sources, and translate evidence into action.</p>
-      <p>The model works for PFACs and PSSM 5, but it can also be adapted to other public health, clinical quality, patient safety, health services research, policy, or implementation science topics.</p>
-    </section>
-
-    <section id="architecture" class="panel">
-      <div class="section-title"><p class="eyebrow">System architecture</p><h2>Search strategy to surveillance to catalog to action.</h2></div>
+      <div class="section-title"><p class="eyebrow">Purpose</p><h2>Three connected layers create one reproducible system.</h2></div>
       <div class="card-grid">
-        <article class="card premium-card"><span class="tag">1. Define lanes</span><h3>Research questions</h3><p>Create topic lanes before searching so alerts are meaningful. Example lanes: PFAC governance, patient experience and safety, HAI/MRSA patient engagement, co-production, and implementation.</p></article>
-        <article class="card premium-card"><span class="tag">2. Build searches</span><h3>PubMed/MyNCBI</h3><p>Use Boolean logic, MeSH terms, title/abstract terms, and saved searches. Turn high-value searches into recurring MyNCBI email alerts.</p></article>
-        <article class="card premium-card"><span class="tag">3. Route alerts</span><h3>Outlook folders</h3><p>Create rules that move PubMed and NCBI alert emails into dedicated research folders by topic lane, date, or project.</p></article>
-        <article class="card premium-card"><span class="tag">4. Catalog sources</span><h3>Zotero collections</h3><p>Save accepted sources into named collections so the bibliography, annotated bibliography, and source map stay organized.</p></article>
-        <article class="card premium-card"><span class="tag">5. Collaborate</span><h3>Notion workspace</h3><p>Use a controlled collaboration layer for source suggestions, benchmark examples, reviewer notes, and toolkit improvement ideas.</p></article>
-        <article class="card premium-card"><span class="tag">6. Translate</span><h3>Evidence matrix</h3><p>Move the best sources into the evidence-to-action matrix so literature becomes operational guidance, not a passive reading list.</p></article>
+        <article class="card premium-card"><span class="tag">Search system</span><h3>PubMed + My NCBI</h3><p>Saved searches act as a continuous surveillance engine. Each query watches a specific domain and sends new results automatically.</p></article>
+        <article class="card premium-card"><span class="tag">Intake system</span><h3>Email + Outlook rules</h3><p>Each alert is routed to a matching folder using the saved-search name in the email subject line, keeping streams separate and reviewable.</p></article>
+        <article class="card premium-card"><span class="tag">Knowledge system</span><h3>Collections + Zotero</h3><p>Saved searches capture incoming evidence. Collections and Zotero organize the studies that actually matter into a reusable evidence base.</p></article>
       </div>
+      <p><strong>System flow:</strong> PubMed → My NCBI alert → email → Outlook rule → review folder → human screening → My NCBI collection → shared Zotero library → annotated bibliography, executive synthesis, and toolkit updates.</p>
     </section>
 
-    <section class="panel patient-first">
-      <div>
-        <p class="eyebrow">Operating model</p>
-        <h2>Weekly review keeps the evidence current and usable.</h2>
-        <p>The weekly cycle is simple: review alerts, remove duplicates, screen abstracts, save accepted sources, tag by topic lane, update the evidence catalog, promote high-value sources into the matrix, document what changed in the toolkit, and route collaboration inputs for review.</p>
+    <section id="setup" class="panel">
+      <div class="section-title"><p class="eyebrow">Step 1</p><h2>Create the PubMed search.</h2></div>
+      <p>Start with one broad master query that captures the core topic. The example below is the APE master search. Another user can reproduce the method by keeping the structure and replacing topic terms with terms relevant to their own project.</p>
+      <div id="sample-query" class="references">
+        <h3>Sample master query</h3>
+        <pre><code>(
+ "Patient Participation"[Mesh]
+ OR "Patient-Centered Care"[Mesh]
+ OR "Community Participation"[Mesh]
+ OR PFAC[tiab]
+ OR PFACs[tiab]
+ OR "patient and family advisory council"[tiab]
+ OR "patient and family advisory councils"[tiab]
+ OR "patient engagement"[tiab]
+ OR "patient voice"[tiab]
+ OR "patient partnership"[tiab]
+ OR "patient partnerships"[tiab]
+ OR codesign[tiab]
+ OR "co-design"[tiab]
+)
+AND
+(
+ "Hospitals"[Mesh]
+ OR "Inpatients"[Mesh]
+ OR hospital*[tiab]
+ OR inpatient*[tiab]
+ OR "acute care"[tiab]
+)
+AND
+(
+ "Patient Safety"[Mesh]
+ OR "Quality Improvement"[Mesh]
+ OR "patient experience"[tiab]
+ OR "inpatient experience"[tiab]
+ OR "patient reported experience"[tiab]
+ OR "patient reported experiences"[tiab]
+ OR PREM[tiab]
+ OR PREMs[tiab]
+ OR "patient safety"[tiab]
+ OR "safety culture"[tiab]
+ OR "access to care"[tiab]
+)</code></pre>
       </div>
-      <div class="question-stack">
-        <div class="question">Did this source change the evidence base?</div>
-        <div class="question">Does it support a patient benefit or reveal patient risk?</div>
-        <div class="question">Does it create a PFAC question or leadership action?</div>
-        <div class="question">Does it belong in the bibliography, matrix, toolkit, or collaboration backlog?</div>
+      <div class="card-grid">
+        <article class="card"><span class="tag">Do this</span><h3>Run the query in PubMed.</h3><p>Check that the results are broadly on-topic. If the search is too narrow, remove unnecessary restrictions. If it is too broad, refine the topic terms before saving it.</p></article>
+        <article class="card"><span class="tag">Why</span><h3>Keep capture broad.</h3><p>The saved search is the surveillance layer. Human screening and collections decide what is actually retained, so the capture step should not be over-filtered.</p></article>
       </div>
     </section>
 
     <section class="panel">
-      <div class="section-title"><p class="eyebrow">Folder and collection model</p><h2>Use consistent names so the system is teachable and auditable.</h2></div>
+      <div class="section-title"><p class="eyebrow">Step 2</p><h2>Save the searches in My NCBI and turn on alerts.</h2></div>
+      <ol class="step-list">
+        <li class="step"><h3>Sign in to My NCBI.</h3><p>Run the PubMed search while signed in.</p></li>
+        <li class="step"><h3>Save the search.</h3><p>Use the saved-search function in PubMed/My NCBI and give the search a clear, stable name.</p></li>
+        <li class="step"><h3>Enable email alerts.</h3><p>Choose email delivery, use Abstract format, and request approximately 25 to 100 items so enough context is available for screening.</p></li>
+        <li class="step"><h3>Set the cadence.</h3><p>High-volume master and experience streams are reviewed weekly. More targeted streams are reviewed monthly.</p></li>
+      </ol>
+      <div class="matrix-table">
+        <table>
+          <thead><tr><th>Saved search example</th><th>Purpose</th><th>Cadence</th></tr></thead>
+          <tbody>
+            <tr><td>APE_MASTER_PFAC_Inpatient_Experience_Safety</td><td>Broad master surveillance stream</td><td>Weekly</td></tr>
+            <tr><td>APE_PFAC_Core</td><td>PFAC-specific evidence</td><td>Monthly</td></tr>
+            <tr><td>APE_Experience_Access</td><td>Patient experience and access</td><td>Weekly</td></tr>
+            <tr><td>APE_PSSM_Structural</td><td>PSSM and structural policy evidence</td><td>Monthly</td></tr>
+            <tr><td>APE_Implementation_Frameworks</td><td>Implementation and toolkit evidence</td><td>Monthly</td></tr>
+            <tr><td>APE_Learning_System</td><td>Learning-system and improvement evidence</td><td>Monthly</td></tr>
+            <tr><td>APE_High_Evidence</td><td>Systematic reviews and higher-level evidence</td><td>Monthly</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="section-title"><p class="eyebrow">Step 3</p><h2>Create the Outlook folders before creating the rules.</h2></div>
+      <p>Create one folder for each evidence stream so alerts never arrive as one mixed inbox.</p>
       <div class="card-grid">
-        <article class="card"><span class="tag">Outlook</span><h3>Suggested folders</h3><p>Research Alerts, PFAC, Patient Experience, PSSM Policy, HAI/MRSA, Implementation, To Screen, Accepted, Excluded, Needs Full Text.</p></article>
-        <article class="card"><span class="tag">Zotero</span><h3>Suggested collections</h3><p>APE_HIGH_VALUE, APE_PFAC, APE_EXPERIENCE_ACCESS, APE_PSSM_POLICY, APE_IMPLEMENTATION, APE_HAI_SAFETY, APE_METHODS.</p></article>
-        <article class="card"><span class="tag">Notion</span><h3>Suggested workspaces</h3><p>Source Intake, PFAC Benchmark Catalog, Evidence Review Queue, Evidence-to-Action Map, Toolkit Backlog, Contributor Notes.</p></article>
+        <article class="card"><span class="tag">Folder</span><h3>APE_ALERTS_MASTER</h3><p>Master PFAC, inpatient experience, and safety stream.</p></article>
+        <article class="card"><span class="tag">Folder</span><h3>APE_ALERTS_PFAC</h3><p>PFAC-specific stream.</p></article>
+        <article class="card"><span class="tag">Folder</span><h3>APE_ALERTS_EXP</h3><p>Experience and access stream.</p></article>
+        <article class="card"><span class="tag">Folder</span><h3>APE_ALERTS_PSSM</h3><p>PSSM structural stream.</p></article>
+        <article class="card"><span class="tag">Folder</span><h3>APE_ALERTS_IMPL</h3><p>Implementation-framework stream.</p></article>
+        <article class="card"><span class="tag">Folder</span><h3>APE_ALERTS_LHS</h3><p>Learning-system stream.</p></article>
+        <article class="card"><span class="tag">Folder</span><h3>APE_ALERTS_SR</h3><p>Systematic-review and higher-evidence validation stream.</p></article>
       </div>
     </section>
 
     <section class="panel executive-summary highlight-panel">
-      <div class="section-title"><p class="eyebrow">Collaboration layer</p><h2>Open science needs a working room.</h2></div>
-      <p>The public website publishes the method and evidence trail. The Notion workspace supports contributor intake, source triage, benchmark review, backlog management, and shared learning.</p>
-      <p><a class="resource-link" href="/collaboration.html">Open the collaboration model</a></p>
-    </section>
+      <div class="section-title"><p class="eyebrow">Step 4</p><h2>Create one Outlook rule per saved search.</h2></div>
+      <p class="lede">The logic is intentionally simple so it is reproducible.</p>
+      <div class="card-grid">
+        <article class="card"><span class="tag">Condition</span><h3>Subject contains saved-search name.</h3><p>Use the exact My NCBI saved-search name as the subject-match condition.</p></article>
+        <article class="card"><span class="tag">Action</span><h3>Move to matching folder.</h3><p>Route the alert into the folder assigned to that search stream.</p></article>
+        <article class="card"><span class="tag">Option</span><h3>Stop processing more rules.</h3><p>This prevents one message from being moved again by a later rule.</p></article>
+      </div>
+      <div class="references">
+        <h3>Example rule</h3>
+        <pre><code>Rule name:
+RULE_APE_MASTER_PFAC_Inpatient_Experience_Safety
 
-    <section id="sql" class="panel references">
-      <div class="section-title"><p class="eyebrow">Example SQL</p><h2>Starter schema for a reusable evidence catalog.</h2></div>
-      <pre><code>create table search_queries (
-  query_id text primary key,
-  topic_lane text not null,
-  database_name text not null,
-  query_text text not null,
-  date_created date not null,
-  alert_enabled boolean default true,
-  notes text
-);
+Condition:
+Subject contains APE_MASTER_PFAC_Inpatient_Experience_Safety
 
-create table sources (
-  source_id text primary key,
-  date_captured date not null,
-  source_type text not null,
-  topic_lane text not null,
-  title text not null,
-  authors text,
-  journal_or_publisher text,
-  publication_year int,
-  pmid text,
-  doi text,
-  url text,
-  zotero_key text,
-  abstract_notes text,
-  relevance_summary text,
-  evidence_use text,
-  patient_benefit text,
-  patient_risk_if_ignored text,
-  pfac_action text,
-  leadership_action text,
-  metric_connection text,
-  competency_connection text,
-  status text default 'Captured'
-);
+Action:
+Move to APE_ALERTS_MASTER
 
-create table surveillance_alerts (
-  alert_id text primary key,
-  query_id text references search_queries(query_id),
-  received_at timestamp not null,
-  email_folder text,
-  source_id text references sources(source_id),
-  triage_status text default 'To Screen'
-);
-
-create table collaboration_items (
-  item_id text primary key,
-  submitted_at timestamp not null,
-  submitter_role text,
-  item_type text not null,
-  title text not null,
-  url text,
-  topic_lane text,
-  notes text,
-  review_status text default 'Submitted',
-  reviewer_notes text
-);
-
-create table evidence_tags (
-  tag_id text primary key,
-  tag_name text not null unique,
-  tag_type text not null
-);
-
-create table source_tags (
-  source_id text references sources(source_id),
-  tag_id text references evidence_tags(tag_id),
-  primary key (source_id, tag_id)
-);
-
-create table evidence_actions (
-  action_id text primary key,
-  source_id text references sources(source_id),
-  action_type text not null,
-  action_summary text not null,
-  owner_role text,
-  due_date date,
-  status text default 'Proposed'
-);</code></pre>
+Option:
+Stop processing more rules</code></pre>
+      </div>
+      <p><strong>Result:</strong> PubMed → My NCBI alert → email → Outlook rule → matching review folder.</p>
     </section>
 
     <section class="panel">
-      <div class="section-title"><p class="eyebrow">Replication guide</p><h2>How another researcher can use this method.</h2></div>
+      <div class="section-title"><p class="eyebrow">Step 5</p><h2>Create My NCBI collections for what you decide to keep.</h2></div>
+      <p>Saved searches capture incoming evidence. Collections are different: they are the curated knowledge buckets containing studies that passed human review.</p>
       <ol class="step-list">
-        <li class="step"><h3>Choose a topic</h3><p>Define a practical question that requires ongoing evidence surveillance.</p></li>
-        <li class="step"><h3>Create search lanes</h3><p>Separate the topic into 3 to 5 focused lanes rather than one oversized search.</p></li>
-        <li class="step"><h3>Save PubMed searches</h3><p>Use MyNCBI alerts to receive new results on a regular cadence.</p></li>
-        <li class="step"><h3>Route emails</h3><p>Use Outlook rules to move alerts into triage folders automatically.</p></li>
-        <li class="step"><h3>Catalog accepted sources</h3><p>Save sources in Zotero and record key metadata in the SQL catalog.</p></li>
-        <li class="step"><h3>Translate evidence</h3><p>Promote high-value sources into an evidence matrix and update the product, paper, or implementation plan.</p></li>
+        <li class="step"><h3>Open PubMed.</h3><p>Collections are created from PubMed, not from the My NCBI dashboard alone.</p></li>
+        <li class="step"><h3>Run a search and select an article.</h3><p>Choose at least one record you want to retain.</p></li>
+        <li class="step"><h3>Select Send to → Collections.</h3><p>Create a new collection or add the article to an existing one.</p></li>
+      </ol>
+      <div class="card-grid">
+        <article class="card"><span class="tag">Collection</span><h3>APE_HIGH_VALUE</h3><p>Systematic reviews, umbrella reviews, and especially useful implementation evidence.</p></article>
+        <article class="card"><span class="tag">Collection</span><h3>APE_PFAC</h3><p>PFAC-specific research.</p></article>
+        <article class="card"><span class="tag">Collection</span><h3>APE_EXPERIENCE_ACCESS</h3><p>Patient experience, communication, and access evidence.</p></article>
+        <article class="card"><span class="tag">Collection</span><h3>APE_PSSM_POLICY</h3><p>Policy, governance, and structural-measure material.</p></article>
+        <article class="card"><span class="tag">Collection</span><h3>APE_IMPLEMENTATION</h3><p>Toolkits, interventions, and implementation evidence.</p></article>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="section-title"><p class="eyebrow">Step 6</p><h2>Use a simple curation decision engine.</h2></div>
+      <div class="card-grid">
+        <article class="card"><span class="tag">Include</span><h3>Keep studies that fit the practice question.</h3><p>Hospital or inpatient studies; interventions and toolkits; system-level research; PFAC or engagement studies; and work linking experience, safety, access, or implementation.</p></article>
+        <article class="card"><span class="tag">Exclude</span><h3>Remove clearly off-scope material.</h3><p>Out-of-hospital settings, irrelevant populations, and material that does not inform the defined practice question or evidence map.</p></article>
+        <article class="card"><span class="tag">Guardrail</span><h3>Do not use filters as the methodology.</h3><p>Humans-only, systematic-review/meta-analysis, and free-full-text filters are temporary tools for curation, validation, or reading. They are not part of the core search methodology.</p></article>
+      </div>
+      <div class="matrix-table">
+        <table>
+          <thead><tr><th>Study type</th><th>Route to</th></tr></thead>
+          <tbody>
+            <tr><td>Toolkit / intervention</td><td>APE_IMPLEMENTATION + APE_HIGH_VALUE</td></tr>
+            <tr><td>Systematic / umbrella review</td><td>APE_HIGH_VALUE</td></tr>
+            <tr><td>PFAC-specific</td><td>APE_PFAC</td></tr>
+            <tr><td>Experience / communication</td><td>APE_EXPERIENCE_ACCESS</td></tr>
+            <tr><td>Policy / governance</td><td>APE_PSSM_POLICY</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="weekly" class="panel patient-first">
+      <div>
+        <p class="eyebrow">Step 7</p>
+        <h2>Run the system on a small, predictable cadence.</h2>
+        <p><strong>Weekly, about 10–15 minutes:</strong> open Outlook, review APE_ALERTS_MASTER and the high-volume experience stream, scan titles and abstracts, identify high-signal records, open them in PubMed, and route accepted studies into the appropriate collections.</p>
+        <p><strong>Monthly validation:</strong> review APE_ALERTS_SR and the other targeted streams, then confirm that systematic reviews or higher-level evidence still align with the working evidence base.</p>
+      </div>
+      <div class="question-stack">
+        <div class="question">Is this study relevant to the defined practice question?</div>
+        <div class="question">Does it change, strengthen, or challenge the current evidence base?</div>
+        <div class="question">Which collection should receive it?</div>
+        <div class="question">Should it update the bibliography, executive summary, matrix, or toolkit?</div>
+      </div>
+    </section>
+
+    <section class="panel executive-summary highlight-panel">
+      <div class="section-title"><p class="eyebrow">Step 8</p><h2>Use Zotero as the shared working library.</h2></div>
+      <p class="lede">My NCBI collections organize evidence inside PubMed. Zotero adds collaboration, tagging, annotations, citation management, and a shared source trail.</p>
+      <div class="card-grid">
+        <article class="card"><span class="tag">Add</span><h3>Send accepted articles to Zotero.</h3><p>Add records directly from PubMed using the Zotero browser connector or citation export.</p></article>
+        <article class="card"><span class="tag">Tag</span><h3>Use topic tags.</h3><p>Tag sources with terms such as PFAC, experience, PSSM, implementation, safety, access, or other project-specific domains.</p></article>
+        <article class="card"><span class="tag">Share</span><h3>Create a group library.</h3><p>The APE used the shared group library “Bolton TDI APE 27” with the preceptor. Another researcher can reproduce the same approach with a project-specific shared group library.</p></article>
+        <article class="card"><span class="tag">Maintain</span><h3>Annotate and update.</h3><p>Use the shared library as the working evidence base for annotations, bibliography development, cross-topic filtering, and review with collaborators.</p></article>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="section-title"><p class="eyebrow">What this produces</p><h2>A surveillance system is useful only if it feeds the work.</h2></div>
+      <div class="card-grid">
+        <article class="card premium-card"><span class="tag">Output</span><h3>Curated annotated bibliography</h3><p>Accepted sources remain organized and traceable for annotation and synthesis.</p></article>
+        <article class="card premium-card"><span class="tag">Output</span><h3>Executive evidence base</h3><p>New evidence can be incorporated into the executive summary when it materially changes the findings.</p></article>
+        <article class="card premium-card"><span class="tag">Output</span><h3>PSSM / PFAC roadmap inputs</h3><p>Implementation, governance, experience, and policy evidence can be routed directly into leadership tools and roadmap decisions.</p></article>
+        <article class="card premium-card"><span class="tag">Output</span><h3>Reproducible research pipeline</h3><p>The same skeleton can be reused for another APE, ILE, public-health question, or health-system improvement topic by changing queries, folders, collections, and tags.</p></article>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="section-title"><p class="eyebrow">Adapt it</p><h2>Keep the architecture. Change the topic.</h2></div>
+      <ol class="step-list">
+        <li class="step"><h3>Replace the topic terms in the PubMed query.</h3><p>Keep the Boolean structure and database-specific field logic, but use terms relevant to the new research question.</p></li>
+        <li class="step"><h3>Rename the saved searches and Outlook folders.</h3><p>Use a consistent naming convention so each alert can be matched reliably to one folder.</p></li>
+        <li class="step"><h3>Create collections that reflect the new evidence domains.</h3><p>Collections should represent the decisions the researcher needs to make, not just broad subject labels.</p></li>
+        <li class="step"><h3>Keep human curation in the loop.</h3><p>Automation captures and routes evidence; the researcher still decides what is relevant, how strong it is, and where it belongs.</p></li>
       </ol>
     </section>
   </main>
