@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "baseline": {
+    "name": "Bolton TDI APE 27",
+    "export_n": 51,
+    "registry": "canonical_sources.json"
+  },
+  "policy": "Do not alter the baseline denominator. Sources beyond the canonical 51 are added here only through an explicit append decision and are classified by type.",
+  "allowed_classes": [
+    "peer_reviewed_research",
+    "government_or_regulatory",
+    "implementation_guidance",
+    "public_data",
+    "health_system_resource",
+    "conceptual_or_theoretical",
+    "lived_experience",
+    "other_contextual"
+  ],
+  "records": []
+}
