@@ -1,4 +1,6 @@
-# APE PFAC Leadership Toolkit
+# Evidence-Based Approach to Improve Outcomes for Patient-Care Experience
+
+*Playbook for Improving Inpatient and Ambulatory Care Experience*
 
 This repository contains an MPH Applied Practice Experience focused on Patient and Family Advisory Councils, patient and family engagement, and the CMS Patient Safety Structural Measure, Domain 5: Patient and Family Engagement.
 
