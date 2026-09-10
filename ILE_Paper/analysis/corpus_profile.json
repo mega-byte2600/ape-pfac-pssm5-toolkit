@@ -1,0 +1,49 @@
+{
+  "project": "ILE_Paper",
+  "source_of_truth": {
+    "file": "data/raw/BOLTON_TDI_APE_27_ALL_ITEMS.json",
+    "export_n": 51,
+    "append_policy": "Do not add external evidence unless explicitly instructed to append."
+  },
+  "source_sha256": "510f3d91d256081749a5b52f496bef87d2a3605a4d92b154c7d416137bad014a",
+  "item_types": {
+    "attachment": 2,
+    "book": 1,
+    "bookSection": 1,
+    "journalArticle": 32,
+    "videoRecording": 1,
+    "webpage": 14
+  },
+  "metadata_completeness": {
+    "abstract": 32,
+    "doi": 29,
+    "url": 37,
+    "pmid": 14
+  },
+  "date_coverage": {
+    "dated_items": 35,
+    "undated_items": 16,
+    "earliest_year": 2003,
+    "latest_year": 2025
+  },
+  "quality_accounting": {
+    "duplicate_groups": [
+      {
+        "doi": "10.1007/s11606-018-4565-9",
+        "keys": [
+          "LKVUVKG2",
+          "C63N797X"
+        ],
+        "title": "Patient, Family, and Community Advisory Councils in Health Care and Research: a Systematic Review"
+      }
+    ],
+    "retracted_records": [
+      {
+        "key": "ICZGXLJB",
+        "title": "RETRACTED: Association Between Physician Burnout and Patient Safety, Professionalism, and Patient Satisfaction: A Systematic Review and Meta-analysis | Professional Well-being | JAMA Internal Medicine | JAMA Network"
+      }
+    ],
+    "unique_after_deduplication": 50,
+    "unique_after_deduplication_and_retraction_exclusion": 49
+  }
+}
