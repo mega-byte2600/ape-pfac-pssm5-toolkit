@@ -42,8 +42,8 @@ class WebContractTests(unittest.TestCase):
 
     def test_core_public_pages_serve_expected_content(self):
         required_pages = {
-            "/": ["Turn patient voice into accountable action.", "Evidence-Based PFAC Summary", "DH benchmark", "Applied Analysis", "APE deliverables"],
-            "/evidence.html": ["Evidence Launch Page", "Evidence-Based PFAC Summary", "Evidence matrix", "AMA 11 source layer", "/toolkit-scan.html"],
+            "/": ["Turn patient voice into accountable action through", "Evidence-Based PFAC Summary", "DH benchmark", "Applied Analysis", "APE deliverables"],
+            "/evidence.html": ["Evidence launch page", "Evidence-Based PFAC Summary", "Evidence matrix", "AMA 11 source layer", "/toolkit-scan.html"],
             "/evidence-summary.html": ["Evidence-Based PFAC Summary", "CMS Patient Safety Structural Measure", "Domain 5: Patient and Family Engagement", "evidence base remains limited", "203 respondents"],
             "/dh-benchmark.html": ["Benchmark assessment framework", "not a scored evaluation", "Evidence-backed preliminary findings", "Evidence needed before scoring", "Not yet scored", "Reusable evidence table"],
             "/applied-analysis.html": ["Original local analysis", "72,736", "48.4%", "60.5%", "47.9%", "Explore the local data", "Implementation demonstration", "Host validation required"],
@@ -180,9 +180,9 @@ class WebContractTests(unittest.TestCase):
         self.assertEqual(
             links,
             [
-                ("/evidence-summary.html", "Summary"),
-                ("/surveillance-method.html", "Method"),
-                ("/evidence-matrix.html", "Matrix"),
+                ("/evidence-summary.html", "Evidence Summary"),
+                ("/surveillance-method.html", "Surveillance Method"),
+                ("/applied-analysis.html", "Applied Analysis"),
                 ("/hai-alert.html", "HAI Alert"),
                 ("/about.html", "About"),
             ],
