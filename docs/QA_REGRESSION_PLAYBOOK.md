@@ -79,6 +79,20 @@ python3 scripts/production_smoke.py --expected-sha <commit-sha>
 
 Use production smoke to confirm the deployed site is serving the intended revision, core public pages, key JavaScript assets, CSV data, health endpoint, and 404 responses for retired routes.
 
+## Production Responsibilities
+
+Five responsibilities must be covered before a public release. One person may cover more than one role, but each decision needs an owner and recorded evidence.
+
+| Responsibility | Release decision | Evidence required |
+| --- | --- | --- |
+| Content and evidence | Claims, citations, calculations, and evidence boundaries are accurate. | Faculty review pass, source checks, and reconciled calculations. |
+| Editorial | Public language is clear, consistent, and free of internal process text. | Whole-site copy review and spillover scan. |
+| QA and V&V | Routes, links, tools, tables, charts, and responsive layouts behave as intended. | Unit tests, extended public smoke, and browser audit. |
+| Accessibility and privacy | Keyboard access, readable layouts, safe external links, and PHI boundaries are preserved. | Accessibility review, mobile checks, and privacy-language inspection. |
+| Release and operations | The intended revision deploys and remains observable and recoverable. | Clean commit, CI pass, Render health check, production smoke, and rollback reference. |
+
+The release owner records the commit SHA, test results, deployment status, production smoke result, and any accepted limitations. A failed evidence-boundary, route, link, privacy, or production-health check blocks release.
+
 ## Agile Working Agreement
 
 - Keep tests close to the risk being changed.

@@ -84,7 +84,7 @@ class ExecutiveValueContractTests(unittest.TestCase):
         )
         for fragment in forbidden:
             self.assertNotIn(fragment.casefold(), body.casefold())
-        self.assertIn("Deliverable 2", body)
+        self.assertIn("Executive decision support", body)
         self.assertIn("without claiming outcomes the evidence does not establish", body)
 
     def test_new_page_has_no_internal_build_or_model_spillover(self):

@@ -16,5 +16,21 @@
     "lived_experience",
     "other_contextual"
   ],
-  "records": []
+  "records": [
+    {
+      "append_id": "APPEND-2026-09-19-001",
+      "source_class": "peer_reviewed_research",
+      "title": "Use of Hospital Patient and Family Advisory Councils: A Scoping Study",
+      "citation_ama11": "Lewis B, Cochran C, Marquez E, et al. Use of hospital patient and family advisory councils: a scoping study. J Patient Exp. 2025;12:23743735251316995. doi:10.1177/23743735251316995",
+      "doi": "10.1177/23743735251316995",
+      "pmid": "39931354",
+      "pmcid": "PMC11808756",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11808756/",
+      "append_decision": "approved_history_anchor_designation",
+      "counting_status": "non_counting_designation",
+      "rationale": "PFAC history anchor. The study identifies Boston Children's Hospital as one of the first hospitals to establish a PFAC, in 1982, and reviews 143 articles on hospital PFAC use, engagement, measurement, and success factors.",
+      "baseline_handling": "The locked canonical export already contains this DOI under Zotero key YZF6JAB4. That historical record is unchanged. This explicit append designation does not change the canonical N = 51 denominator and must not be counted as a second source.",
+      "excluded_artifact": "research/BRANT_J_OLIVER_PFAC_PSSM_LHS_DISCOVERY.json"
+    }
+  ]
 }

@@ -1,4 +1,5 @@
 import csv
+import json
 import re
 import unittest
 from pathlib import Path
@@ -61,6 +62,32 @@ class EvidenceIntegrityTests(unittest.TestCase):
         ]
         for doi in dois:
             self.assertIn(doi, self.bibliography_html)
+
+    def test_pfac_history_anchor_is_append_designated_without_changing_baseline(self):
+        canonical = json.loads((ROOT / "evidence" / "canonical_sources.json").read_text(encoding="utf-8"))
+        append = json.loads((ROOT / "evidence" / "append_registry.json").read_text(encoding="utf-8"))
+        brant = (ROOT / "research" / "BRANT_J_OLIVER_PFAC_PSSM_LHS_DISCOVERY.json").read_text(encoding="utf-8")
+        doi = "10.1177/23743735251316995"
+
+        self.assertEqual(canonical["source_export_n"], 51)
+        self.assertEqual(len(canonical["records"]), 51)
+        self.assertEqual(sum(record.get("doi") == doi for record in canonical["records"]), 1)
+        matches = [record for record in append["records"] if record.get("doi") == doi]
+        self.assertEqual(len(matches), 1)
+        self.assertEqual(matches[0]["counting_status"], "non_counting_designation")
+        self.assertEqual(matches[0]["pmid"], "39931354")
+        self.assertEqual(matches[0]["pmcid"], "PMC11808756")
+        self.assertNotIn(doi, brant)
+
+    def test_pfac_history_claim_uses_the_supported_boundary(self):
+        summary = (WEB / "evidence-summary.html").read_text(encoding="utf-8")
+        self.assertIn('<a href="#history">PFAC history</a>', summary)
+        self.assertIn('<section id="history" class="panel history-anchor">', summary)
+        self.assertIn("one of the first hospitals to establish a Patient and Family Advisory Council, in 1982", summary)
+        self.assertIn("supports “one of the first,”", summary)
+        self.assertNotIn("established the first PFAC", summary)
+        for identifier in ("doi:10.1177/23743735251316995", "PMID:39931354", "PMCID:PMC11808756"):
+            self.assertIn(identifier, self.bibliography_html)
 
     def test_no_numeric_pfac_maturity_score_is_presented(self):
         benchmark = (WEB / "dh-benchmark.html").read_text(encoding="utf-8")

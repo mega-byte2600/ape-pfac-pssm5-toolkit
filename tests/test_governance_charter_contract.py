@@ -48,7 +48,7 @@ class GovernanceCharterContractTests(unittest.TestCase):
 
     def test_current_state_tool_links_to_charter_without_expanding_tool_count(self):
         _, _, body = request("/toolkit-tools.html")
-        self.assertIn("These six working tools sit inside Deliverable 2.", body)
+        self.assertIn("These six working tools convert PFAC evidence", body)
         self.assertIn("/pfac-governance-charter.html", body)
         self.assertIn("Open governance charter starter", body)
 

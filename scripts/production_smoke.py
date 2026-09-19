@@ -12,7 +12,7 @@ from urllib.request import Request, urlopen
 DEFAULT_BASE_URL = "https://ape-pfac-pssm5-toolkit.onrender.com"
 
 HTML_CHECKS = {
-    "/": ["Turn patient voice into accountable action.", "APE deliverables"],
+    "/": ["Turn patient voice into accountable action through", "APE deliverables"],
     "/story.html": ["Rosie Bartel", "lived experience"],
     "/about.html": ["Michael Bolton", "Project Lead"],
     "/hai-alert.html": ["hai-trend-chart", "hai-baseline-chart", "plotly-2.35.2.min.js"],

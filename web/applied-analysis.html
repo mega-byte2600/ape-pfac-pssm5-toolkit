@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Interactive Upper Valley local analysis and applied implementation demonstration for the APE PFAC leadership toolkit.">
   <title>Applied Analysis | APE PFAC Leadership Toolkit</title>
-  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/styles.css?v=20260919">
   <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" defer></script>
   <style>
     .analysis-controls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.85rem;margin:1rem 0 1.2rem}.analysis-controls label{display:grid;gap:.4rem;color:var(--forest);font-weight:850;font-size:.88rem}.analysis-controls select,.analysis-controls input{width:100%;min-height:2.8rem;border:1px solid var(--line);border-radius:.8rem;padding:.7rem .8rem;background:white;color:var(--ink);font:inherit}.analysis-controls select:focus,.analysis-controls input:focus{outline:3px solid rgba(0,105,62,.16);border-color:var(--dartmouth-green)}.analysis-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.85rem;margin:0 0 1.15rem}.analysis-stat{border:1px solid var(--line);border-radius:1rem;background:#fff;padding:1rem}.analysis-stat span{display:block;color:var(--muted);font-size:.78rem;font-weight:850;text-transform:uppercase;letter-spacing:.06em}.analysis-stat strong{display:block;margin-top:.25rem;color:var(--forest);font-size:1.55rem;line-height:1.1}.analysis-readout{border-left:.35rem solid var(--dartmouth-green);background:#f4faf7;border-radius:.9rem;padding:1rem 1.1rem;margin:0 0 1.15rem}.analysis-readout p{margin:.25rem 0;max-width:none}.analysis-table{overflow-x:auto;border:1px solid var(--line);border-radius:1rem}.analysis-table table{min-width:760px}.analysis-chart{width:100%;min-height:520px}.status-pill{display:inline-block;border-radius:999px;padding:.2rem .55rem;font-size:.78rem;font-weight:900;background:#eef5f1;color:var(--forest)}.status-pill.above{background:#fff4e8;color:#6e3c00}.analysis-source-note{color:var(--muted);font-size:.9rem}.analysis-status{margin:.75rem 0 0;color:var(--muted);font-size:.9rem}@media(max-width:860px){.analysis-controls,.analysis-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.analysis-controls,.analysis-summary{grid-template-columns:1fr}.analysis-chart{min-height:620px}}
@@ -14,16 +14,17 @@
 <body>
   <a class="skip" href="#main">Skip to main content</a>
   <header class="site-header enterprise-header">
-    <div class="brand"><span class="mark">PF</span><div><strong>PFAC Leadership Toolkit</strong><small>Evidence. Local analysis. Decisions. Accountability.</small></div></div></div>
-    <nav aria-label="Primary"><a href="/">Toolkit</a><a href="/deliverables.html">APE Deliverables</a><a href="/dh-benchmark.html">DH Benchmark</a><a href="/toolkit-tools.html">Leadership Tools</a><a href="/evidence-summary.html">Evidence Summary</a></nav>
+    <a class="brand" href="/" aria-label="PFAC Leadership Toolkit home"><span class="mark"><img src="/pfac-origin-logo.jpg" alt="" width="48" height="48"></span><span><strong>PFAC Leadership Toolkit</strong><small>Evidence. Local analysis. Decisions. Accountability.</small></span></a>
+    <nav aria-label="Primary"><a href="/">Home</a><a href="/executive-launch.html">Executive Brief</a><a href="/evidence-summary.html">Evidence Summary</a><a href="/applied-analysis.html" aria-current="page">Applied Analysis</a><a href="/toolkit-tools.html">Leadership Tools</a><a href="/deliverables.html">APE Deliverables</a></nav>
   </header>
+  <nav class="utility-nav" aria-label="Key resource shortcuts"><span>Key resources</span><a href="/story.html">Rosie Bartel</a><a href="/hai-alert.html">HAI Alert</a><a href="/resources.html">Resources</a><a href="/about.html">About</a></nav>
 
   <main id="main">
     <section class="hero hero-executive">
       <div class="hero-copy">
         <p class="eyebrow">Original local analysis • Upper Valley • applied implementation</p>
         <h1>Use local evidence to decide who must be heard and what leaders should do next.</h1>
-        <p class="lead">This page applies the APE toolkit to Dartmouth Hitchcock Medical Center and Alice Peck Day Memorial Hospital's 2025 Upper Valley service-area data. Reviewers can inspect the municipality-level data, denominator, benchmark, calculation, interpretation, and limitation directly.</p>
+        <p class="lead">This page applies the APE toolkit to Dartmouth Hitchcock Medical Center and Alice Peck Day Memorial Hospital's 2025 Upper Valley service-area data. The municipality-level data, denominator, calculations, interpretation, and limitations are available for direct review.</p>
         <div class="actions">
           <a class="button" href="#explorer">Explore the local data</a>
           <a class="button secondary" href="/upper-valley-local-analysis.csv">Open calculation file</a>
@@ -133,13 +134,13 @@
     </section>
 
     <section id="implementation" class="panel">
-      <div class="section-title"><p class="eyebrow">Implementation demonstration</p><h2>The toolkit is applied to a real Upper Valley access and navigation use case.</h2></div>
-      <p class="lede">This is implementation of the APE method, not a claim that Dartmouth Health has adopted the recommendations. The local problem, population context, PFAC workstream, measurement logic, and validation steps are populated so a health-system leader can move directly into host review.</p>
+      <div class="section-title"><p class="eyebrow">Applied example</p><h2>The toolkit is applied to an Upper Valley access and navigation use case.</h2></div>
+      <p class="lede">This is an applied example, not a claim that Dartmouth Health has adopted the recommendations. The problem, population context, PFAC workstream, measurement logic, and next decisions are populated so leaders can assess the approach with local teams.</p>
       <details class="data-details">
         <summary>View implementation detail table</summary>
         <div class="matrix-table">
           <table>
-            <thead><tr><th>Implementation element</th><th>Completed in the APE</th><th>Host validation required</th></tr></thead>
+            <thead><tr><th>Implementation element</th><th>Completed in the APE</th><th>Local confirmation needed</th></tr></thead>
             <tbody>
               <tr><td>Problem definition</td><td>Access, navigation, capacity, wait-time, and rural or isolation signals are extracted from the 2025 CHNA and converted into a defined PFAC workstream.</td><td>Confirm which access pathway should be prioritized first.</td></tr>
               <tr><td>Population and representation</td><td>Age, disability, poverty, geography, isolation, transportation, caregiver, and technology considerations are built into the representation and access logic.</td><td>Compare current PFAC composition and participation options with local service-area context.</td></tr>
@@ -168,9 +169,16 @@
       </ol>
       <p><strong>Calculation note:</strong> all percentages shown as original re-analysis were recalculated from the municipality-level values and 2023 population estimates published in the 2025 CHNA. Because source percentages are rounded, derived population shares should be interpreted as descriptive approximations.</p>
     </section>
+    <section class="panel highlight-panel">
+      <div class="section-title"><p class="eyebrow">Safety and payment context</p><h2>HAI Alert → pay-for-performance incentives.</h2></div>
+      <p>CMS links hospital quality performance to Medicare payment through national value-based programs. Healthcare-associated infection measures contribute to Hospital Value-Based Purchasing, while the Hospital-Acquired Condition Reduction Program applies a payment reduction to hospitals in the worst-performing quartile using a measure set that includes CLABSI, CAUTI, surgical-site infection, MRSA bacteremia, and <em>C. difficile</em> infection.</p>
+      <p class="boundary-note"><strong>Evidence boundary:</strong> This establishes the national policy connection between HAI performance and payment. It does not establish Dartmouth Health's current scores, eligibility, payment adjustment, incentive amount, or local causal impact; those require current hospital-specific CMS and local finance data.</p>
+      <p><a class="resource-link" href="/hai-alert.html">Open the HAI Alert and PFAC safety questions</a></p>
+    </section>
+    <nav class="journey-nav" aria-label="Presentation sequence"><a href="/evidence-summary.html"><small>Previous</small><strong>← Evidence Summary</strong></a><a href="/toolkit-tools.html"><small>Next</small><strong>Leadership Tools →</strong></a></nav>
   </main>
 
-  <footer><span>APE Applied Analysis</span><span>Local evidence to leadership action</span></footer>
+  <footer><span>APE Applied Analysis</span><span>Local evidence to leadership action</span><nav class="footer-resources" aria-label="Key resources"><a href="/story.html">Rosie Bartel</a><a href="/hai-alert.html">HAI Alert</a><a href="/resources.html">Resources</a><a href="/about.html">About</a></nav></footer>
   <script src="/applied-analysis.js" defer></script>
 </body>
 </html>

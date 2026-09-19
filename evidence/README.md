@@ -8,7 +8,7 @@ This directory is the single source-control evidence layer for both the APE and 
 
 ## Append layer
 
-`append_registry.json` holds sources that are intentionally added beyond the 51-record baseline. Appends are classified by source type so the original Zotero denominator remains unchanged.
+`append_registry.json` holds sources that are intentionally added beyond the 51-record baseline and explicit non-counting anchor designations requested for the public toolkit. Appends are classified by source type. A designation for a source already present in the locked export must identify the existing Zotero key and must not be counted as a second source, so the original Zotero denominator remains unchanged.
 
 ## Reconciliation layer
 

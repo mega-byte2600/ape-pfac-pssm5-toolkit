@@ -46,12 +46,12 @@ class WebContractTests(unittest.TestCase):
             "/evidence.html": ["Evidence launch page", "Evidence-Based PFAC Summary", "Evidence matrix", "AMA 11 source layer", "/toolkit-scan.html"],
             "/evidence-summary.html": ["Evidence-Based PFAC Summary", "CMS Patient Safety Structural Measure", "Domain 5: Patient and Family Engagement", "evidence base remains limited", "203 respondents"],
             "/dh-benchmark.html": ["Benchmark assessment framework", "not a scored evaluation", "Evidence-backed preliminary findings", "Evidence needed before scoring", "Not yet scored", "Reusable evidence table"],
-            "/applied-analysis.html": ["Original local analysis", "72,736", "48.4%", "60.5%", "47.9%", "Explore the local data", "Implementation demonstration", "Host validation required"],
+            "/applied-analysis.html": ["Original local analysis", "72,736", "48.4%", "60.5%", "47.9%", "Explore the local data", "Applied example", "Local confirmation needed"],
             "/bibliography.html": ["AMA 11", "Core research evidence", "Federal and implementation guidance", "Open data and public resources", "Story and acknowledgement resources"],
             "/hai-alert.html": ["HAI", "MRSA", "PFAC", "Evidence synthesis summary", "Interactive HAI dashboard"],
             "/story.html": ["Rosie Bartel", "lived-experience anchor", "does not imply endorsement", "not representative evidence"],
             "/about.html": ["Michael Bolton", "Silicon Valley engineer", "LinkedIn profile", "Notion workspace"],
-            "/deliverables.html": ["Two practical deliverables", "Environmental scan and annotated bibliography", "Deliverable 2 tools", "CEPH 4", "CEPH 7", "Dartmouth Program-Specific Competency 4", "Demonstrated."],
+            "/deliverables.html": ["Two practical deliverables", "Environmental scan and annotated bibliography", "Practical leadership tools", "CEPH 4", "CEPH 7", "Dartmouth Program-Specific Competency 4", "Demonstrated."],
             "/toolkit-tools.html": ["Tools leaders can use immediately.", "PFAC current-state assessment", "Closed-loop action tracker", "Representation and access check", "Measurement plan", "Domain 5 traceability"],
         }
         for path, expected in required_pages.items():
@@ -79,6 +79,36 @@ class WebContractTests(unittest.TestCase):
                 self.assertIn("text/html", headers["Content-Type"])
                 if path != "/":
                     self.assertNotIn("Turn patient voice into accountable action.", body, f"{path} appears to fall back to homepage")
+
+    def test_photo_mark_replaces_initials_on_every_public_page(self):
+        expected = '<span class="mark"><img src="/pfac-origin-logo.jpg" alt="" width="48" height="48"></span>'
+        for path in public_html_paths():
+            with self.subTest(path=path):
+                body = self.assert_page_contains(path, [expected])
+                self.assertNotIn('<span class="mark">PF</span>', body)
+        captured = {}
+        payload = b"".join(
+            application(
+                {"PATH_INFO": "/pfac-origin-logo.jpg", "REQUEST_METHOD": "GET"},
+                lambda status, headers: captured.update(status=status, headers=dict(headers)),
+            )
+        )
+        self.assertEqual(captured["status"], "200 OK")
+        self.assertEqual(captured["headers"]["Content-Type"], "image/jpeg")
+        self.assertLess(len(payload), 25_000)
+
+    def test_homepage_preserves_patient_first_family_portrait(self):
+        body = self.assert_page_contains(
+            "/",
+            [
+                "Portrait of the presenter's uncle, known as General Bolton",
+                "My uncle, “General Bolton.” Patient. Family.",
+                "every system decision reaches a real person",
+                "What matters to a patient is to survive",
+                "Open the lived-experience anchor",
+            ],
+        )
+        self.assertIn("data:image/webp;base64,", body)
 
     def test_internal_review_method_and_validation_spillover_are_not_public(self):
         self.assertFalse(Path("web/research-plan.html").exists())
@@ -172,21 +202,61 @@ class WebContractTests(unittest.TestCase):
         }
         self.assertTrue(required_routes <= reachable, sorted(required_routes - reachable))
 
-    def test_dh_benchmark_contextual_navigation_sequence_is_preserved(self):
-        body = self.assert_page_contains("/dh-benchmark.html", ['nav aria-label="Primary"'])
-        primary_nav = re.search(r'<nav aria-label="Primary">(.*?)</nav>', body, flags=re.DOTALL)
-        self.assertIsNotNone(primary_nav)
-        links = re.findall(r'<a href="([^"]+)">([^<]+)</a>', primary_nav.group(1))
-        self.assertEqual(
-            links,
-            [
-                ("/evidence-summary.html", "Evidence Summary"),
-                ("/surveillance-method.html", "Surveillance Method"),
-                ("/applied-analysis.html", "Applied Analysis"),
-                ("/hai-alert.html", "HAI Alert"),
-                ("/about.html", "About"),
-            ],
-        )
+    def test_primary_navigation_is_consistent_across_public_pages(self):
+        expected = [
+            ("/", "Home"),
+            ("/executive-launch.html", "Executive Brief"),
+            ("/evidence-summary.html", "Evidence Summary"),
+            ("/applied-analysis.html", "Applied Analysis"),
+            ("/toolkit-tools.html", "Leadership Tools"),
+            ("/deliverables.html", "APE Deliverables"),
+        ]
+        for path in public_html_paths():
+            with self.subTest(path=path):
+                body = self.assert_page_contains(path, ['nav aria-label="Primary"'])
+                primary_nav = re.search(r'<nav aria-label="Primary">(.*?)</nav>', body, flags=re.DOTALL)
+                self.assertIsNotNone(primary_nav)
+                links = re.findall(r'<a href="([^"]+)"(?: aria-current="page")?>([^<]+)</a>', primary_nav.group(1))
+                self.assertEqual(links, expected)
+
+    def test_presentation_sequence_and_supporting_return_paths_are_explicit(self):
+        journey = {
+            "/": [("/executive-launch.html", "Executive Brief")],
+            "/executive-launch.html": [("/", "Home"), ("/evidence-summary.html", "Evidence Summary")],
+            "/evidence-summary.html": [("/executive-launch.html", "Executive Brief"), ("/applied-analysis.html", "Applied Analysis")],
+            "/applied-analysis.html": [("/evidence-summary.html", "Evidence Summary"), ("/toolkit-tools.html", "Leadership Tools")],
+            "/toolkit-tools.html": [("/applied-analysis.html", "Applied Analysis"), ("/deliverables.html", "APE Deliverables")],
+            "/deliverables.html": [("/toolkit-tools.html", "Leadership Tools"), ("/", "Return to Home")],
+        }
+        for path, expected in journey.items():
+            body = self.assert_page_contains(path, ['aria-label="Presentation sequence"'])
+            for href, label in expected:
+                self.assertRegex(body, rf'href="{re.escape(href)}"[^>]*>.*?{re.escape(label)}', path)
+
+        parents = {
+            "/about.html": ("/", "Return to Home"),
+            "/dh-benchmark.html": ("/applied-analysis.html", "Return to Applied Analysis"),
+            "/hai-alert.html": ("/applied-analysis.html", "Return to Applied Analysis"),
+            "/charter.html": ("/toolkit-tools.html", "Return to Leadership Tools"),
+            "/pfac-governance-charter.html": ("/toolkit-tools.html", "Return to Leadership Tools"),
+        }
+        for path in ("/evidence.html", "/evidence-matrix.html", "/bibliography.html", "/surveillance-method.html", "/toolkit-scan.html", "/story.html", "/resources.html", "/collaboration.html"):
+            parents[path] = ("/evidence-summary.html", "Return to Evidence Summary")
+        for path, (href, label) in parents.items():
+            body = self.assert_page_contains(path, ['aria-label="Section navigation"'])
+            self.assertIn(f'href="{href}">← {label}</a>', body)
+
+    def test_key_resources_are_available_on_every_page(self):
+        expected = (("/story.html", "Rosie Bartel"), ("/hai-alert.html", "HAI Alert"), ("/resources.html", "Resources"), ("/about.html", "About"))
+        for path in public_html_paths():
+            body = self.assert_page_contains(path, ['aria-label="Key resources"', 'aria-label="Key resource shortcuts"'])
+            shortcut_nav = re.search(r'<nav class="utility-nav" aria-label="Key resource shortcuts">(.*?)</nav>', body, flags=re.DOTALL)
+            footer_nav = re.search(r'<nav class="footer-resources" aria-label="Key resources">(.*?)</nav>', body, flags=re.DOTALL)
+            self.assertIsNotNone(shortcut_nav)
+            self.assertIsNotNone(footer_nav)
+            for href, label in expected:
+                self.assertIn(f'<a href="{href}">{label}</a>', shortcut_nav.group(1))
+                self.assertRegex(footer_nav.group(1), rf'<a href="{re.escape(href)}"(?: aria-current="page")?>{re.escape(label)}</a>')
 
     def test_evidence_matrix_keeps_current_sources_and_claim_limits(self):
         body = self.assert_page_contains(
@@ -211,6 +281,26 @@ class WebContractTests(unittest.TestCase):
         lowered = body.casefold()
         self.assertNotIn("loading hai dashboard", lowered)
         self.assertNotIn("<canvas", lowered)
+
+    def test_hai_payment_context_is_supported_and_bounded(self):
+        body = self.assert_page_contains(
+            "/applied-analysis.html",
+            [
+                "HAI Alert → pay-for-performance incentives",
+                "Hospital Value-Based Purchasing",
+                "Hospital-Acquired Condition Reduction Program",
+                "does not establish Dartmouth Health's current scores",
+            ],
+        )
+        hai_body = self.assert_page_contains(
+            "/hai-alert.html",
+            [
+                "CMS Hospital Value-Based Purchasing Program",
+                "CMS Hospital-Acquired Condition Reduction Program",
+            ],
+        )
+        self.assertNotIn("Dartmouth Health received a payment", body)
+        self.assertIn("https://www.cms.gov/", hai_body)
 
     def test_toolkit_download_templates_are_real_static_assets(self):
         templates = {
@@ -297,6 +387,13 @@ class WebContractTests(unittest.TestCase):
                 self.assertEqual(status, "200 OK")
                 for fragment in ("**", "```", "### ", "## "):
                     self.assertNotIn(fragment, body, f"{path} contains raw markdown artifact {fragment!r}")
+
+    def test_public_pages_do_not_number_the_deliverables(self):
+        for path in public_html_paths():
+            with self.subTest(path=path):
+                status, _, body = request(path)
+                self.assertEqual(status, "200 OK")
+                self.assertNotRegex(body, r"(?i)deliverable\s+[12]")
 
 
 if __name__ == "__main__":
