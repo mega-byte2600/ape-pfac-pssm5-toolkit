@@ -9,6 +9,12 @@ from pathlib import Path
 from wsgiref.simple_server import make_server
 
 from .hai_dashboard import build_hai_dashboard
+from .live_data import (
+    fetch_census_upper_valley,
+    fetch_evidence_watch,
+    fetch_hcahps,
+    live_data_status,
+)
 from .supabase_backend import backend_status, build_demo_payload, submit_demo_intake
 
 PACKAGE_ROOT = Path(__file__).resolve().parents[1]
@@ -100,6 +106,14 @@ def application(environ, start_response):
         return _json(start_response, build_hai_dashboard())
     if path == "/api/toolkit":
         return _json(start_response, build_demo_payload())
+    if path == "/api/live/status":
+        return _json(start_response, live_data_status())
+    if path == "/api/live/hcahps":
+        return _json(start_response, fetch_hcahps())
+    if path == "/api/live/evidence-watch":
+        return _json(start_response, fetch_evidence_watch())
+    if path == "/api/live/census-upper-valley":
+        return _json(start_response, fetch_census_upper_valley())
     relative = "index.html" if path in ("/", "") else path.lstrip("/")
     target = (WEB / relative).resolve()
     web_root = WEB.resolve()
