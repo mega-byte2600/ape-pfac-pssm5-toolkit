@@ -23,7 +23,9 @@ from typing import Any, Dict, List, Optional
 _TIMEOUT_SECONDS = 12
 _USER_AGENT = "ape-pfac-pssm5-toolkit/0.1 (MPH Applied Practice Experience)"
 
-# facility_id -> display name for hospitals tracked by the toolkit
+# facility_id -> display name, seeded with one example. Leaders can query
+# any CMS-tracked facility by passing facility_id to /api/live/hcahps
+# or using /api/live/facility-search to find theirs.
 TRACKED_FACILITIES = {
     "300003": "Mary Hitchcock Memorial Hospital (Dartmouth Health)",
 }
@@ -88,8 +90,66 @@ HCAHPS_FOCUS_MEASURES = {
 }
 
 
+def search_facilities(name: str = "", state: str = "", limit: int = 20) -> Dict[str, Any]:
+    """Find CMS-tracked facilities by name and/or state.
+
+    Leaders use this to find their hospital's facility_id, then pass it to
+    /api/live/hcahps for their own patient-experience benchmark.
+    """
+    cache_key = f"facility_search:{name}:{state}:{limit}"
+    cached = _cache_get(cache_key)
+    if cached is not None:
+        return cached
+
+    source = "CMS Provider Data Catalog: HCAHPS (data.cms.gov)"
+    try:
+        params: Dict[str, str] = {"limit": str(min(max(limit, 1), 50))}
+        idx = 0
+        if name:
+            params[f"conditions[{idx}][property]"] = "facility_name"
+            params[f"conditions[{idx}][value]"] = name
+            params[f"conditions[{idx}][operator]"] = "="
+            idx += 1
+        if state:
+            params[f"conditions[{idx}][property]"] = "state"
+            params[f"conditions[{idx}][value]"] = state.upper()
+            params[f"conditions[{idx}][operator]"] = "="
+            idx += 1
+        data = _get_json(f"{_CMS_BASE}/{_CMS_HOSPITAL_DATASET}/0", params)
+    except Exception as exc:
+        payload = _unavailable(source, "UPSTREAM_OR_AUTH_FAILURE", type(exc).__name__)
+        _cache_set(cache_key, payload, 300)
+        return payload
+
+    seen: Dict[str, Dict[str, Any]] = {}
+    for row in (data or {}).get("results", []):
+        fid = row.get("facility_id")
+        if fid and fid not in seen:
+            seen[fid] = {
+                "facility_id": fid,
+                "facility_name": row.get("facility_name"),
+                "city": row.get("citytown"),
+                "state": row.get("state"),
+                "county": row.get("countyparish"),
+            }
+
+    payload = {
+        "status": "ok",
+        "source": source,
+        "fetched_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "count": len(seen),
+        "facilities": sorted(seen.values(), key=lambda f: f["facility_name"] or ""),
+    }
+    _cache_set(cache_key, payload, 24 * 3600)
+    return payload
+
+
 def fetch_hcahps(facility_id: str = "300003") -> Dict[str, Any]:
-    """Live HCAHPS scores for a tracked facility vs national benchmarks.
+    """Live HCAHPS scores for any CMS-tracked facility vs national benchmarks.
+
+    Leaders pass their own facility_id (found via /api/live/facility-search)
+    to benchmark their hospital's patient-experience scores against national
+    averages — the "measure what matters" input for PFAC effectiveness work.
 
     Source: CMS Provider Data Catalog (Socrata API, no key required).
     All values are public CMS-published aggregates, not project findings.
@@ -175,6 +235,54 @@ def fetch_hcahps(facility_id: str = "300003") -> Dict[str, Any]:
 _PUBMED_ESEARCH = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
 _PUBMED_ESUMMARY = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi"
 
+
+def format_ama11(doc: Dict[str, Any]) -> str:
+    """Format a PubMed esummary doc as an AMA 11th-edition journal citation.
+
+    Pattern: Authors. Title. Journal. Year;Volume(Issue):pages. doi:xx
+    Lists the first 3 authors then et al. when more than 6 are present,
+    per AMA 11. Uses the journal name as returned by PubMed.
+    """
+    authors = [a.get("name", "") for a in (doc.get("authors") or []) if a.get("name")]
+    if len(authors) > 6:
+        author_str = ", ".join(authors[:3]) + ", et al"
+    elif authors:
+        author_str = ", ".join(authors)
+    else:
+        author_str = ""
+
+    title = (doc.get("title") or "").rstrip(".")
+    journal = doc.get("source") or ""
+    pubdate = doc.get("pubdate") or ""
+    year = pubdate.split()[0] if pubdate else ""
+    volume = doc.get("volume") or ""
+    issue = doc.get("issue") or ""
+    pages = doc.get("pages") or ""
+    doi = ""
+    for aid in doc.get("articleids") or []:
+        if aid.get("idtype") == "doi":
+            doi = aid.get("value", "")
+            break
+
+    parts = []
+    if author_str:
+        parts.append(author_str + ".")
+    if title:
+        parts.append(title + ".")
+    if journal:
+        parts.append(journal + ".")
+    vol_issue = volume
+    if issue:
+        vol_issue += f"({issue})"
+    tail = ";".join(p for p in [year, vol_issue] if p)
+    if pages:
+        tail += f":{pages}" if tail else pages
+    if tail:
+        parts.append(tail + ".")
+    if doi:
+        parts.append(f"doi:{doi}")
+    return " ".join(parts)
+
 EVIDENCE_WATCH_QUERIES = {
     "pfac_systematic_reviews": (
         "(patient family advisory council[All Fields] OR patient advisor[All Fields]) "
@@ -238,9 +346,14 @@ def fetch_evidence_watch() -> Dict[str, Any]:
                             "title": doc.get("title"),
                             "journal": doc.get("source"),
                             "pubdate": doc.get("pubdate"),
+                            "volume": doc.get("volume"),
+                            "issue": doc.get("issue"),
+                            "pages": doc.get("pages"),
                             "authors": [
-                                a.get("name") for a in (doc.get("authors") or [])[:5]
+                                a.get("name") for a in (doc.get("authors") or [])[:6]
                             ],
+                            "author_count": len(doc.get("authors") or []),
+                            "ama11_citation": format_ama11(doc),
                             "url": f"https://pubmed.ncbi.nlm.nih.gov/{pmid}/",
                         }
                     )
@@ -272,30 +385,28 @@ def fetch_evidence_watch() -> Dict[str, Any]:
 
 
 # ---------------------------------------------------------------------------
-# Census ACS: Upper Valley municipality refresh (requires free API key)
+# Census ACS: service-area demographics for any county (requires free key)
 # ---------------------------------------------------------------------------
 
-# 19 municipalities from web/upper-valley-local-analysis.csv with
-# (state FIPS, county FIPS, place description) for ACS county-subdivision lookup.
-UPPER_VALLEY_PLACES = [
-    ("Canaan", "33", "009"), ("Dorchester", "33", "009"), ("Enfield", "33", "009"),
-    ("Grafton", "33", "009"), ("Grantham", "33", "009"), ("Hanover", "33", "009"),
-    ("Lebanon", "33", "009"), ("Lyme", "33", "009"), ("Orange", "33", "009"),
-    ("Orford", "33", "009"), ("Piermont", "33", "009"), ("Plainfield", "33", "009"),
-    ("Fairlee", "50", "017"), ("Hartford", "50", "027"), ("Hartland", "50", "027"),
-    ("Norwich", "50", "027"), ("Sharon", "50", "027"), ("Thetford", "50", "017"),
-    ("Woodstock", "50", "027"),
-]
+# Example: the 19 Upper Valley municipalities from the one-time environmental
+# scan (web/upper-valley-local-analysis.csv), kept as a usage example.
+# Leaders pass their own state/county FIPS to /api/live/census-demographics.
+UPPER_VALLEY_EXAMPLE = {"state_fips": "33", "county_fips": "009", "label": "Grafton County, NH"}
 
 
-def fetch_census_upper_valley() -> Dict[str, Any]:
-    """ACS 5-year demographics for the 19 Upper Valley municipalities.
+def fetch_census_demographics(
+    state_fips: str = "", county_fips: str = ""
+) -> Dict[str, Any]:
+    """ACS 5-year demographics (population, poverty, disability proxy) for all
+    county subdivisions in a given county.
+
+    Leaders use this for the population-context input to PFAC recruitment and
+    representation design in their own service area.
 
     Requires the free Census API key (CENSUS_API_KEY env var). Without it,
-    returns status "unavailable" with reason CREDENTIALS_NOT_CONFIGURED and
-    the project keeps serving its static CHNA-derived CSV.
+    returns status "unavailable" with reason CREDENTIALS_NOT_CONFIGURED.
     """
-    cache_key = "census_upper_valley"
+    cache_key = f"census_demographics:{state_fips}:{county_fips}"
     cached = _cache_get(cache_key)
     if cached is not None:
         return cached
@@ -306,41 +417,47 @@ def fetch_census_upper_valley() -> Dict[str, Any]:
         payload = _unavailable(
             source,
             "CREDENTIALS_NOT_CONFIGURED",
-            "Set CENSUS_API_KEY (free at api.census.gov/data/key_signup.html) to enable live refresh.",
+            "Set CENSUS_API_KEY (free at api.census.gov/data/key_signup.html) to enable.",
+        )
+        _cache_set(cache_key, payload, 3600)
+        return payload
+    if not state_fips or not county_fips:
+        payload = _unavailable(
+            source,
+            "MISSING_PARAMETERS",
+            "Pass state_fips and county_fips query parameters (e.g. state_fips=33&county_fips=009).",
         )
         _cache_set(cache_key, payload, 3600)
         return payload
 
     try:
-        collected: Dict[str, Dict[str, Any]] = {}
-        # Group places by (state, county) to minimize requests.
-        groups: Dict[tuple, List[str]] = {}
-        for name, state, county in UPPER_VALLEY_PLACES:
-            groups.setdefault((state, county), []).append(name)
-        for (state, county), _names in groups.items():
-            data = _get_json(
-                "https://api.census.gov/data/2023/acs/acs5",
+        data = _get_json(
+            "https://api.census.gov/data/2023/acs/acs5",
+            {
+                "get": "NAME,B17001_001E,B17001_002E,B01003_001E",
+                "for": "county subdivision:*",
+                "in": f"state:{state_fips} county:{county_fips}",
+                "key": api_key,
+            },
+        )
+        header, rows = data[0], data[1:]
+        idx = {col: i for i, col in enumerate(header)}
+        subdivisions = []
+        for row in rows:
+            universe = row[idx["B17001_001E"]]
+            poor = row[idx["B17001_002E"]]
+            try:
+                poverty_pct = round(100 * int(poor) / int(universe), 1) if int(universe) else None
+            except (ValueError, TypeError):
+                poverty_pct = None
+            subdivisions.append(
                 {
-                    "get": "NAME,B17001_001E,B17001_002E,B01003_001E",
-                    "for": "county subdivision:*",
-                    "in": f"state:{state} county:{county}",
-                    "key": api_key,
-                },
-            )
-            header, rows = data[0], data[1:]
-            idx = {col: i for i, col in enumerate(header)}
-            for row in rows:
-                name_full = row[idx["NAME"]]
-                town = name_full.split(",")[0].replace(" town", "").replace(" city", "")
-                collected[town] = {
-                    "census_name": name_full,
-                    "poverty_universe": row[idx["B17001_001E"]],
-                    "poverty_count": row[idx["B17001_002E"]],
+                    "name": row[idx["NAME"]].split(",")[0],
                     "population": row[idx["B01003_001E"]],
+                    "poverty_percent": poverty_pct,
                 }
-        municipalities = []
-        for name, _s, _c in UPPER_VALLEY_PLACES:
-            municipalities.append({"municipality": name, **collected.get(name, {})})
+            )
+        subdivisions.sort(key=lambda r: r["name"] or "")
     except Exception as exc:
         payload = _unavailable(source, "UPSTREAM_OR_AUTH_FAILURE", type(exc).__name__)
         _cache_set(cache_key, payload, 300)
@@ -350,15 +467,23 @@ def fetch_census_upper_valley() -> Dict[str, Any]:
         "status": "ok",
         "source": source,
         "note": (
-            "Live ACS 5-year estimates for context. Poverty/disability/age "
-            "band calculations remain the project's own reproducible method "
-            "in web/upper-valley-local-analysis.csv."
+            "Live ACS 5-year estimates for local population context. "
+            "Interpretation and PFAC design decisions remain the leader's own work."
         ),
         "fetched_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-        "municipalities": municipalities,
+        "state_fips": state_fips,
+        "county_fips": county_fips,
+        "subdivisions": subdivisions,
     }
     _cache_set(cache_key, payload, 24 * 3600)
     return payload
+
+
+def fetch_census_upper_valley() -> Dict[str, Any]:
+    """Backwards-compatible alias: Upper Valley example from the one-time scan."""
+    return fetch_census_demographics(
+        UPPER_VALLEY_EXAMPLE["state_fips"], UPPER_VALLEY_EXAMPLE["county_fips"]
+    )
 
 
 def live_data_status() -> Dict[str, Any]:
@@ -368,10 +493,16 @@ def live_data_status() -> Dict[str, Any]:
         "status": "ok",
         "sources": [
             {
-                "id": "hcahps",
-                "label": "CMS HCAHPS hospital patient-experience scores",
+                "id": "facility_search",
+                "label": "CMS facility lookup by name/state",
                 "credential_required": False,
-                "endpoint": "/api/live/hcahps",
+                "endpoint": "/api/live/facility-search?name=&state=",
+            },
+            {
+                "id": "hcahps",
+                "label": "CMS HCAHPS patient-experience scores for any facility vs national benchmarks",
+                "credential_required": False,
+                "endpoint": "/api/live/hcahps?facility_id=",
             },
             {
                 "id": "evidence_watch",
@@ -380,11 +511,11 @@ def live_data_status() -> Dict[str, Any]:
                 "endpoint": "/api/live/evidence-watch",
             },
             {
-                "id": "census_upper_valley",
-                "label": "Census ACS Upper Valley demographics",
+                "id": "census_demographics",
+                "label": "Census ACS demographics for any county's subdivisions",
                 "credential_required": True,
                 "configured": census_key,
-                "endpoint": "/api/live/census-upper-valley",
+                "endpoint": "/api/live/census-demographics?state_fips=&county_fips=",
             },
         ],
     }

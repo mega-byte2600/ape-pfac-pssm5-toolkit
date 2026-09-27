@@ -5,15 +5,18 @@ from __future__ import annotations
 import json
 import mimetypes
 import os
+import urllib.parse
 from pathlib import Path
 from wsgiref.simple_server import make_server
 
 from .hai_dashboard import build_hai_dashboard
 from .live_data import (
+    fetch_census_demographics,
     fetch_census_upper_valley,
     fetch_evidence_watch,
     fetch_hcahps,
     live_data_status,
+    search_facilities,
 )
 from .supabase_backend import backend_status, build_demo_payload, submit_demo_intake
 
@@ -108,10 +111,30 @@ def application(environ, start_response):
         return _json(start_response, build_demo_payload())
     if path == "/api/live/status":
         return _json(start_response, live_data_status())
+    if path == "/api/live/facility-search":
+        query = urllib.parse.parse_qs(environ.get("QUERY_STRING", ""))
+        return _json(
+            start_response,
+            search_facilities(
+                name=query.get("name", [""])[0],
+                state=query.get("state", [""])[0],
+            ),
+        )
     if path == "/api/live/hcahps":
-        return _json(start_response, fetch_hcahps())
+        query = urllib.parse.parse_qs(environ.get("QUERY_STRING", ""))
+        facility_id = query.get("facility_id", ["300003"])[0] or "300003"
+        return _json(start_response, fetch_hcahps(facility_id))
     if path == "/api/live/evidence-watch":
         return _json(start_response, fetch_evidence_watch())
+    if path == "/api/live/census-demographics":
+        query = urllib.parse.parse_qs(environ.get("QUERY_STRING", ""))
+        return _json(
+            start_response,
+            fetch_census_demographics(
+                state_fips=query.get("state_fips", [""])[0],
+                county_fips=query.get("county_fips", [""])[0],
+            ),
+        )
     if path == "/api/live/census-upper-valley":
         return _json(start_response, fetch_census_upper_valley())
     relative = "index.html" if path in ("/", "") else path.lstrip("/")
