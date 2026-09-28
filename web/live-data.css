@@ -1,0 +1,132 @@
+/* Live public data section (resources.html) — executive, plain-language, phone-first. */
+
+.live-block {
+  margin-top: 2.25rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--line);
+}
+.live-block:first-of-type { margin-top: 1.5rem; }
+.live-block h3 { margin: 0 0 0.35rem; font-size: 1.2rem; }
+.live-block > p { color: var(--muted); max-width: 68ch; }
+
+.live-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: flex-end;
+  margin: 1rem 0;
+}
+.live-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--granite);
+}
+.live-form input {
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 1rem;
+  min-width: 11rem;
+  background: var(--card);
+  color: var(--ink);
+}
+.live-form input:focus {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+  border-color: var(--focus);
+}
+
+.live-results { margin-top: 1rem; }
+.live-results .muted { color: var(--muted); }
+.live-results .error {
+  border-left: 4px solid var(--risk);
+  background: #fdf3f0;
+  padding: 0.8rem 1rem;
+  border-radius: 0 8px 8px 0;
+}
+
+.facility-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+.facility-list button {
+  width: 100%;
+  text-align: left;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.8rem 1rem;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--ink);
+  box-shadow: var(--soft-shadow);
+}
+.facility-list button:hover { border-color: var(--dartmouth-green); }
+.facility-list button small { display: block; color: var(--muted); font-size: 0.85rem; }
+
+/* HCAHPS measure bars: facility vs national */
+.measure { margin: 1.1rem 0; }
+.measure .measure-label { font-weight: 600; margin-bottom: 0.15rem; }
+.measure .measure-question { color: var(--muted); font-size: 0.9rem; margin-bottom: 0.4rem; }
+.bar-row { display: grid; grid-template-columns: 7.5rem 1fr 3.2rem; gap: 0.6rem; align-items: center; margin: 0.25rem 0; }
+.bar-row .bar-key { font-size: 0.85rem; color: var(--granite); }
+.bar-track { background: #eef2f0; border-radius: 6px; height: 1.35rem; position: relative; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 6px; background: var(--dartmouth-green); }
+.bar-fill.national { background: var(--river); }
+.bar-row .bar-val { font-variant-numeric: tabular-nums; font-weight: 600; font-size: 0.95rem; }
+.measure .period { font-size: 0.8rem; color: var(--muted); margin-top: 0.3rem; }
+
+.source-note {
+  margin-top: 1.25rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  border-top: 1px dashed var(--line);
+  padding-top: 0.7rem;
+}
+
+/* Evidence watch */
+.evidence-item {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 1rem 1.1rem;
+  margin: 0.75rem 0;
+  box-shadow: var(--soft-shadow);
+}
+.evidence-item .ama { font-size: 0.95rem; line-height: 1.5; }
+.evidence-item .ama a { color: var(--river); }
+.evidence-item .watch-tag {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--pine);
+  background: #e8f0ec;
+  border-radius: 20px;
+  padding: 0.2rem 0.6rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Census */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: 0.75rem; margin-top: 0.75rem; }
+.stat {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  box-shadow: var(--soft-shadow);
+}
+.stat strong { display: block; font-size: 1.35rem; font-variant-numeric: tabular-nums; }
+.stat span { font-size: 0.85rem; color: var(--muted); }
+
+.status-pill {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: 20px;
+  padding: 0.25rem 0.7rem;
+  margin-right: 0.4rem;
+}
+.status-pill.ok { background: #e6f2ea; color: var(--pine); }
+.status-pill.unavailable { background: #f6ece8; color: var(--risk); }

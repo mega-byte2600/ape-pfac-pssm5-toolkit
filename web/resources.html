@@ -6,7 +6,9 @@
   <meta name="description" content="Open resources and collaboration access for the PFAC PSSM 5 leadership toolkit.">
   <title>Open Resources | PFAC PSSM 5 Toolkit</title>
   <link rel="stylesheet" href="/styles.css?v=20260919">
+  <link rel="stylesheet" href="/live-data.css">
   <script defer src="/app.js"></script>
+  <script defer src="/live-data.js"></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
@@ -70,6 +72,43 @@
         <p>These public resources support toolkit review, benchmarking, and future updates.</p>
       </div>
       <div id="open-resources-grid" class="card-grid"></div>
+    </section>
+    <section class="panel" id="live-data">
+      <div class="section-title">
+        <p class="eyebrow">Live public data</p>
+        <h2>Your hospital, the evidence, your population — live.</h2>
+        <p>Public data sources, queried live. No patient data, no logins, no keys. Every number below states its source.</p>
+      </div>
+      <p class="lede" id="live-data-status" aria-live="polite">Checking live sources…</p>
+
+      <div class="live-block">
+        <h3>Your hospital&rsquo;s patient experience</h3>
+        <p>Find any CMS-tracked hospital, then see its HCAHPS experience scores next to national benchmarks. Context for measurement — not proof of what caused a score.</p>
+        <form id="facility-search-form" class="live-form">
+          <label>Hospital name <input type="search" id="facility-name" name="name" placeholder="e.g. Mary Hitchcock" autocomplete="off"></label>
+          <label>State <input type="text" id="facility-state" name="state" placeholder="e.g. NH" maxlength="2" autocomplete="off"></label>
+          <button type="submit" class="button">Search</button>
+        </form>
+        <div id="facility-results" class="live-results" aria-live="polite"></div>
+        <div id="hcahps-panel" class="live-results" aria-live="polite"></div>
+      </div>
+
+      <div class="live-block">
+        <h3>What the evidence says now</h3>
+        <p>Ongoing PubMed surveillance for PFAC and patient-engagement literature. Citations are formatted to AMA 11th edition, ready for the annotated bibliography.</p>
+        <div id="evidence-watch" class="live-results" aria-live="polite"><p class="muted">Loading evidence watch…</p></div>
+      </div>
+
+      <div class="live-block">
+        <h3>The population you serve</h3>
+        <p>American Community Survey 5-year demographics for any U.S. county — context for representation and access design. Requires a free Census API key on the server; without one, this panel says so plainly.</p>
+        <form id="census-form" class="live-form">
+          <label>State FIPS <input type="text" id="census-state" placeholder="e.g. 33" maxlength="2" inputmode="numeric"></label>
+          <label>County FIPS <input type="text" id="census-county" placeholder="e.g. 009" maxlength="3" inputmode="numeric"></label>
+          <button type="submit" class="button">Look up</button>
+        </form>
+        <div id="census-panel" class="live-results" aria-live="polite"></div>
+      </div>
     </section>
     <nav class="parent-nav" aria-label="Section navigation"><a href="/evidence-summary.html">← Return to Evidence Summary</a></nav>
   </main>
