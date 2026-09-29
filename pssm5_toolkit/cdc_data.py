@@ -1,15 +1,14 @@
 """CDC public-data adapters for the APE PFAC leadership toolkit.
 
-These endpoints use public aggregate CDC data only. They are context inputs for
-patient-safety, representation, and leadership questions; they are not measures
-of PFAC effectiveness and must not be interpreted as local organizational
-performance unless the returned geography actually matches the organization.
+Public aggregate CDC data only. These feeds provide patient-safety and
+population context; they do not measure PFAC effectiveness and are not local
+organizational performance unless the returned geography matches the user.
 """
 
 from __future__ import annotations
 
 import time
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from .live_data import _cache_get, _cache_set, _get_json, _unavailable
 
@@ -29,6 +28,18 @@ def _now() -> str:
 
 def _bounded_limit(value: int, maximum: int = 250) -> int:
     return min(max(int(value), 1), maximum)
+
+
+def _probe(url: str, params: Optional[Dict[str, str]] = None) -> Dict[str, str]:
+    started = time.time()
+    try:
+        _get_json(url, params, timeout=6)
+    except Exception as exc:  # noqa: BLE001
+        return {"state": "unavailable", "reason": type(exc).__name__}
+    elapsed = time.time() - started
+    if elapsed > 4:
+        return {"state": "degraded", "reason": f"slow response ({elapsed:.1f}s)"}
+    return {"state": "live", "reason": ""}
 
 
 def _normalize_haic_rows(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
@@ -72,10 +83,7 @@ def _fetch_haic_dataset(
     if cached is not None:
         return cached
 
-    params: Dict[str, str] = {
-        "$limit": str(limit),
-        "$order": "yearname DESC",
-    }
+    params: Dict[str, str] = {"$limit": str(limit), "$order": "yearname DESC"}
     if topic:
         params["topic"] = topic
     if view_by:
@@ -85,7 +93,7 @@ def _fetch_haic_dataset(
 
     try:
         rows = _get_json(f"{_CDC_SOCRATA}/{dataset_id}.json", params)
-    except Exception as exc:  # noqa: BLE001 - returned as structured status
+    except Exception as exc:  # noqa: BLE001
         payload = _unavailable(source_label, "UPSTREAM_FAILURE", type(exc).__name__)
         _cache_set(cache_key, payload, 300)
         return payload
@@ -126,7 +134,7 @@ def fetch_cdc_hai_isa(
 def fetch_cdc_candidemia(
     topic: str = "", view_by: str = "", series: str = "", limit: int = 100
 ) -> Dict[str, Any]:
-    """CDC HAICViz candidemia surveillance, including drug-resistance views."""
+    """CDC HAICViz candidemia surveillance, including resistance views."""
     return _fetch_haic_dataset(
         _CDC_CANDIDEMIA_DATASET,
         "CDC HAICViz: Candidemia",
@@ -158,11 +166,7 @@ def fetch_cdc_places_county(location_id: str = "", limit: int = 100) -> Dict[str
     try:
         rows = _get_json(
             f"{_CDC_SOCRATA}/{_CDC_PLACES_COUNTY_DATASET}.json",
-            {
-                "locationid": fips,
-                "$limit": str(limit),
-                "$order": "category, measure, data_value_type",
-            },
+            {"locationid": fips, "$limit": str(limit), "$order": "category, measure, data_value_type"},
         )
     except Exception as exc:  # noqa: BLE001
         payload = _unavailable(source, "UPSTREAM_FAILURE", type(exc).__name__)
@@ -201,7 +205,7 @@ def fetch_cdc_places_county(location_id: str = "", limit: int = 100) -> Dict[str
         "count": len(measures),
         "note": (
             "PLACES provides model-based population estimates for public-health planning. "
-            "Use as community context, not as evidence that a PFAC caused an outcome."
+            "CDC cautions against using the estimates to evaluate local program effects."
         ),
         "measures": measures,
     }
@@ -254,10 +258,7 @@ def fetch_cdc_svi_county(fips: str = "") -> Dict[str, Any]:
     payload = {
         "status": "ok",
         "source": source,
-        "source_url": (
-            "https://www.atsdr.cdc.gov/place-health/php/svi/"
-            "svi-data-documentation-download.html"
-        ),
+        "source_url": "https://www.atsdr.cdc.gov/place-health/php/svi/",
         "fetched_at": _now(),
         "fips": county_fips,
         "location": attrs.get("LOCATION"),
@@ -270,7 +271,7 @@ def fetch_cdc_svi_county(fips: str = "") -> Dict[str, Any]:
         },
         "note": (
             "SVI is a relative vulnerability index for public-health planning. "
-            "It should support representation and access questions, not individual risk scoring."
+            "Use it to inform representation and access questions, not individual risk scoring."
         ),
     }
     _cache_set(cache_key, payload, 24 * 3600)
@@ -278,38 +279,40 @@ def fetch_cdc_svi_county(fips: str = "") -> Dict[str, Any]:
 
 
 def cdc_data_status() -> Dict[str, Any]:
-    """Configured CDC feeds exposed by the APE backend."""
-    return {
-        "status": "ok",
-        "fetched_at": _now(),
-        "sources": [
+    """Availability of configured CDC feeds, cached for five minutes."""
+    cache_key = "cdc_source_health"
+    health = _cache_get(cache_key)
+    if health is None:
+        health = {
+            "hai_isa": _probe(f"{_CDC_SOCRATA}/{_CDC_ISA_DATASET}.json", {"$limit": "1"}),
+            "candidemia": _probe(f"{_CDC_SOCRATA}/{_CDC_CANDIDEMIA_DATASET}.json", {"$limit": "1"}),
+            "places_county": _probe(f"{_CDC_SOCRATA}/{_CDC_PLACES_COUNTY_DATASET}.json", {"$limit": "1"}),
+            "svi_county": _probe(
+                _CDC_SVI_COUNTY,
+                {"where": "1=1", "outFields": "FIPS", "resultRecordCount": "1", "returnGeometry": "false", "f": "json"},
+            ),
+        }
+        _cache_set(cache_key, health, 300)
+
+    definitions = [
+        ("hai_isa", "CDC HAICViz invasive Staphylococcus aureus (MRSA/MSSA)", _CDC_ISA_DATASET, "/api/live/cdc/hai-isa"),
+        ("candidemia", "CDC HAICViz candidemia and drug resistance", _CDC_CANDIDEMIA_DATASET, "/api/live/cdc/candidemia"),
+        ("places_county", "CDC PLACES county public-health measures", _CDC_PLACES_COUNTY_DATASET, "/api/live/cdc/places?location_id="),
+        ("svi_county", "CDC/ATSDR Social Vulnerability Index 2022", "CDC_ATSDR_SVI_2022_USA", "/api/live/cdc/svi?fips="),
+    ]
+    sources = []
+    for source_id, label, dataset_id, endpoint in definitions:
+        probe = health[source_id]
+        sources.append(
             {
-                "id": "hai_isa",
-                "label": "CDC HAICViz invasive Staphylococcus aureus (MRSA/MSSA)",
+                "id": source_id,
+                "label": label,
                 "credential_required": False,
-                "dataset_id": _CDC_ISA_DATASET,
-                "endpoint": "/api/live/cdc/hai-isa",
-            },
-            {
-                "id": "candidemia",
-                "label": "CDC HAICViz candidemia and drug resistance",
-                "credential_required": False,
-                "dataset_id": _CDC_CANDIDEMIA_DATASET,
-                "endpoint": "/api/live/cdc/candidemia",
-            },
-            {
-                "id": "places_county",
-                "label": "CDC PLACES county public-health measures",
-                "credential_required": False,
-                "dataset_id": _CDC_PLACES_COUNTY_DATASET,
-                "endpoint": "/api/live/cdc/places?location_id=",
-            },
-            {
-                "id": "svi_county",
-                "label": "CDC/ATSDR Social Vulnerability Index 2022",
-                "credential_required": False,
-                "dataset_id": "CDC_ATSDR_SVI_2022_USA",
-                "endpoint": "/api/live/cdc/svi?fips=",
-            },
-        ],
-    }
+                "dataset_id": dataset_id,
+                "endpoint": endpoint,
+                "state": probe["state"],
+                "reason": probe["reason"],
+                "checked_at": _now(),
+            }
+        )
+    return {"status": "ok", "fetched_at": _now(), "sources": sources}
