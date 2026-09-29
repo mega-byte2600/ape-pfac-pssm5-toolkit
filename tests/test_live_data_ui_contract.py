@@ -78,11 +78,65 @@ class LiveDataUIContractTest(unittest.TestCase):
                 self.assertIn("url", a)
                 self.assertTrue(a["url"].startswith("https://pubmed.ncbi.nlm.nih.gov/"))
 
-    def test_census_unavailable_shape_without_key(self):
+    _CR_GEO = "05000US33009"
+
+    def _cr_payload(self):
+        return {
+            "data": {
+                self._CR_GEO: {
+                    "B01003": {"estimate": {"B01003001": 300000.0}},
+                    "B17001": {"estimate": {"B17001001": 290000.0, "B17001002": 29000.0}},
+                    "B03002": {"estimate": {
+                        "B03002001": 300000.0, "B03002003": 240000.0,
+                        "B03002004": 9000.0, "B03002006": 6000.0,
+                        "B03002012": 30000.0,
+                    }},
+                }
+            },
+            "geography": {self._CR_GEO: {"name": "Grafton County, NH"}},
+            "release": {"name": "ACS 2024 5-year"},
+        }
+
+    @patch("pssm5_toolkit.live_data._get_json")
+    def test_census_ok_shape_via_census_reporter(self, mock_get):
+        mock_get.return_value = self._cr_payload()
         d = fetch_census_demographics("33", "009")
+        self.assertEqual(d["status"], "ok")
+        self.assertIn("censusreporter.org", d["source"])
+        self.assertEqual(d["county_name"], "Grafton County, NH")
+        self.assertEqual(d["population"], 300000)
+        self.assertEqual(d["poverty_percent"], 10.0)
+        self.assertTrue(d["breakdown"])
+        labels = [b["label"] for b in d["breakdown"]]
+        self.assertIn("Hispanic or Latino", labels)
+        for b in d["breakdown"]:
+            self.assertIn("label", b)
+            self.assertIn("percent", b)
+        # keyless: no key parameter sent upstream
+        params = mock_get.call_args[0][1]
+        self.assertNotIn("key", params)
+
+    @patch("pssm5_toolkit.live_data._get_json")
+    def test_census_rejects_bad_fips_without_network(self, mock_get):
+        for sf, cf in [("", ""), ("3", "009"), ("33", "09"), ("xx", "009")]:
+            d = fetch_census_demographics(sf, cf)
+            self.assertEqual(d["status"], "unavailable")
+            self.assertEqual(d["reason_code"], "MISSING_PARAMETERS")
+        mock_get.assert_not_called()
+
+    @patch("pssm5_toolkit.live_data._get_json")
+    def test_census_unknown_geo_shape(self, mock_get):
+        mock_get.return_value = {"data": {}, "geography": {}, "release": {}}
+        d = fetch_census_demographics("99", "999")
         self.assertEqual(d["status"], "unavailable")
-        self.assertEqual(d["reason_code"], "CREDENTIALS_NOT_CONFIGURED")
-        self.assertIn("detail", d)
+        self.assertIn("reason_code", d)
+
+    def test_census_panel_copy_has_no_key_requirement(self):
+        from pathlib import Path
+        html = Path("web/resources.html").read_text()
+        census_block = html[html.index('id="census-form"') - 400:html.index('id="census-form"')]
+        self.assertNotIn("API key", census_block)
+        self.assertNotIn("api_key", census_block.lower())
 
     def test_resources_page_includes_live_data_section(self):
         from pathlib import Path

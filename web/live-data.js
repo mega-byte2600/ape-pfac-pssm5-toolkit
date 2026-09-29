@@ -218,35 +218,26 @@
     getJSON("/api/live/census-demographics?state_fips=" + encodeURIComponent(sf) +
             "&county_fips=" + encodeURIComponent(cf)).then(function (d) {
       if (d.status !== "ok") {
-        var msg = (d.reason_code === "CREDENTIALS_NOT_CONFIGURED")
-          ? "Population lookup needs a free Census API key on the server. Until then, the static county tables in the toolkit still work."
-          : (d.reason_code || d.status);
-        censusPanel.innerHTML = unavailableBox(msg, d.detail);
+        censusPanel.innerHTML = unavailableBox(d.detail || d.reason_code || d.status);
         return;
       }
-      var subs = d.subdivisions || [];
-      var total = subs.reduce(function (acc, s) {
-        var n = Number(String(s.population).replace(/[^0-9]/g, ""));
-        return acc + (isNaN(n) ? 0 : n);
-      }, 0);
-      var html = "<h4>County subdivisions</h4>";
-      if (!subs.length) {
-        html += '<p class="muted">No subdivision data returned for this county.</p>';
-      } else {
-        html += '<div class="stat-grid">' +
-          '<div class="stat"><strong>' + total.toLocaleString() + '</strong><span>Total population</span></div>' +
-          '<div class="stat"><strong>' + subs.length + '</strong><span>Subdivisions</span></div>' +
-          "</div>";
-        html += '<ul class="facility-list">' + subs.slice(0, 20).map(function (s) {
-          return "<li><button type=\"button\" disabled>" + esc(s.name || "—") +
-            "<small>Population " + esc(String(s.population == null ? "—" : s.population)) +
-            (s.poverty_percent != null ? " · " + esc(String(s.poverty_percent)) + "% below poverty" : "") +
-            "</small></button></li>";
-        }).join("") + "</ul>";
-        if (subs.length > 20) html += '<p class="muted">Showing 20 of ' + subs.length + " subdivisions.</p>";
+      var pop = (d.population == null) ? "—" : Number(d.population).toLocaleString("en-US");
+      var pov = (d.poverty_percent == null) ? "—" : d.poverty_percent + "%";
+      var html = "<h4>" + esc(d.county_name || "County demographics") + "</h4>";
+      html += '<p class="muted">' + esc(d.release || "ACS 5-year") +
+        " — population context for representation and access design.</p>";
+      html += '<div class="stat-grid">' +
+        '<div class="stat"><strong>' + esc(pop) + "</strong><span>Total population</span></div>" +
+        '<div class="stat"><strong>' + esc(pov) + "</strong><span>Below poverty level</span></div>" +
+        "</div>";
+      var bd = d.breakdown || [];
+      if (bd.length) {
+        html += "<h4>Race and ethnicity</h4>" + bd.map(function (r) {
+          return barRow(r.label, r.percent, false);
+        }).join("");
       }
       censusPanel.innerHTML = html + sourceNote(
-        (d.source || "U.S. Census Bureau, American Community Survey 5-year") +
+        (d.source || "Census Reporter") +
         (d.fetched_at ? " · fetched " + d.fetched_at.slice(0, 10) : ""));
     }).catch(function () {
       censusPanel.innerHTML = unavailableBox("Census lookup did not respond.");

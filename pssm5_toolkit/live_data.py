@@ -653,89 +653,119 @@ def fetch_trials(
 UPPER_VALLEY_EXAMPLE = {"state_fips": "33", "county_fips": "009", "label": "Grafton County, NH"}
 
 
+_CR_BASE = "https://api.censusreporter.org/1.0"
+_CR_SOURCE = (
+    "Census Reporter (censusreporter.org) \u2014 "
+    "U.S. Census Bureau American Community Survey 5-year"
+)
+
+
 def fetch_census_demographics(
     state_fips: str = "", county_fips: str = ""
 ) -> Dict[str, Any]:
-    """ACS 5-year demographics (population, poverty, disability proxy) for all
-    county subdivisions in a given county.
+    """County demographics for PFAC representation and access design.
 
-    Leaders use this for the population-context input to PFAC recruitment and
-    representation design in their own service area.
+    Population, poverty rate, and race/ethnicity breakdown for any U.S.
+    county, via Census Reporter \u2014 a free public service with no API key
+    or signup, serving Census American Community Survey 5-year estimates.
 
-    Requires the free Census API key (CENSUS_API_KEY env var). Without it,
-    returns status "unavailable" with reason CREDENTIALS_NOT_CONFIGURED.
+    Leaders use this for the population-context input to PFAC recruitment
+    and representation design in their own service area. Interpretation and
+    PFAC design decisions remain the leader's own work.
+
+    (Replaces the former api.census.gov path, which began requiring an API
+    key; Census Reporter serves the same ACS 5-year data keyless.)
     """
     cache_key = f"census_demographics:{state_fips}:{county_fips}"
     cached = _cache_get(cache_key)
     if cached is not None:
         return cached
 
-    source = "U.S. Census Bureau American Community Survey 5-year (api.census.gov)"
-    api_key = os.environ.get("CENSUS_API_KEY", "").strip()
-    if not api_key:
+    sf = (state_fips or "").strip()
+    cf = (county_fips or "").strip()
+    if not (sf.isdigit() and len(sf) == 2 and cf.isdigit() and len(cf) == 3):
         payload = _unavailable(
-            source,
-            "CREDENTIALS_NOT_CONFIGURED",
-            "Set CENSUS_API_KEY (free at api.census.gov/data/key_signup.html) to enable.",
-        )
-        _cache_set(cache_key, payload, 3600)
-        return payload
-    if not state_fips or not county_fips:
-        payload = _unavailable(
-            source,
+            _CR_SOURCE,
             "MISSING_PARAMETERS",
-            "Pass state_fips and county_fips query parameters (e.g. state_fips=33&county_fips=009).",
+            "Pass state_fips (2 digits) and county_fips (3 digits), "
+            "e.g. state_fips=33&county_fips=009.",
         )
         _cache_set(cache_key, payload, 3600)
         return payload
 
+    geo_id = f"05000US{sf}{cf}"
     try:
         data = _get_json(
-            "https://api.census.gov/data/2023/acs/acs5",
-            {
-                "get": "NAME,B17001_001E,B17001_002E,B01003_001E",
-                "for": "county subdivision:*",
-                "in": f"state:{state_fips} county:{county_fips}",
-                "key": api_key,
-            },
+            f"{_CR_BASE}/data/show/latest",
+            {"table_ids": "B01003,B17001,B03002", "geo_ids": geo_id},
         )
-        header, rows = data[0], data[1:]
-        idx = {col: i for i, col in enumerate(header)}
-        subdivisions = []
-        for row in rows:
-            universe = row[idx["B17001_001E"]]
-            poor = row[idx["B17001_002E"]]
+        geo_data = (data.get("data") or {}).get(geo_id)
+        if not geo_data:
+            raise ValueError(f"no data for geo {geo_id}")
+        county_name = ((data.get("geography") or {}).get(geo_id) or {}).get(
+            "name", ""
+        )
+        release = (data.get("release") or {}).get("name") or "ACS 5-year"
+
+        def est(table: str, col: str):
             try:
-                poverty_pct = round(100 * int(poor) / int(universe), 1) if int(universe) else None
-            except (ValueError, TypeError):
-                poverty_pct = None
-            subdivisions.append(
-                {
-                    "name": row[idx["NAME"]].split(",")[0],
-                    "population": row[idx["B01003_001E"]],
-                    "poverty_percent": poverty_pct,
-                }
-            )
-        subdivisions.sort(key=lambda r: r["name"] or "")
+                return float(
+                    ((geo_data.get(table) or {}).get("estimate") or {}).get(col)
+                )
+            except (TypeError, ValueError):
+                return None
+
+        population = est("B01003", "B01003001")
+        pov_universe = est("B17001", "B17001001")
+        pov_below = est("B17001", "B17001002")
+        poverty_pct = (
+            round(100 * pov_below / pov_universe, 1) if pov_universe else None
+        )
+        race_total = est("B03002", "B03002001")
+        breakdown = []
+        for col, label in (
+            ("B03002012", "Hispanic or Latino"),
+            ("B03002003", "White alone, not Hispanic or Latino"),
+            ("B03002004", "Black or African American alone, not Hispanic or Latino"),
+            ("B03002006", "Asian alone, not Hispanic or Latino"),
+        ):
+            val = est("B03002", col)
+            if val is not None and race_total:
+                breakdown.append(
+                    {"label": label, "percent": round(100 * val / race_total, 1)}
+                )
+        breakdown.sort(key=lambda r: r["percent"], reverse=True)
     except Exception as exc:
-        payload = _unavailable(source, "UPSTREAM_OR_AUTH_FAILURE", type(exc).__name__)
+        payload = _unavailable(
+            _CR_SOURCE, "UPSTREAM_OR_AUTH_FAILURE", type(exc).__name__
+        )
         _cache_set(cache_key, payload, 300)
         return payload
 
     payload = {
         "status": "ok",
-        "source": source,
+        "source": _CR_SOURCE,
+        "source_urls": [
+            "https://censusreporter.org/",
+            "https://www.census.gov/programs-surveys/acs",
+        ],
         "note": (
             "Live ACS 5-year estimates for local population context. "
-            "Interpretation and PFAC design decisions remain the leader's own work."
+            "Interpretation and PFAC design decisions remain the leader's "
+            "own work."
         ),
         "fetched_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-        "state_fips": state_fips,
-        "county_fips": county_fips,
-        "subdivisions": subdivisions,
+        "state_fips": sf,
+        "county_fips": cf,
+        "county_name": county_name,
+        "release": release,
+        "population": int(population) if population is not None else None,
+        "poverty_percent": poverty_pct,
+        "breakdown": breakdown,
     }
     _cache_set(cache_key, payload, 24 * 3600)
     return payload
+
 
 
 def fetch_census_upper_valley() -> Dict[str, Any]:
@@ -787,11 +817,10 @@ def live_data_status() -> Dict[str, Any]:
         }
         _cache_set("source_health", health, 300)
 
-    census_key = bool(os.environ.get("CENSUS_API_KEY", "").strip())
-    census_health = (
-        {"state": "live", "reason": ""}
-        if census_key
-        else {"state": "needs_key", "reason": "Set CENSUS_API_KEY to enable"}
+    census_health = _probe_source(
+        "census",
+        f"{_CR_BASE}/data/show/latest",
+        {"table_ids": "B01003", "geo_ids": "05000US33009"},
     )
     checked_at = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     sources = [
@@ -833,9 +862,8 @@ def live_data_status() -> Dict[str, Any]:
         },
         {
             "id": "census_demographics",
-            "label": "Census ACS demographics for any county's subdivisions",
-            "credential_required": True,
-            "configured": census_key,
+            "label": "County population, poverty, and race/ethnicity (Census ACS via Census Reporter)",
+            "credential_required": False,
             "endpoint": "/api/live/census-demographics?state_fips=&county_fips=",
             "state": census_health["state"],
             "reason": census_health["reason"],
