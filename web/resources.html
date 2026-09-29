@@ -15,7 +15,6 @@
   <a class="skip" href="#main">Skip to main content</a>
   <header class="site-header enterprise-header">
     <a class="brand" href="/" aria-label="PFAC Leadership Toolkit home"><span class="mark"><img src="/pfac-origin-logo.jpg" alt="" width="48" height="48"></span><span><strong>PFAC Leadership Toolkit</strong><small>Evidence. Local analysis. Decisions. Accountability.</small></span></a>
-    </div>
     <nav aria-label="Primary"><a href="/">Home</a><a href="/executive-launch.html">Executive Brief</a><a href="/evidence-summary.html">Evidence Summary</a><a href="/applied-analysis.html">Applied Analysis</a><a href="/toolkit-tools.html">Leadership Tools</a><a href="/deliverables.html">APE Deliverables</a></nav>
   </header>
   <nav class="utility-nav" aria-label="Key resource shortcuts"><span>Key resources</span><a href="/story.html">Rosie Bartel</a><a href="/hai-alert.html">HAI Alert</a><a href="/resources.html">Resources</a><a href="/about.html">About</a></nav>
@@ -74,6 +73,7 @@
       </div>
       <div id="open-resources-grid" class="card-grid"></div>
     </section>
+
     <section class="panel" id="live-data">
       <div class="section-title">
         <p class="eyebrow">Live public data</p>
@@ -126,6 +126,16 @@
           <button type="submit" class="button">Look up</button>
         </form>
         <div id="census-panel" class="live-results" aria-live="polite"></div>
+      </div>
+
+      <div class="live-block" id="cdc-carpe-data">
+        <h3>CDC Carpe Data: community context</h3>
+        <p>Use one county FIPS code to pull CDC PLACES health measures and the CDC/ATSDR Social Vulnerability Index. These data help leaders ask who is represented, who may face access barriers, and which community signals deserve discussion.</p>
+        <form id="cdc-county-form" class="live-form">
+          <label>County FIPS <input type="text" id="cdc-county-fips" placeholder="e.g. 06079" maxlength="5" inputmode="numeric"></label>
+          <button type="submit" class="button">Pull CDC data</button>
+        </form>
+        <div id="cdc-county-panel" class="live-results" aria-live="polite"></div>
       </div>
     </section>
     <nav class="parent-nav" aria-label="Section navigation"><a href="/evidence-summary.html">← Return to Evidence Summary</a></nav>
