@@ -9,6 +9,13 @@ import urllib.parse
 from pathlib import Path
 from wsgiref.simple_server import make_server
 
+from .cdc_data import (
+    cdc_data_status,
+    fetch_cdc_candidemia,
+    fetch_cdc_hai_isa,
+    fetch_cdc_places_county,
+    fetch_cdc_svi_county,
+)
 from .evidence_search import fetch_evidence_search
 from .hai_dashboard import build_hai_dashboard
 from .live_data import (
@@ -72,6 +79,13 @@ def _asset(start_response, target: Path):
     return [body]
 
 
+def _int_query(query, name: str, default: int) -> int:
+    try:
+        return int(query.get(name, [str(default)])[0] or str(default))
+    except ValueError:
+        return default
+
+
 def application(environ, start_response):
     path = environ.get("PATH_INFO", "/")
     method = environ.get("REQUEST_METHOD", "GET").upper()
@@ -112,7 +126,9 @@ def application(environ, start_response):
     if path == "/api/toolkit":
         return _json(start_response, build_demo_payload())
     if path == "/api/live/status":
-        return _json(start_response, live_data_status())
+        status = live_data_status()
+        status["sources"].extend(cdc_data_status()["sources"])
+        return _json(start_response, status)
     if path == "/api/live/facility-search":
         query = urllib.parse.parse_qs(environ.get("QUERY_STRING", ""))
         return _json(
@@ -130,13 +146,11 @@ def application(environ, start_response):
         return _json(start_response, fetch_evidence_watch())
     if path == "/api/live/evidence-search":
         query = urllib.parse.parse_qs(environ.get("QUERY_STRING", ""))
-        try:
-            limit = int(query.get("limit", ["10"])[0] or "10")
-        except ValueError:
-            limit = 10
         return _json(
             start_response,
-            fetch_evidence_search(query.get("q", [""])[0], limit=limit),
+            fetch_evidence_search(
+                query.get("q", [""])[0], limit=_int_query(query, "limit", 10)
+            ),
         )
     if path == "/api/live/trials":
         query = urllib.parse.parse_qs(environ.get("QUERY_STRING", ""))
@@ -158,6 +172,45 @@ def application(environ, start_response):
         )
     if path == "/api/live/census-upper-valley":
         return _json(start_response, fetch_census_upper_valley())
+    if path == "/api/live/cdc/status":
+        return _json(start_response, cdc_data_status())
+    if path == "/api/live/cdc/hai-isa":
+        query = urllib.parse.parse_qs(environ.get("QUERY_STRING", ""))
+        return _json(
+            start_response,
+            fetch_cdc_hai_isa(
+                topic=query.get("topic", [""])[0],
+                view_by=query.get("view_by", [""])[0],
+                series=query.get("series", [""])[0],
+                limit=_int_query(query, "limit", 100),
+            ),
+        )
+    if path == "/api/live/cdc/candidemia":
+        query = urllib.parse.parse_qs(environ.get("QUERY_STRING", ""))
+        return _json(
+            start_response,
+            fetch_cdc_candidemia(
+                topic=query.get("topic", [""])[0],
+                view_by=query.get("view_by", [""])[0],
+                series=query.get("series", [""])[0],
+                limit=_int_query(query, "limit", 100),
+            ),
+        )
+    if path == "/api/live/cdc/places":
+        query = urllib.parse.parse_qs(environ.get("QUERY_STRING", ""))
+        return _json(
+            start_response,
+            fetch_cdc_places_county(
+                location_id=query.get("location_id", [""])[0],
+                limit=_int_query(query, "limit", 100),
+            ),
+        )
+    if path == "/api/live/cdc/svi":
+        query = urllib.parse.parse_qs(environ.get("QUERY_STRING", ""))
+        return _json(
+            start_response,
+            fetch_cdc_svi_county(fips=query.get("fips", [""])[0]),
+        )
     relative = "index.html" if path in ("/", "") else path.lstrip("/")
     target = (WEB / relative).resolve()
     web_root = WEB.resolve()
