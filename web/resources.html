@@ -88,7 +88,11 @@
         <p>Find any CMS-tracked hospital, then see its HCAHPS experience scores next to national benchmarks — plus the clinical trials running there, where advisor input counts most. Context for measurement — not proof of what caused a score.</p>
         <form id="facility-search-form" class="live-form">
           <label>Hospital name <input type="search" id="facility-name" name="name" placeholder="e.g. Hitchcock" autocomplete="off"></label>
-          <label>State <input type="text" id="facility-state" name="state" placeholder="e.g. NH" maxlength="2" autocomplete="off"></label>
+          <label>State
+            <select id="facility-state" name="state" autocomplete="address-level1">
+              <option value="">Any state</option>
+            </select>
+          </label>
           <button type="submit" class="button">Search</button>
         </form>
         <div id="facility-results" class="live-results" aria-live="polite"></div>
@@ -101,7 +105,11 @@
         <p>Search ClinicalTrials.gov for studies listing a hospital as a location — recruiting studies are where advisor input on recruitment and participant experience counts most. Live, no key needed.</p>
         <form id="trials-search-form" class="live-form">
           <label>Hospital or facility name <input type="search" id="trials-facility" placeholder="e.g. Hitchcock" autocomplete="off"></label>
-          <label>State <input type="text" id="trials-state" placeholder="e.g. NH" maxlength="2" autocomplete="off"></label>
+          <label>State
+            <select id="trials-state" autocomplete="address-level1">
+              <option value="">Any state</option>
+            </select>
+          </label>
           <button type="submit" class="button">Search trials</button>
         </form>
         <div id="trials-search-panel" class="live-results" aria-live="polite"></div>
@@ -120,12 +128,21 @@
 
       <div class="live-block">
         <h3>The population you serve</h3>
-        <p>American Community Survey 5-year demographics for any U.S. county — population, poverty rate, and race/ethnicity breakdown as context for representation and access design. Free, no key or signup needed.</p>
+        <p>American Community Survey 5-year demographics for any U.S. county — population, poverty rate, and race/ethnicity breakdown as context for representation and access design. Choose the place; the site handles Census geography codes automatically.</p>
         <form id="census-form" class="live-form">
-          <label>State FIPS <input type="text" id="census-state" placeholder="e.g. 33" maxlength="2" inputmode="numeric"></label>
-          <label>County FIPS <input type="text" id="census-county" placeholder="e.g. 009" maxlength="3" inputmode="numeric"></label>
-          <button type="submit" class="button">Look up</button>
+          <label>State
+            <select id="census-state" autocomplete="address-level1">
+              <option value="">Choose state</option>
+            </select>
+          </label>
+          <label>County
+            <select id="census-county" disabled>
+              <option value="">Choose state first</option>
+            </select>
+          </label>
+          <button type="submit" class="button" id="census-submit" disabled>View demographics</button>
         </form>
+        <p class="form-help">No Census or FIPS code lookup needed.</p>
         <div id="census-panel" class="live-results" aria-live="polite"></div>
       </div>
 
