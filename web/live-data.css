@@ -24,7 +24,8 @@
   font-weight: 600;
   color: var(--granite);
 }
-.live-form input {
+.live-form input,
+.live-form select {
   padding: 0.55rem 0.7rem;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -33,11 +34,19 @@
   background: var(--card);
   color: var(--ink);
 }
-.live-form input:focus {
+.live-form select { min-width: 13rem; }
+.live-form input:focus,
+.live-form select:focus {
   outline: 2px solid var(--focus);
   outline-offset: 1px;
   border-color: var(--focus);
 }
+.live-form select:disabled,
+.live-form button:disabled {
+  opacity: 0.58;
+  cursor: not-allowed;
+}
+.form-help { margin-top: 0.25rem; font-size: 0.85rem; color: var(--muted); }
 
 .live-results { margin-top: 1rem; }
 .live-results .muted { color: var(--muted); }

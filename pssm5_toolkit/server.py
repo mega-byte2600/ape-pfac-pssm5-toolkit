@@ -16,6 +16,7 @@ from .cdc_data import (
     fetch_cdc_places_county,
     fetch_cdc_svi_county,
 )
+from .cdc_geography import fetch_cdc_counties
 from .evidence_search import fetch_evidence_search
 from .hai_dashboard import build_hai_dashboard
 from .live_data import (
@@ -174,6 +175,9 @@ def application(environ, start_response):
         return _json(start_response, fetch_census_upper_valley())
     if path == "/api/live/cdc/status":
         return _json(start_response, cdc_data_status())
+    if path == "/api/live/cdc/counties":
+        query = urllib.parse.parse_qs(environ.get("QUERY_STRING", ""))
+        return _json(start_response, fetch_cdc_counties(query.get("state", [""])[0]))
     if path == "/api/live/cdc/hai-isa":
         query = urllib.parse.parse_qs(environ.get("QUERY_STRING", ""))
         return _json(
