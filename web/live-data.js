@@ -216,8 +216,7 @@
       '<p class="muted">No new articles matched this week.</p>';
     evidenceEl.innerHTML += sourceNote(
       (d.source || "PubMed E-utilities") +
-      (d.fetched_at ? " · fetched " + d.fetched_at.slice(0, 10) : "") +
-      " · citations in AMA 11th edition format");
+      (d.fetched_at ? " · fetched " + d.fetched_at.slice(0, 10) : ""));
   }).catch(function () {
     evidenceEl.innerHTML = unavailableBox("PubMed surveillance did not respond.");
   });
