@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="/live-data.css">
   <script defer src="/app.js"></script>
   <script defer src="/live-data.js"></script>
+  <script defer src="/cdc-county-selector.js"></script>
   <script defer src="/evidence-search.js"></script>
 </head>
 <body>
@@ -131,11 +132,21 @@
       <div class="live-block" id="cdc-community-context">
         <p class="eyebrow">CDC public health data</p>
         <h3>Community context from CDC</h3>
-        <p>Enter a county FIPS code to view CDC PLACES health measures alongside the CDC/ATSDR Social Vulnerability Index. Use these signals to inform questions about representation, access, and community context.</p>
+        <p>Choose a state and county. The site handles the county FIPS code automatically, then returns CDC PLACES health measures and the CDC/ATSDR Social Vulnerability Index.</p>
         <form id="cdc-county-form" class="live-form">
-          <label>County FIPS <input type="text" id="cdc-county-fips" placeholder="e.g. 06079" maxlength="5" inputmode="numeric"></label>
-          <button type="submit" class="button">View CDC data</button>
+          <label>State
+            <select id="cdc-state" name="state" autocomplete="address-level1">
+              <option value="">Choose state</option>
+            </select>
+          </label>
+          <label>County
+            <select id="cdc-county-fips" name="county" disabled>
+              <option value="">Choose state first</option>
+            </select>
+          </label>
+          <button type="submit" class="button" id="cdc-county-submit" disabled>View CDC data</button>
         </form>
+        <p class="form-help">No ZIP code or FIPS lookup needed.</p>
         <div id="cdc-county-panel" class="live-results" aria-live="polite"></div>
       </div>
     </section>
