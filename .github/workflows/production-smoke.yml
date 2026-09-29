@@ -13,15 +13,24 @@ on:
 
 jobs:
   deployed-site:
-    name: Verify deployed public site
+    name: Deploy and verify public site
     runs-on: ubuntu-latest
     steps:
+      - name: Trigger Render deploy
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          test -n "$RENDER_DEPLOY_HOOK_URL"
+          curl --fail --silent --show-error --retry 3 --retry-all-errors "$RENDER_DEPLOY_HOOK_URL" > /dev/null
+
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
       - name: Wait for production and run smoke
         env:
           EXPECTED_SHA: ${{ inputs.expected_sha }}
