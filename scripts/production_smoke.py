@@ -30,6 +30,7 @@ HTML_CHECKS = {
         "Bolton TDI APE 27",
         "Keep the architecture. Change the topic.",
     ],
+    "/resources.html": ["cdc-state", "cdc-county-fips", "No ZIP code or FIPS lookup needed."],
     "/deliverables.html": ["APE deliverables"],
 }
 
@@ -38,6 +39,7 @@ ASSET_CHECKS = {
     "/applied-analysis.js": ["Plotly.react"],
     "/leadership-tools.js": ["leadership-tool-select", "data-leadership-tool", "history.replaceState"],
     "/leadership-tools.css": [".tool-workspace", ".tool-summary-grid", ".audit-table-details"],
+    "/cdc-county-selector.js": ["/api/live/cdc/counties", "Choose state first"],
     "/upper-valley-local-analysis.csv": ["Municipality"],
 }
 
@@ -63,6 +65,23 @@ def fetch_status(base_url: str, path: str) -> tuple[int, str, str]:
 
 def fail(message: str) -> None:
     print(f"FAIL: {message}")
+
+
+def check_json_route(base_url: str, path: str) -> tuple[dict, int]:
+    try:
+        status, content_type, body = fetch(base_url, path)
+        payload = json.loads(body)
+    except (HTTPError, URLError, TimeoutError, json.JSONDecodeError) as exc:
+        fail(f"{path} request error: {exc}")
+        return {}, 1
+    failures = 0
+    if status != 200 or "application/json" not in content_type:
+        fail(f"{path} did not return JSON 200")
+        failures += 1
+    if payload.get("status") not in {"ok", "unavailable"}:
+        fail(f"{path} returned unexpected status {payload.get('status')!r}")
+        failures += 1
+    return payload, failures
 
 
 def main() -> int:
@@ -138,6 +157,34 @@ def main() -> int:
     except (HTTPError, URLError, TimeoutError, json.JSONDecodeError) as exc:
         fail(f"/api/health request error: {exc}")
         failures += 1
+
+    counties, county_failures = check_json_route(args.base_url, "/api/live/cdc/counties?state=CA")
+    failures += county_failures
+    if counties.get("status") == "ok":
+        county_map = {str(c.get("fips")): c.get("name") for c in counties.get("counties", [])}
+        if county_map.get("06079") != "San Luis Obispo":
+            fail("CDC county selector did not return San Luis Obispo County FIPS 06079")
+            failures += 1
+        else:
+            print("CDC county selector live: CA -> San Luis Obispo (06079)")
+
+    places, places_failures = check_json_route(args.base_url, "/api/live/cdc/places?location_id=06079&limit=200")
+    failures += places_failures
+    if places.get("status") == "ok":
+        if not places.get("measures"):
+            fail("CDC PLACES returned no measures for San Luis Obispo County")
+            failures += 1
+        else:
+            print(f"CDC PLACES live: {len(places.get('measures', []))} county measure rows")
+
+    svi, svi_failures = check_json_route(args.base_url, "/api/live/cdc/svi?fips=06079")
+    failures += svi_failures
+    if svi.get("status") == "ok":
+        if svi.get("overall_percentile") is None:
+            fail("CDC SVI returned no overall percentile for San Luis Obispo County")
+            failures += 1
+        else:
+            print("CDC SVI live: San Luis Obispo County percentile returned")
 
     if failures:
         print(f"Production smoke FAILED with {failures} issue(s).")
