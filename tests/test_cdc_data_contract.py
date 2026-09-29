@@ -102,18 +102,20 @@ class CDCDataContractTests(unittest.TestCase):
         self.assertEqual(d["overall_percentile"], 0.31)
         self.assertIn("housing_transportation", d["themes"])
 
-    def test_public_pages_surface_cdc_integration(self):
+    def test_public_pages_surface_cdc_integration_without_internal_copy(self):
         resources = Path("web/resources.html").read_text(encoding="utf-8")
         hai = Path("web/hai-alert.html").read_text(encoding="utf-8")
         js = Path("web/live-data.js").read_text(encoding="utf-8")
         app = Path("web/app.js").read_text(encoding="utf-8")
-        self.assertIn('id="cdc-carpe-data"', resources)
+        self.assertIn('id="cdc-community-context"', resources)
         self.assertIn('id="cdc-county-form"', resources)
         self.assertIn("/api/live/cdc/places", js)
         self.assertIn("/api/live/cdc/svi", js)
         self.assertIn('id="cdc-hai-live"', hai)
         self.assertIn("/api/live/cdc/hai-isa", app)
         self.assertIn("/api/live/cdc/candidemia", app)
+        self.assertNotIn("Carpe Data", resources)
+        self.assertNotIn("Carpe Data", hai)
 
     @patch("pssm5_toolkit.cdc_data._get_json")
     def test_server_places_route(self, mock_get):
