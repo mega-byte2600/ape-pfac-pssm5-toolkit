@@ -200,6 +200,55 @@ function renderHaiCharts(data) {
   }, config);
 }
 
+function renderCdcHaic(targetId, data) {
+  const target = document.getElementById(targetId);
+  if (!target) return;
+  if (!data || data.status !== "ok") {
+    target.innerHTML = '<p class="boundary-note">CDC feed is unavailable right now.</p>';
+    return;
+  }
+  const records = (data.records || []).filter((item) => item.year || item.topic || item.series).slice(0, 8);
+  if (!records.length) {
+    target.innerHTML = '<p class="boundary-note">CDC returned no displayable rows for this request.</p>';
+    return;
+  }
+  const table = document.createElement("table");
+  table.innerHTML = '<thead><tr><th>Year</th><th>Topic</th><th>Series</th><th>Value</th></tr></thead>';
+  const body = document.createElement("tbody");
+  for (const row of records) {
+    const tr = document.createElement("tr");
+    for (const value of [row.year || "", row.topic || row.view_by || "", row.series || "", row.value == null ? "" : row.value]) {
+      const td = document.createElement("td");
+      td.textContent = String(value);
+      tr.appendChild(td);
+    }
+    body.appendChild(tr);
+  }
+  table.appendChild(body);
+  const wrap = document.createElement("div");
+  wrap.className = "matrix-table";
+  wrap.tabIndex = 0;
+  wrap.appendChild(table);
+  target.innerHTML = "";
+  target.appendChild(wrap);
+  const source = document.createElement("p");
+  source.className = "source-note";
+  source.textContent = `${data.source} · dataset ${data.dataset_id} · fetched ${(data.fetched_at || "").slice(0, 10)}`;
+  target.appendChild(source);
+}
+
+async function loadCdcHai() {
+  const isaTarget = document.getElementById("cdc-isa-panel");
+  const candTarget = document.getElementById("cdc-candidemia-panel");
+  if (!isaTarget && !candTarget) return;
+  const results = await Promise.allSettled([
+    fetchJson("/api/live/cdc/hai-isa?limit=20"),
+    fetchJson("/api/live/cdc/candidemia?limit=20"),
+  ]);
+  renderCdcHaic("cdc-isa-panel", results[0].status === "fulfilled" ? results[0].value : null);
+  renderCdcHaic("cdc-candidemia-panel", results[1].status === "fulfilled" ? results[1].value : null);
+}
+
 async function boot() {
   const toolkitTarget = document.getElementById("motto");
   const resourcesTarget = document.getElementById("open-resources-grid");
@@ -228,6 +277,7 @@ async function boot() {
   if (haiTarget) {
     const data = await fetchJson("/api/hai-dashboard");
     renderHaiCharts(data);
+    await loadCdcHai();
   }
 }
 
