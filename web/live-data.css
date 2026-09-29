@@ -1,4 +1,4 @@
-/* Live public data section (resources.html) — executive, plain-language, phone-first. */
+/* Live public data — resources.html. Plain-language, executive-friendly. */
 
 .live-block {
   margin-top: 2.25rem;
@@ -47,6 +47,19 @@
   padding: 0.8rem 1rem;
   border-radius: 0 8px 8px 0;
 }
+
+#cdc-community-context {
+  margin-top: 2rem;
+  padding: 1.35rem 1.4rem 1.45rem;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--dartmouth-green);
+  border-radius: 14px;
+  background: linear-gradient(180deg, #f7fbf8 0%, var(--card) 100%);
+  box-shadow: var(--soft-shadow);
+}
+#cdc-community-context .eyebrow { margin: 0 0 0.35rem; }
+#cdc-community-context h3 { font-size: 1.3rem; }
+#cdc-community-context .live-form { margin-bottom: 0.4rem; }
 
 .facility-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
 .facility-list button {
