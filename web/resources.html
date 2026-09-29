@@ -95,6 +95,17 @@
       </div>
 
       <div class="live-block">
+        <h3>Clinical trials at your hospital</h3>
+        <p>Search ClinicalTrials.gov for studies listing a hospital as a location — recruiting studies are where advisor input on recruitment and participant experience counts most. Live, no key needed.</p>
+        <form id="trials-search-form" class="live-form">
+          <label>Hospital or facility name <input type="search" id="trials-facility" placeholder="e.g. Hitchcock" autocomplete="off"></label>
+          <label>State <input type="text" id="trials-state" placeholder="e.g. NH" maxlength="2" autocomplete="off"></label>
+          <button type="submit" class="button">Search trials</button>
+        </form>
+        <div id="trials-search-panel" class="live-results" aria-live="polite"></div>
+      </div>
+
+      <div class="live-block">
         <h3>What the evidence says now</h3>
         <p>Ongoing PubMed surveillance for PFAC and patient-engagement literature. Citations are formatted to AMA 11th edition, ready for the annotated bibliography.</p>
         <div id="evidence-watch" class="live-results" aria-live="polite"><p class="muted">Loading evidence watch…</p></div>

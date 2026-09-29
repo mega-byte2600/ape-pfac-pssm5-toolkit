@@ -146,6 +146,17 @@ class LiveDataUIContractTest(unittest.TestCase):
         self.assertIn("live-data.css", html)
         self.assertIn('id="trials-panel"', html)
 
+    def test_trials_search_is_standalone(self):
+        from pathlib import Path
+        html = Path("web/resources.html").read_text()
+        js = Path("web/live-data.js").read_text()
+        self.assertIn('id="trials-search-form"', html)
+        self.assertIn('id="trials-search-panel"', html)
+        self.assertIn('id="trials-facility"', html)
+        # the standalone form is wired to the trials loader
+        self.assertIn("trials-search-form", js)
+        self.assertIn("loadTrials(tName, tState, trialsSearchPanel)", js)
+
     @patch("pssm5_toolkit.live_data._get_json")
     def test_facility_search_uses_partial_match_and_ranks(self, mock_get):
         mock_get.return_value = {

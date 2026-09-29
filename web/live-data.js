@@ -128,13 +128,14 @@
     });
   }
 
-  function loadTrials(facilityName, state) {
-    if (!trialsPanel) return;
-    trialsPanel.innerHTML = '<p class="muted">Loading research at this hospital…</p>';
+  function loadTrials(facilityName, state, panel) {
+    var target = panel || trialsPanel;
+    if (!target) return;
+    target.innerHTML = '<p class="muted">Loading research at this hospital…</p>';
     getJSON("/api/live/trials?facility_name=" + encodeURIComponent(facilityName || "") +
             "&state=" + encodeURIComponent(state || "")).then(function (d) {
       if (d.status !== "ok") {
-        trialsPanel.innerHTML = unavailableBox(d.reason_code || d.status, d.detail);
+        target.innerHTML = unavailableBox(d.reason_code || d.status, d.detail);
         return;
       }
       var studies = d.studies || [];
@@ -158,11 +159,27 @@
             "</li>";
         }).join("") + "</ul>";
       }
-      trialsPanel.innerHTML = html + sourceNote(
+      target.innerHTML = html + sourceNote(
         (d.source || "ClinicalTrials.gov") +
         (d.fetched_at ? " · fetched " + d.fetched_at.slice(0, 10) : ""));
     }).catch(function () {
-      trialsPanel.innerHTML = unavailableBox("ClinicalTrials.gov did not respond.");
+      target.innerHTML = unavailableBox("ClinicalTrials.gov did not respond.");
+    });
+  }
+
+  /* ---- standalone trials search ---- */
+  var trialsSearchForm = document.getElementById("trials-search-form");
+  var trialsSearchPanel = document.getElementById("trials-search-panel");
+  if (trialsSearchForm) {
+    trialsSearchForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var tName = document.getElementById("trials-facility").value.trim();
+      var tState = document.getElementById("trials-state").value.trim().toUpperCase();
+      if (!tName) {
+        trialsSearchPanel.innerHTML = '<p class="muted">Enter a hospital or facility name.</p>';
+        return;
+      }
+      loadTrials(tName, tState, trialsSearchPanel);
     });
   }
 
