@@ -11,8 +11,10 @@
   var evidenceEl = document.getElementById("evidence-watch");
   var censusForm = document.getElementById("census-form");
   var censusPanel = document.getElementById("census-panel");
+  var cdcCountyForm = document.getElementById("cdc-county-form");
+  var cdcCountyPanel = document.getElementById("cdc-county-panel");
 
-  if (!statusEl) return; // not on resources.html
+  if (!statusEl) return;
 
   function esc(s) {
     return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
@@ -37,24 +39,21 @@
       (detail ? " " + esc(detail) : "") + "</div>";
   }
 
-  /* ---- source status pills ---- */
   getJSON("/api/live/status").then(function (st) {
     var srcs = st.sources || [];
     var pills = srcs.map(function (s) {
-      var state = s.state || (s.credential_required ? "needs_key" : "live");
+      var state = s.state || (s.credential_required ? "needs_key" : "unavailable");
       var cls = "unavailable", note = s.reason || state;
       if (state === "live") { cls = "ok"; note = "live, no key"; }
       else if (state === "degraded") { cls = "degraded"; note = "slow — " + (s.reason || "responding slowly"); }
       else if (state === "needs_key") { cls = "unavailable"; note = "needs a free key"; }
       return '<span class="status-pill ' + cls + '">' + esc(s.label) + " — " + esc(note) + "</span>";
     }).join("");
-    statusEl.innerHTML = pills ||
-      '<span class="muted">Source status unavailable.</span>';
+    statusEl.innerHTML = pills || '<span class="muted">Source status unavailable.</span>';
   }).catch(function () {
     statusEl.innerHTML = '<span class="muted">Could not reach live sources.</span>';
   });
 
-  /* ---- facility search + HCAHPS ---- */
   facilityForm.addEventListener("submit", function (e) {
     e.preventDefault();
     var name = document.getElementById("facility-name").value.trim();
@@ -65,21 +64,14 @@
     }
     facilityResults.innerHTML = '<p class="muted">Searching CMS records…</p>';
     hcahpsPanel.innerHTML = "";
-    getJSON("/api/live/facility-search?name=" + encodeURIComponent(name) +
-            "&state=" + encodeURIComponent(state)).then(function (d) {
+    getJSON("/api/live/facility-search?name=" + encodeURIComponent(name) + "&state=" + encodeURIComponent(state)).then(function (d) {
       var list = d.facilities || [];
       if (!list.length) {
-        facilityResults.innerHTML = '<p class="muted">No hospitals found. Try a shorter name or a different state.</p>' +
-          sourceNote(d.source || "CMS Provider Data Catalog");
+        facilityResults.innerHTML = '<p class="muted">No hospitals found. Try a shorter name or a different state.</p>' + sourceNote(d.source || "CMS Provider Data Catalog");
         return;
       }
       var html = '<ul class="facility-list">' + list.slice(0, 12).map(function (f) {
-        return '<li><button type="button" data-facility-id="' + esc(f.facility_id) + '"' +
-          ' data-facility-name="' + esc(f.facility_name) + '"' +
-          ' data-facility-state="' + esc(f.state) + '">' +
-          esc(f.facility_name) +
-          "<small>" + esc([f.city, f.state].filter(Boolean).join(", ")) +
-          " · CMS ID " + esc(f.facility_id) + "</small></button></li>";
+        return '<li><button type="button" data-facility-id="' + esc(f.facility_id) + '" data-facility-name="' + esc(f.facility_name) + '" data-facility-state="' + esc(f.state) + '">' + esc(f.facility_name) + "<small>" + esc([f.city, f.state].filter(Boolean).join(", ")) + " · CMS ID " + esc(f.facility_id) + "</small></button></li>";
       }).join("") + "</ul>";
       if (list.length > 12) html += '<p class="muted">Showing 12 of ' + list.length + ". Narrow your search.</p>";
       facilityResults.innerHTML = html + sourceNote(d.source || "CMS Provider Data Catalog");
@@ -101,28 +93,21 @@
         hcahpsPanel.innerHTML = unavailableBox(d.reason_code || d.status, d.detail);
         return;
       }
-      var measures = (d.measures || []).filter(function (m) {
-        return m.facility_percent != null && m.national_percent != null;
-      });
+      var measures = (d.measures || []).filter(function (m) { return m.facility_percent != null && m.national_percent != null; });
       var html = "<h4>" + esc(d.facility_name || ("Facility " + d.facility_id)) + "</h4>";
       if (!measures.length) {
         html += '<p class="muted">CMS has no published HCAHPS scores for this facility in the current period.</p>';
       } else {
         html += measures.map(function (m) {
-          var f = Number(m.facility_percent), n = Number(m.national_percent);
-          return '<div class="measure">' +
-            '<div class="measure-label">' + esc(m.label) + "</div>" +
+          return '<div class="measure"><div class="measure-label">' + esc(m.label) + "</div>" +
             (m.question ? '<div class="measure-question">' + esc(m.question) + "</div>" : "") +
-            barRow("This hospital", f, false) +
-            barRow("National average", n, true) +
-            '<div class="period">Reporting period: ' + esc(m.period_start || "?") + " – " + esc(m.period_end || "?") + "</div>" +
-            "</div>";
+            barRow("This hospital", Number(m.facility_percent), false) +
+            barRow("National average", Number(m.national_percent), true) +
+            '<div class="period">Reporting period: ' + esc(m.period_start || "?") + " – " + esc(m.period_end || "?") + "</div></div>";
         }).join("");
         html += '<p class="muted">These scores describe patient experience. They do not show what caused a score to move.</p>';
       }
-      hcahpsPanel.innerHTML = html + sourceNote(
-        (d.source || "CMS Provider Data Catalog") +
-        (d.fetched_at ? " · fetched " + d.fetched_at.slice(0, 10) : ""));
+      hcahpsPanel.innerHTML = html + sourceNote((d.source || "CMS Provider Data Catalog") + (d.fetched_at ? " · fetched " + d.fetched_at.slice(0, 10) : ""));
     }).catch(function () {
       hcahpsPanel.innerHTML = unavailableBox("HCAHPS data did not respond.");
     });
@@ -132,42 +117,29 @@
     var target = panel || trialsPanel;
     if (!target) return;
     target.innerHTML = '<p class="muted">Loading research at this hospital…</p>';
-    getJSON("/api/live/trials?facility_name=" + encodeURIComponent(facilityName || "") +
-            "&state=" + encodeURIComponent(state || "")).then(function (d) {
+    getJSON("/api/live/trials?facility_name=" + encodeURIComponent(facilityName || "") + "&state=" + encodeURIComponent(state || "")).then(function (d) {
       if (d.status !== "ok") {
         target.innerHTML = unavailableBox(d.reason_code || d.status, d.detail);
         return;
       }
       var studies = d.studies || [];
       var html = "<h4>Research engagement at " + esc(facilityName || "this hospital") + "</h4>";
-      html += '<p class="muted">Studies listing this hospital as a location. Recruiting studies are where advisor input on recruitment and participant experience counts most. Listings are informational — whether advisors engage with any study is your call.</p>';
+      html += '<p class="muted">Studies listing this hospital as a location. Listings are informational; advisor engagement remains a local decision.</p>';
       if (!studies.length) {
         html += '<p class="muted">No matching trials found for this hospital right now.</p>';
       } else {
         html += '<ul class="trial-list">' + studies.map(function (s) {
-          var locs = (s.locations || []).map(function (l) {
-            return [l.facility, l.city, l.state].filter(Boolean).join(", ");
-          }).join(" · ");
+          var locs = (s.locations || []).map(function (l) { return [l.facility, l.city, l.state].filter(Boolean).join(", "); }).join(" · ");
           var recruiting = (s.status || "").toUpperCase() === "RECRUITING";
-          return '<li class="trial-item' + (recruiting ? " recruiting" : "") + '">' +
-            '<div class="trial-title"><a href="' + esc(s.url) + '" target="_blank" rel="noopener">' +
-            esc(s.title || s.nct_id) + ' ↗</a></div>' +
-            '<div class="trial-meta"><span class="trial-status">' + esc(s.status || "—") + "</span>" +
-            (s.phase ? ' <span class="trial-phase">' + esc(s.phase) + "</span>" : "") +
-            ' <span class="trial-nct">' + esc(s.nct_id) + "</span></div>" +
-            (locs ? '<div class="trial-locs">' + esc(locs) + "</div>" : "") +
-            "</li>";
+          return '<li class="trial-item' + (recruiting ? " recruiting" : "") + '"><div class="trial-title"><a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.title || s.nct_id) + ' ↗</a></div><div class="trial-meta"><span class="trial-status">' + esc(s.status || "—") + "</span>" + (s.phase ? ' <span class="trial-phase">' + esc(s.phase) + "</span>" : "") + ' <span class="trial-nct">' + esc(s.nct_id) + "</span></div>" + (locs ? '<div class="trial-locs">' + esc(locs) + "</div>" : "") + "</li>";
         }).join("") + "</ul>";
       }
-      target.innerHTML = html + sourceNote(
-        (d.source || "ClinicalTrials.gov") +
-        (d.fetched_at ? " · fetched " + d.fetched_at.slice(0, 10) : ""));
+      target.innerHTML = html + sourceNote((d.source || "ClinicalTrials.gov") + (d.fetched_at ? " · fetched " + d.fetched_at.slice(0, 10) : ""));
     }).catch(function () {
       target.innerHTML = unavailableBox("ClinicalTrials.gov did not respond.");
     });
   }
 
-  /* ---- standalone trials search ---- */
   var trialsSearchForm = document.getElementById("trials-search-form");
   var trialsSearchPanel = document.getElementById("trials-search-panel");
   if (trialsSearchForm) {
@@ -185,43 +157,28 @@
 
   function barRow(key, val, national) {
     var pct = Math.max(0, Math.min(100, val));
-    return '<div class="bar-row"><span class="bar-key">' + esc(key) + "</span>" +
-      '<div class="bar-track"><div class="bar-fill' + (national ? " national" : "") +
-      '" style="width:' + pct + '%"></div></div>' +
-      '<span class="bar-val">' + pct + "%</span></div>";
+    return '<div class="bar-row"><span class="bar-key">' + esc(key) + '</span><div class="bar-track"><div class="bar-fill' + (national ? " national" : "") + '" style="width:' + pct + '%"></div></div><span class="bar-val">' + pct + "%</span></div>";
   }
 
-  /* ---- evidence watch ---- */
   getJSON("/api/live/evidence-watch").then(function (d) {
     if (d.status !== "ok") {
       evidenceEl.innerHTML = unavailableBox(d.reason_code || d.status, d.detail);
       return;
     }
-    var watches = d.watches || [];
-    var labels = {
-      "pfac_systematic_reviews": "PFAC systematic reviews",
-      "engagement_outcomes": "Patient engagement & outcomes"
-    };
+    var labels = { "pfac_systematic_reviews": "PFAC systematic reviews", "engagement_outcomes": "Patient engagement & outcomes" };
     var html = "";
-    watches.forEach(function (w) {
+    (d.watches || []).forEach(function (w) {
       var tag = labels[w.watch_id] || w.watch_id;
       (w.recent || []).forEach(function (a) {
-        html += '<article class="evidence-item"><span class="watch-tag">' +
-          esc(tag) + " · " + esc(String(w.total_results)) + " found</span>" +
-          '<p class="ama">' + esc(a.ama11_citation || a.title || "") + " " +
-          '<a href="' + esc(a.url) + '" target="_blank" rel="noopener">PubMed ↗</a></p></article>';
+        html += '<article class="evidence-item"><span class="watch-tag">' + esc(tag) + " · " + esc(String(w.total_results)) + ' found</span><p class="ama">' + esc(a.ama11_citation || a.title || "") + ' <a href="' + esc(a.url) + '" target="_blank" rel="noopener">PubMed ↗</a></p></article>';
       });
     });
-    evidenceEl.innerHTML = html ||
-      '<p class="muted">No new articles matched this week.</p>';
-    evidenceEl.innerHTML += sourceNote(
-      (d.source || "PubMed E-utilities") +
-      (d.fetched_at ? " · fetched " + d.fetched_at.slice(0, 10) : ""));
+    evidenceEl.innerHTML = html || '<p class="muted">No new articles matched this week.</p>';
+    evidenceEl.innerHTML += sourceNote((d.source || "PubMed E-utilities") + (d.fetched_at ? " · fetched " + d.fetched_at.slice(0, 10) : ""));
   }).catch(function () {
     evidenceEl.innerHTML = unavailableBox("PubMed surveillance did not respond.");
   });
 
-  /* ---- census demographics ---- */
   censusForm.addEventListener("submit", function (e) {
     e.preventDefault();
     var sf = document.getElementById("census-state").value.trim();
@@ -231,32 +188,80 @@
       return;
     }
     censusPanel.innerHTML = '<p class="muted">Looking up…</p>';
-    getJSON("/api/live/census-demographics?state_fips=" + encodeURIComponent(sf) +
-            "&county_fips=" + encodeURIComponent(cf)).then(function (d) {
+    getJSON("/api/live/census-demographics?state_fips=" + encodeURIComponent(sf) + "&county_fips=" + encodeURIComponent(cf)).then(function (d) {
       if (d.status !== "ok") {
         censusPanel.innerHTML = unavailableBox(d.detail || d.reason_code || d.status);
         return;
       }
-      var pop = (d.population == null) ? "—" : Number(d.population).toLocaleString("en-US");
-      var pov = (d.poverty_percent == null) ? "—" : d.poverty_percent + "%";
+      var pop = d.population == null ? "—" : Number(d.population).toLocaleString("en-US");
+      var pov = d.poverty_percent == null ? "—" : d.poverty_percent + "%";
       var html = "<h4>" + esc(d.county_name || "County demographics") + "</h4>";
-      html += '<p class="muted">' + esc(d.release || "ACS 5-year") +
-        " — population context for representation and access design.</p>";
-      html += '<div class="stat-grid">' +
-        '<div class="stat"><strong>' + esc(pop) + "</strong><span>Total population</span></div>" +
-        '<div class="stat"><strong>' + esc(pov) + "</strong><span>Below poverty level</span></div>" +
-        "</div>";
+      html += '<p class="muted">' + esc(d.release || "ACS 5-year") + ' — population context for representation and access design.</p><div class="stat-grid"><div class="stat"><strong>' + esc(pop) + '</strong><span>Total population</span></div><div class="stat"><strong>' + esc(pov) + '</strong><span>Below poverty level</span></div></div>';
       var bd = d.breakdown || [];
-      if (bd.length) {
-        html += "<h4>Race and ethnicity</h4>" + bd.map(function (r) {
-          return barRow(r.label, r.percent, false);
-        }).join("");
-      }
-      censusPanel.innerHTML = html + sourceNote(
-        (d.source || "Census Reporter") +
-        (d.fetched_at ? " · fetched " + d.fetched_at.slice(0, 10) : ""));
+      if (bd.length) html += "<h4>Race and ethnicity</h4>" + bd.map(function (r) { return barRow(r.label, r.percent, false); }).join("");
+      censusPanel.innerHTML = html + sourceNote((d.source || "Census Reporter") + (d.fetched_at ? " · fetched " + d.fetched_at.slice(0, 10) : ""));
     }).catch(function () {
       censusPanel.innerHTML = unavailableBox("Census lookup did not respond.");
     });
   });
+
+  function pctLabel(v) {
+    return v == null ? "—" : Math.round(Number(v) * 100) + "th percentile";
+  }
+
+  function relevantPlaces(measures) {
+    var preferred = /mental health|disabil|social need|insurance|food|housing|transport|social isolation|health status/i;
+    var selected = (measures || []).filter(function (m) {
+      return m.value != null && preferred.test((m.category || "") + " " + (m.measure || ""));
+    });
+    if (!selected.length) selected = (measures || []).filter(function (m) { return m.value != null; });
+    var seen = {};
+    return selected.filter(function (m) {
+      var key = (m.measure || "") + "|" + (m.value_type || "");
+      if (seen[key]) return false;
+      seen[key] = true;
+      return true;
+    }).slice(0, 8);
+  }
+
+  if (cdcCountyForm) {
+    cdcCountyForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var fips = document.getElementById("cdc-county-fips").value.trim();
+      if (!/^\d{5}$/.test(fips)) {
+        cdcCountyPanel.innerHTML = '<p class="muted">Enter a five-digit county FIPS code.</p>';
+        return;
+      }
+      cdcCountyPanel.innerHTML = '<p class="muted">Pulling CDC PLACES and SVI…</p>';
+      Promise.all([
+        getJSON("/api/live/cdc/places?location_id=" + encodeURIComponent(fips) + "&limit=200"),
+        getJSON("/api/live/cdc/svi?fips=" + encodeURIComponent(fips))
+      ]).then(function (items) {
+        var places = items[0], svi = items[1];
+        if (places.status !== "ok" && svi.status !== "ok") {
+          cdcCountyPanel.innerHTML = unavailableBox("CDC county sources did not return data.");
+          return;
+        }
+        var html = '<h4>CDC county context</h4>';
+        if (svi.status === "ok") {
+          html += '<p class="muted">' + esc(svi.location || ("County " + fips)) + ' · Social Vulnerability Index</p>';
+          html += '<div class="stat-grid"><div class="stat"><strong>' + esc(pctLabel(svi.overall_percentile)) + '</strong><span>Overall SVI</span></div><div class="stat"><strong>' + esc(pctLabel((svi.themes || {}).socioeconomic_status)) + '</strong><span>Socioeconomic</span></div><div class="stat"><strong>' + esc(pctLabel((svi.themes || {}).housing_transportation)) + '</strong><span>Housing / transportation</span></div></div>';
+        }
+        if (places.status === "ok") {
+          var rows = relevantPlaces(places.measures || []);
+          if (rows.length) {
+            html += '<h4>PLACES signals</h4><div class="matrix-table" role="region" tabindex="0"><table><thead><tr><th>Measure</th><th>Value</th><th>Type</th></tr></thead><tbody>' + rows.map(function (m) {
+              var val = m.value == null ? "—" : m.value + (m.unit || "");
+              return '<tr><td>' + esc(m.measure || "") + '</td><td>' + esc(val) + '</td><td>' + esc(m.value_type || "") + '</td></tr>';
+            }).join("") + '</tbody></table></div>';
+          }
+          html += '<p class="muted">CDC PLACES estimates support population context and planning; CDC cautions against using them to evaluate local program effects.</p>';
+        }
+        html += sourceNote([places.source, svi.source].filter(Boolean).join(" · "));
+        cdcCountyPanel.innerHTML = html;
+      }).catch(function () {
+        cdcCountyPanel.innerHTML = unavailableBox("CDC county data did not respond.");
+      });
+    });
+  }
 })();
