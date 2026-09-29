@@ -13,8 +13,11 @@ this data can state its source.
 
 from __future__ import annotations
 
+import http.client
 import json
 import os
+import random
+import re
 import time
 import urllib.parse
 import urllib.request
@@ -22,6 +25,10 @@ from typing import Any, Dict, List, Optional
 
 _TIMEOUT_SECONDS = 12
 _USER_AGENT = "ape-pfac-pssm5-toolkit/0.1 (MPH Applied Practice Experience)"
+
+# Retry policy for transient upstream failures (timeouts, 429, 5xx).
+# 4xx other than 429 is not retried: the request itself is wrong.
+_MAX_RETRIES = 2
 
 # facility_id -> display name, seeded with one example. Leaders can query
 # any CMS-tracked facility by passing facility_id to /api/live/hcahps
@@ -46,14 +53,45 @@ def _cache_set(key: str, payload: Dict[str, Any], ttl_seconds: int) -> None:
     _CACHE[key] = (time.time() + ttl_seconds, payload)
 
 
-def _get_json(url: str, params: Optional[Dict[str, str]] = None) -> Any:
-    """GET a URL and parse JSON. Raises on any failure."""
+def _is_transient(exc: BaseException) -> bool:
+    """True for failures worth retrying: timeouts, disconnects, 429, 5xx."""
+    if isinstance(exc, urllib.error.HTTPError):
+        return exc.code == 429 or exc.code >= 500
+    return isinstance(
+        exc,
+        (
+            urllib.error.URLError,
+            TimeoutError,
+            ConnectionError,
+            http.client.HTTPException,
+        ),
+    )
+
+
+def _get_json(
+    url: str, params: Optional[Dict[str, str]] = None, timeout: int = _TIMEOUT_SECONDS
+) -> Any:
+    """GET a URL and parse JSON, with backoff on transient failures.
+
+    Raises on any failure after retries are exhausted.
+    """
     if params:
         url = url + "?" + urllib.parse.urlencode(params)
-    request = urllib.request.Request(url, headers={"User-Agent": _USER_AGENT})
-    with urllib.request.urlopen(request, timeout=_TIMEOUT_SECONDS) as response:
-        raw = response.read()
-    return json.loads(raw.decode("utf-8"))
+    last_exc: Optional[BaseException] = None
+    for attempt in range(_MAX_RETRIES + 1):
+        try:
+            request = urllib.request.Request(url, headers={"User-Agent": _USER_AGENT})
+            with urllib.request.urlopen(request, timeout=timeout) as response:
+                raw = response.read()
+            return json.loads(raw.decode("utf-8"))
+        except Exception as exc:  # noqa: BLE001 - classified below
+            if not _is_transient(exc):
+                raise
+            last_exc = exc
+        if attempt < _MAX_RETRIES:
+            time.sleep(2**attempt + random.uniform(0, 0.5))
+    assert last_exc is not None
+    raise last_exc
 
 
 def _unavailable(source: str, reason_code: str, detail: str = "") -> Dict[str, Any]:
@@ -90,11 +128,37 @@ HCAHPS_FOCUS_MEASURES = {
 }
 
 
+def _rank_facilities(
+    facilities: List[Dict[str, Any]], name_query: str
+) -> List[Dict[str, Any]]:
+    """Best matches first: exact, then starts-with, then contains, then name."""
+    query = (name_query or "").strip().casefold()
+
+    def sort_key(facility: Dict[str, Any]):
+        name = (facility.get("facility_name") or "").casefold()
+        if query and name == query:
+            rank = 0
+        elif query and name.startswith(query):
+            rank = 1
+        elif query and name:
+            rank = 2
+        else:
+            rank = 3
+        return (rank, name)
+
+    return sorted(facilities, key=sort_key)
+
+
 def search_facilities(name: str = "", state: str = "", limit: int = 20) -> Dict[str, Any]:
     """Find CMS-tracked facilities by name and/or state.
 
     Leaders use this to find their hospital's facility_id, then pass it to
     /api/live/hcahps for their own patient-experience benchmark.
+
+    Name matching is partial and case-insensitive ("Hitchcock" finds
+    "MARY HITCHCOCK MEMORIAL HOSPITAL"); results are ranked exact first,
+    then starts-with, then contains. CMS returns one row per measure, so
+    rows are de-duplicated by facility_id before ranking.
     """
     cache_key = f"facility_search:{name}:{state}:{limit}"
     cached = _cache_get(cache_key)
@@ -102,19 +166,24 @@ def search_facilities(name: str = "", state: str = "", limit: int = 20) -> Dict[
         return cached
 
     source = "CMS Provider Data Catalog: HCAHPS (data.cms.gov)"
+    limit = min(max(limit, 1), 50)
     try:
-        params: Dict[str, str] = {"limit": str(min(max(limit, 1), 50))}
+        params: Dict[str, str] = {}
         idx = 0
         if name:
+            # Escape LIKE wildcards in user input, then match any substring.
+            safe = re.sub(r"[%_]", "", name.strip())
             params[f"conditions[{idx}][property]"] = "facility_name"
-            params[f"conditions[{idx}][value]"] = name
-            params[f"conditions[{idx}][operator]"] = "="
+            params[f"conditions[{idx}][value]"] = f"%{safe}%"
+            params[f"conditions[{idx}][operator]"] = "like"
             idx += 1
         if state:
             params[f"conditions[{idx}][property]"] = "state"
             params[f"conditions[{idx}][value]"] = state.upper()
             params[f"conditions[{idx}][operator]"] = "="
             idx += 1
+        # One row per measure per facility: over-fetch rows, dedup to facilities.
+        params["limit"] = str(min(limit * 12, 600))
         data = _get_json(f"{_CMS_BASE}/{_CMS_HOSPITAL_DATASET}/0", params)
     except Exception as exc:
         payload = _unavailable(source, "UPSTREAM_OR_AUTH_FAILURE", type(exc).__name__)
@@ -133,12 +202,13 @@ def search_facilities(name: str = "", state: str = "", limit: int = 20) -> Dict[
                 "county": row.get("countyparish"),
             }
 
+    facilities = _rank_facilities(list(seen.values()), name)[:limit]
     payload = {
         "status": "ok",
         "source": source,
         "fetched_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-        "count": len(seen),
-        "facilities": sorted(seen.values(), key=lambda f: f["facility_name"] or ""),
+        "count": len(facilities),
+        "facilities": facilities,
     }
     _cache_set(cache_key, payload, 24 * 3600)
     return payload
@@ -385,6 +455,195 @@ def fetch_evidence_watch() -> Dict[str, Any]:
 
 
 # ---------------------------------------------------------------------------
+# ClinicalTrials.gov: research engagement opportunities at the leader's facility
+# ---------------------------------------------------------------------------
+
+_CTG_BASE = "https://clinicaltrials.gov/api/v2/studies"
+_CTG_SOURCE = "ClinicalTrials.gov (U.S. National Library of Medicine)"
+
+# Generic words in hospital names that make poor search tokens.
+_TRIAL_NAME_STOPWORDS = frozenset(
+    {
+        "hospital", "medical", "center", "centre", "memorial", "health",
+        "healthcare", "system", "clinic", "regional", "general", "community",
+        "university", "saint", "st", "the", "of", "and",
+    }
+)
+
+# Two-letter code -> full name, to match ClinicalTrials.gov location states
+# against the CMS two-letter state codes the UI already carries.
+_US_STATE_NAMES = {
+    "AL": "Alabama", "AK": "Alaska", "AZ": "Arizona", "AR": "Arkansas",
+    "CA": "California", "CO": "Colorado", "CT": "Connecticut",
+    "DE": "Delaware", "DC": "District of Columbia", "FL": "Florida",
+    "GA": "Georgia", "HI": "Hawaii", "ID": "Idaho", "IL": "Illinois",
+    "IN": "Indiana", "IA": "Iowa", "KS": "Kansas", "KY": "Kentucky",
+    "LA": "Louisiana", "ME": "Maine", "MD": "Maryland",
+    "MA": "Massachusetts", "MI": "Michigan", "MN": "Minnesota",
+    "MS": "Mississippi", "MO": "Missouri", "MT": "Montana",
+    "NE": "Nebraska", "NV": "Nevada", "NH": "New Hampshire",
+    "NJ": "New Jersey", "NM": "New Mexico", "NY": "New York",
+    "NC": "North Carolina", "ND": "North Dakota", "OH": "Ohio",
+    "OK": "Oklahoma", "OR": "Oregon", "PA": "Pennsylvania",
+    "RI": "Rhode Island", "SC": "South Carolina", "SD": "South Dakota",
+    "TN": "Tennessee", "TX": "Texas", "UT": "Utah", "VT": "Vermont",
+    "VA": "Virginia", "WA": "Washington", "WV": "West Virginia",
+    "WI": "Wisconsin", "WY": "Wyoming",
+    "PR": "Puerto Rico", "GU": "Guam", "VI": "Virgin Islands",
+}
+
+
+def _normalize_state(state: str) -> str:
+    """Two-letter code or full name -> full name, for location matching."""
+    s = (state or "").strip()
+    if len(s) == 2:
+        return _US_STATE_NAMES.get(s.upper(), s)
+    return s
+
+
+# Trial statuses where advisor input matters most, in display order.
+_TRIAL_STATUS_RANK = {
+    "RECRUITING": 0,
+    "NOT_YET_RECRUITING": 1,
+    "ACTIVE_NOT_RECRUITING": 2,
+    "ENROLLING_BY_INVITATION": 2,
+}
+
+
+def _trial_search_token(facility_name: str) -> str:
+    """Pick the most distinctive word of a facility name for trial search."""
+    words = re.findall(r"[A-Za-z0-9]+", facility_name or "")
+    candidates = [
+        w for w in words if len(w) >= 4 and w.lower() not in _TRIAL_NAME_STOPWORDS
+    ]
+    if not candidates:
+        candidates = [w for w in words if len(w) >= 3]
+    if not candidates:
+        return ""
+    return max(candidates, key=len)
+
+
+def fetch_trials(
+    facility_name: str = "", state: str = "", limit: int = 10
+) -> Dict[str, Any]:
+    """Active clinical trials listing the leader's facility as a location.
+
+    PFACs commonly advise on research: recruiting studies are where advisor
+    input on recruitment materials and participant experience counts most.
+    This gives leaders their institution's research footprint as an input to
+    feedback-to-action planning and new-leader onboarding — informational
+    only; whether advisors engage with any study is the leader's decision.
+
+    Source: ClinicalTrials.gov API v2 (no key required). Only studies with a
+    location whose facility name matches the search are returned; the API's
+    own area search is broad, so locations are filtered client-side.
+    """
+    cache_key = f"trials:{facility_name}:{state}:{limit}"
+    cached = _cache_get(cache_key)
+    if cached is not None:
+        return cached
+
+    token = _trial_search_token(facility_name)
+    if not token:
+        payload = _unavailable(
+            _CTG_SOURCE,
+            "MISSING_PARAMETERS",
+            "Pass a facility_name (e.g. from /api/live/facility-search).",
+        )
+        _cache_set(cache_key, payload, 3600)
+        return payload
+    limit = min(max(limit, 1), 25)
+    want_state = _normalize_state(state).lower()
+
+    try:
+        data = _get_json(
+            _CTG_BASE,
+            {
+                "query.term": f"AREA[LocationFacility]{token}",
+                "pageSize": "25",
+                "fields": ",".join(
+                    [
+                        "NCTId",
+                        "BriefTitle",
+                        "OverallStatus",
+                        "StartDate",
+                        "Phase",
+                        "StudyType",
+                        "Condition",
+                        "LocationFacility",
+                        "LocationCity",
+                        "LocationState",
+                    ]
+                ),
+            },
+        )
+    except Exception as exc:
+        payload = _unavailable(_CTG_SOURCE, "UPSTREAM_OR_AUTH_FAILURE", type(exc).__name__)
+        _cache_set(cache_key, payload, 300)
+        return payload
+
+    token_lower = token.lower()
+    studies = []
+    for entry in (data or {}).get("studies", []):
+        ps = entry.get("protocolSection") or {}
+        ident = ps.get("identificationModule") or {}
+        status_mod = ps.get("statusModule") or {}
+        locations = (ps.get("contactsLocationsModule") or {}).get("locations") or []
+        matching = [
+            {
+                "facility": loc.get("facility"),
+                "city": loc.get("city"),
+                "state": loc.get("state"),
+            }
+            for loc in locations
+            if token_lower in (loc.get("facility") or "").lower()
+            and (not want_state or (loc.get("state") or "").lower() == want_state)
+        ]
+        if not matching:
+            continue
+        nct_id = ident.get("nctId") or ""
+        status = status_mod.get("overallStatus") or ""
+        conditions = ps.get("conditionsModule") or {}
+        studies.append(
+            {
+                "nct_id": nct_id,
+                "title": ident.get("briefTitle"),
+                "status": status,
+                "start_date": (status_mod.get("startDateStruct") or {}).get("date"),
+                "phase": ", ".join((ps.get("designModule") or {}).get("phases") or []),
+                "study_type": (ps.get("designModule") or {}).get("studyType"),
+                "conditions": conditions.get("keywords") or [],
+                "locations": matching,
+                "url": f"https://clinicaltrials.gov/study/{nct_id}" if nct_id else "",
+            }
+        )
+
+    studies.sort(
+        key=lambda s: (
+            _TRIAL_STATUS_RANK.get(s["status"], 3),
+            s["title"] or "",
+        )
+    )
+    studies = studies[:limit]
+
+    payload = {
+        "status": "ok",
+        "source": _CTG_SOURCE,
+        "fetched_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "facility_name": facility_name,
+        "search_token": token,
+        "count": len(studies),
+        "note": (
+            "Trial listings are informational context for PFAC research-engagement "
+            "planning. Inclusion is not an endorsement of any study."
+        ),
+        "studies": studies,
+    }
+    _cache_set(cache_key, payload, 24 * 3600)
+    return payload
+
+
+# ---------------------------------------------------------------------------
 # Census ACS: service-area demographics for any county (requires free key)
 # ---------------------------------------------------------------------------
 
@@ -486,36 +745,101 @@ def fetch_census_upper_valley() -> Dict[str, Any]:
     )
 
 
+def _probe_source(name: str, url: str, params: Optional[Dict[str, str]] = None) -> Dict[str, Any]:
+    """Cheap liveness check for one source: live, degraded (slow), or unavailable."""
+    started = time.time()
+    try:
+        _get_json(url, params, timeout=6)
+    except Exception as exc:  # noqa: BLE001 - surfaced as the reason
+        return {"state": "unavailable", "reason": type(exc).__name__}
+    elapsed = time.time() - started
+    if elapsed > 4:
+        return {"state": "degraded", "reason": f"slow response ({elapsed:.1f}s)"}
+    return {"state": "live", "reason": ""}
+
+
 def live_data_status() -> Dict[str, Any]:
-    """Summary of live-data source availability (no fetches)."""
+    """Per-source availability: live, degraded, unavailable (with reason),
+    or needs_key. Keyless sources get a cheap live probe, cached 5 minutes;
+    nothing here fetches full datasets."""
+    cached = _cache_get("source_health")
+    if cached is not None:
+        health = cached
+    else:
+        health = {
+            "facility_search": _probe_source(
+                "cms", f"{_CMS_BASE}/{_CMS_HOSPITAL_DATASET}/0", {"limit": "1"}
+            ),
+            "hcahps": _probe_source(
+                "cms", f"{_CMS_BASE}/{_CMS_NATIONAL_DATASET}/0", {"limit": "1"}
+            ),
+            "evidence_watch": _probe_source(
+                "pubmed",
+                _PUBMED_ESEARCH,
+                {"db": "pubmed", "term": "patient engagement", "retmode": "json", "retmax": "0"},
+            ),
+            "trials": _probe_source(
+                "clinicaltrials",
+                _CTG_BASE,
+                {"query.term": "AREA[LocationFacility]hospital", "pageSize": "1",
+                 "fields": "NCTId"},
+            ),
+        }
+        _cache_set("source_health", health, 300)
+
     census_key = bool(os.environ.get("CENSUS_API_KEY", "").strip())
-    return {
-        "status": "ok",
-        "sources": [
-            {
-                "id": "facility_search",
-                "label": "CMS facility lookup by name/state",
-                "credential_required": False,
-                "endpoint": "/api/live/facility-search?name=&state=",
-            },
-            {
-                "id": "hcahps",
-                "label": "CMS HCAHPS patient-experience scores for any facility vs national benchmarks",
-                "credential_required": False,
-                "endpoint": "/api/live/hcahps?facility_id=",
-            },
-            {
-                "id": "evidence_watch",
-                "label": "PubMed PFAC evidence surveillance",
-                "credential_required": False,
-                "endpoint": "/api/live/evidence-watch",
-            },
-            {
-                "id": "census_demographics",
-                "label": "Census ACS demographics for any county's subdivisions",
-                "credential_required": True,
-                "configured": census_key,
-                "endpoint": "/api/live/census-demographics?state_fips=&county_fips=",
-            },
-        ],
-    }
+    census_health = (
+        {"state": "live", "reason": ""}
+        if census_key
+        else {"state": "needs_key", "reason": "Set CENSUS_API_KEY to enable"}
+    )
+    checked_at = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+    sources = [
+        {
+            "id": "facility_search",
+            "label": "CMS facility lookup by name/state",
+            "credential_required": False,
+            "endpoint": "/api/live/facility-search?name=&state=",
+            "state": health["facility_search"]["state"],
+            "reason": health["facility_search"]["reason"],
+            "checked_at": checked_at,
+        },
+        {
+            "id": "hcahps",
+            "label": "CMS HCAHPS patient-experience scores for any facility vs national benchmarks",
+            "credential_required": False,
+            "endpoint": "/api/live/hcahps?facility_id=",
+            "state": health["hcahps"]["state"],
+            "reason": health["hcahps"]["reason"],
+            "checked_at": checked_at,
+        },
+        {
+            "id": "evidence_watch",
+            "label": "PubMed PFAC evidence surveillance",
+            "credential_required": False,
+            "endpoint": "/api/live/evidence-watch",
+            "state": health["evidence_watch"]["state"],
+            "reason": health["evidence_watch"]["reason"],
+            "checked_at": checked_at,
+        },
+        {
+            "id": "trials",
+            "label": "ClinicalTrials.gov research engagement at your facility",
+            "credential_required": False,
+            "endpoint": "/api/live/trials?facility_name=&state=",
+            "state": health["trials"]["state"],
+            "reason": health["trials"]["reason"],
+            "checked_at": checked_at,
+        },
+        {
+            "id": "census_demographics",
+            "label": "Census ACS demographics for any county's subdivisions",
+            "credential_required": True,
+            "configured": census_key,
+            "endpoint": "/api/live/census-demographics?state_fips=&county_fips=",
+            "state": census_health["state"],
+            "reason": census_health["reason"],
+            "checked_at": checked_at,
+        },
+    ]
+    return {"status": "ok", "sources": sources}

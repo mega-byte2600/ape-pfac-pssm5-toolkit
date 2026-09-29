@@ -15,6 +15,7 @@ from .live_data import (
     fetch_census_upper_valley,
     fetch_evidence_watch,
     fetch_hcahps,
+    fetch_trials,
     live_data_status,
     search_facilities,
 )
@@ -126,6 +127,15 @@ def application(environ, start_response):
         return _json(start_response, fetch_hcahps(facility_id))
     if path == "/api/live/evidence-watch":
         return _json(start_response, fetch_evidence_watch())
+    if path == "/api/live/trials":
+        query = urllib.parse.parse_qs(environ.get("QUERY_STRING", ""))
+        return _json(
+            start_response,
+            fetch_trials(
+                facility_name=query.get("facility_name", [""])[0],
+                state=query.get("state", [""])[0],
+            ),
+        )
     if path == "/api/live/census-demographics":
         query = urllib.parse.parse_qs(environ.get("QUERY_STRING", ""))
         return _json(

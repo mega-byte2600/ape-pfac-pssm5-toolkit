@@ -7,6 +7,7 @@
   var facilityForm = document.getElementById("facility-search-form");
   var facilityResults = document.getElementById("facility-results");
   var hcahpsPanel = document.getElementById("hcahps-panel");
+  var trialsPanel = document.getElementById("trials-panel");
   var evidenceEl = document.getElementById("evidence-watch");
   var censusForm = document.getElementById("census-form");
   var censusPanel = document.getElementById("census-panel");
@@ -40,8 +41,11 @@
   getJSON("/api/live/status").then(function (st) {
     var srcs = st.sources || [];
     var pills = srcs.map(function (s) {
-      var cls = s.credential_required ? "unavailable" : "ok";
-      var note = s.credential_required ? "needs a key" : "live, no key";
+      var state = s.state || (s.credential_required ? "needs_key" : "live");
+      var cls = "unavailable", note = s.reason || state;
+      if (state === "live") { cls = "ok"; note = "live, no key"; }
+      else if (state === "degraded") { cls = "degraded"; note = "slow — " + (s.reason || "responding slowly"); }
+      else if (state === "needs_key") { cls = "unavailable"; note = "needs a free key"; }
       return '<span class="status-pill ' + cls + '">' + esc(s.label) + " — " + esc(note) + "</span>";
     }).join("");
     statusEl.innerHTML = pills ||
@@ -70,7 +74,9 @@
         return;
       }
       var html = '<ul class="facility-list">' + list.slice(0, 12).map(function (f) {
-        return '<li><button type="button" data-facility-id="' + esc(f.facility_id) + '">' +
+        return '<li><button type="button" data-facility-id="' + esc(f.facility_id) + '"' +
+          ' data-facility-name="' + esc(f.facility_name) + '"' +
+          ' data-facility-state="' + esc(f.state) + '">' +
           esc(f.facility_name) +
           "<small>" + esc([f.city, f.state].filter(Boolean).join(", ")) +
           " · CMS ID " + esc(f.facility_id) + "</small></button></li>";
@@ -78,7 +84,10 @@
       if (list.length > 12) html += '<p class="muted">Showing 12 of ' + list.length + ". Narrow your search.</p>";
       facilityResults.innerHTML = html + sourceNote(d.source || "CMS Provider Data Catalog");
       facilityResults.querySelectorAll("button[data-facility-id]").forEach(function (btn) {
-        btn.addEventListener("click", function () { loadHcahps(btn.getAttribute("data-facility-id")); });
+        btn.addEventListener("click", function () {
+          loadHcahps(btn.getAttribute("data-facility-id"));
+          loadTrials(btn.getAttribute("data-facility-name"), btn.getAttribute("data-facility-state"));
+        });
       });
     }).catch(function () {
       facilityResults.innerHTML = unavailableBox("CMS facility search did not respond.");
@@ -116,6 +125,44 @@
         (d.fetched_at ? " · fetched " + d.fetched_at.slice(0, 10) : ""));
     }).catch(function () {
       hcahpsPanel.innerHTML = unavailableBox("HCAHPS data did not respond.");
+    });
+  }
+
+  function loadTrials(facilityName, state) {
+    if (!trialsPanel) return;
+    trialsPanel.innerHTML = '<p class="muted">Loading research at this hospital…</p>';
+    getJSON("/api/live/trials?facility_name=" + encodeURIComponent(facilityName || "") +
+            "&state=" + encodeURIComponent(state || "")).then(function (d) {
+      if (d.status !== "ok") {
+        trialsPanel.innerHTML = unavailableBox(d.reason_code || d.status, d.detail);
+        return;
+      }
+      var studies = d.studies || [];
+      var html = "<h4>Research engagement at " + esc(facilityName || "this hospital") + "</h4>";
+      html += '<p class="muted">Studies listing this hospital as a location. Recruiting studies are where advisor input on recruitment and participant experience counts most. Listings are informational — whether advisors engage with any study is your call.</p>';
+      if (!studies.length) {
+        html += '<p class="muted">No matching trials found for this hospital right now.</p>';
+      } else {
+        html += '<ul class="trial-list">' + studies.map(function (s) {
+          var locs = (s.locations || []).map(function (l) {
+            return [l.facility, l.city, l.state].filter(Boolean).join(", ");
+          }).join(" · ");
+          var recruiting = (s.status || "").toUpperCase() === "RECRUITING";
+          return '<li class="trial-item' + (recruiting ? " recruiting" : "") + '">' +
+            '<div class="trial-title"><a href="' + esc(s.url) + '" target="_blank" rel="noopener">' +
+            esc(s.title || s.nct_id) + ' ↗</a></div>' +
+            '<div class="trial-meta"><span class="trial-status">' + esc(s.status || "—") + "</span>" +
+            (s.phase ? ' <span class="trial-phase">' + esc(s.phase) + "</span>" : "") +
+            ' <span class="trial-nct">' + esc(s.nct_id) + "</span></div>" +
+            (locs ? '<div class="trial-locs">' + esc(locs) + "</div>" : "") +
+            "</li>";
+        }).join("") + "</ul>";
+      }
+      trialsPanel.innerHTML = html + sourceNote(
+        (d.source || "ClinicalTrials.gov") +
+        (d.fetched_at ? " · fetched " + d.fetched_at.slice(0, 10) : ""));
+    }).catch(function () {
+      trialsPanel.innerHTML = unavailableBox("ClinicalTrials.gov did not respond.");
     });
   }
 

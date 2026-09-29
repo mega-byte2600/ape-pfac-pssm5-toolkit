@@ -129,4 +129,31 @@
   margin-right: 0.4rem;
 }
 .status-pill.ok { background: #e6f2ea; color: var(--pine); }
+.status-pill.degraded { background: #f7f0dd; color: #7a5b00; }
 .status-pill.unavailable { background: #f6ece8; color: var(--risk); }
+
+/* ClinicalTrials.gov research engagement */
+.trial-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.75rem; }
+.trial-item {
+  border: 1px solid var(--line, #e2e2e2);
+  border-radius: 8px;
+  padding: 0.75rem 0.9rem;
+  background: var(--card, #fff);
+}
+.trial-item.recruiting { border-left: 4px solid var(--dartmouth-green); }
+.trial-title { font-weight: 600; margin-bottom: 0.25rem; }
+.trial-title a { color: inherit; }
+.trial-meta { font-size: 0.85rem; color: var(--muted); margin-bottom: 0.2rem; }
+.trial-status {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  background: #eef1f4;
+  color: var(--muted);
+}
+.trial-item.recruiting .trial-status { background: #e6f2ea; color: var(--pine); }
+.trial-locs { font-size: 0.85rem; color: var(--muted); }

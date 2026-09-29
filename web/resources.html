@@ -83,14 +83,15 @@
 
       <div class="live-block">
         <h3>Your hospital&rsquo;s patient experience</h3>
-        <p>Find any CMS-tracked hospital, then see its HCAHPS experience scores next to national benchmarks. Context for measurement — not proof of what caused a score.</p>
+        <p>Find any CMS-tracked hospital, then see its HCAHPS experience scores next to national benchmarks — plus the clinical trials running there, where advisor input counts most. Context for measurement — not proof of what caused a score.</p>
         <form id="facility-search-form" class="live-form">
-          <label>Hospital name <input type="search" id="facility-name" name="name" placeholder="e.g. Mary Hitchcock" autocomplete="off"></label>
+          <label>Hospital name <input type="search" id="facility-name" name="name" placeholder="e.g. Hitchcock" autocomplete="off"></label>
           <label>State <input type="text" id="facility-state" name="state" placeholder="e.g. NH" maxlength="2" autocomplete="off"></label>
           <button type="submit" class="button">Search</button>
         </form>
         <div id="facility-results" class="live-results" aria-live="polite"></div>
         <div id="hcahps-panel" class="live-results" aria-live="polite"></div>
+        <div id="trials-panel" class="live-results" aria-live="polite"></div>
       </div>
 
       <div class="live-block">
