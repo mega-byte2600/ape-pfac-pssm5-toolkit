@@ -139,12 +139,12 @@ class CDCDataContractTests(unittest.TestCase):
     @patch("pssm5_toolkit.cdc_geography._get_json")
     def test_server_counties_route(self, mock_get):
         mock_get.return_value = [
-            {"locationid": "06079", "locationname": "San Luis Obispo", "stateabbr": "CA"}
+            {"locationid": "33009", "locationname": "Grafton", "stateabbr": "NH"}
         ]
-        status, d = request("/api/live/cdc/counties", "state=CA")
+        status, d = request("/api/live/cdc/counties", "state=NH")
         self.assertEqual(status, "200 OK")
         self.assertEqual(d["status"], "ok")
-        self.assertEqual(d["counties"][0]["fips"], "06079")
+        self.assertEqual(d["counties"][0]["fips"], "33009")
 
     @patch("pssm5_toolkit.cdc_data._get_json")
     def test_server_places_route(self, mock_get):
