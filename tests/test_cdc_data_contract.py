@@ -136,6 +136,23 @@ class CDCDataContractTests(unittest.TestCase):
         for page in Path("web").glob("*.html"):
             self.assertNotIn("Carpe Data", page.read_text(encoding="utf-8"), page.name)
 
+    def test_public_api_inputs_hide_geography_codes(self):
+        resources = Path("web/resources.html").read_text(encoding="utf-8")
+        selector = Path("web/cdc-county-selector.js").read_text(encoding="utf-8")
+        self.assertIn('<select id="facility-state"', resources)
+        self.assertIn('<select id="trials-state"', resources)
+        self.assertIn('<select id="census-state"', resources)
+        self.assertIn('<select id="census-county"', resources)
+        self.assertIn('id="census-submit" disabled', resources)
+        self.assertNotIn('id="facility-state" name="state" placeholder=', resources)
+        self.assertNotIn('id="trials-state" placeholder=', resources)
+        self.assertNotIn('State FIPS <input', resources)
+        self.assertNotIn('County FIPS <input', resources)
+        self.assertIn('populateState(document.getElementById("facility-state")', selector)
+        self.assertIn('populateState(document.getElementById("trials-state")', selector)
+        self.assertIn('stateId: "census-state"', selector)
+        self.assertIn('countyValue: "county_fips"', selector)
+
     @patch("pssm5_toolkit.cdc_geography._get_json")
     def test_server_counties_route(self, mock_get):
         mock_get.return_value = [
