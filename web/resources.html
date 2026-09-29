@@ -128,12 +128,13 @@
         <div id="census-panel" class="live-results" aria-live="polite"></div>
       </div>
 
-      <div class="live-block" id="cdc-carpe-data">
-        <h3>CDC Carpe Data: community context</h3>
-        <p>Use one county FIPS code to pull CDC PLACES health measures and the CDC/ATSDR Social Vulnerability Index. These data help leaders ask who is represented, who may face access barriers, and which community signals deserve discussion.</p>
+      <div class="live-block" id="cdc-community-context">
+        <p class="eyebrow">CDC public health data</p>
+        <h3>Community context from CDC</h3>
+        <p>Enter a county FIPS code to view CDC PLACES health measures alongside the CDC/ATSDR Social Vulnerability Index. Use these signals to inform questions about representation, access, and community context.</p>
         <form id="cdc-county-form" class="live-form">
           <label>County FIPS <input type="text" id="cdc-county-fips" placeholder="e.g. 06079" maxlength="5" inputmode="numeric"></label>
-          <button type="submit" class="button">Pull CDC data</button>
+          <button type="submit" class="button">View CDC data</button>
         </form>
         <div id="cdc-county-panel" class="live-results" aria-live="polite"></div>
       </div>
