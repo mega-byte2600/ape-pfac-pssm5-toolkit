@@ -56,8 +56,7 @@
         '<p class="muted">No matching articles found.</p>';
       html += sourceNote(
         (d.source || "PubMed E-utilities") +
-        (d.fetched_at ? " · fetched " + d.fetched_at.slice(0, 10) : "") +
-        " · citations in AMA 11th edition format"
+        (d.fetched_at ? " · fetched " + d.fetched_at.slice(0, 10) : "")
       );
       panel.innerHTML = html;
     }).catch(function () {
