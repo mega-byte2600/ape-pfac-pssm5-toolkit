@@ -62,6 +62,19 @@
       <div id="hai-action-grid" class="action-grid" aria-label="HAI leadership actions"></div>
     </section>
 
+    <section class="panel" id="cdc-hai-live">
+      <div class="section-title">
+        <p class="eyebrow">CDC Carpe Data</p>
+        <h2>Live HAI surveillance from CDC HAICViz.</h2>
+        <p>Current public surveillance feeds for invasive <em>Staphylococcus aureus</em> and candidemia. Use them as national surveillance context, then ask for the corresponding local data.</p>
+      </div>
+      <div class="dashboard-grid">
+        <article class="chart-card"><div class="chart-title"><span>CDC HAICViz</span><strong>Invasive S. aureus</strong></div><div id="cdc-isa-panel" class="live-results" aria-live="polite"><p>Loading CDC surveillance…</p></div></article>
+        <article class="chart-card"><div class="chart-title"><span>CDC HAICViz</span><strong>Candidemia</strong></div><div id="cdc-candidemia-panel" class="live-results" aria-live="polite"><p>Loading CDC surveillance…</p></div></article>
+      </div>
+      <p class="boundary-note"><strong>Interpretation boundary:</strong> CDC notes that HAICViz methods and datasets may differ from other HAIC publications and that small numbers can make year-to-year changes difficult to interpret. These feeds do not measure PFAC effectiveness or local hospital performance.</p>
+    </section>
+
     <section class="panel">
       <div class="section-title"><p class="eyebrow">Evidence signal</p><h2>Use national HAI trends to frame the question, then ask for local data.</h2><p>The public evidence is useful for identifying the safety problem. It is not a substitute for local infection, readmission, complaint, call-center, or post-discharge data.</p></div>
       <details class="data-details">
@@ -110,6 +123,8 @@
       <div class="section-title"><p class="eyebrow">Public source trail</p><h2>Starting data and reference links.</h2></div>
       <ol>
         <li><a href="https://www.cdc.gov/hai/php/data/index.html" target="_blank" rel="noopener noreferrer">CDC Healthcare-Associated Infections data page</a></li>
+        <li><a href="https://data.cdc.gov/Public-Health-Surveillance/HAICViz-iSA/ssz5-s49e" target="_blank" rel="noopener noreferrer">CDC HAICViz invasive S. aureus dataset</a></li>
+        <li><a href="https://data.cdc.gov/d/34p9-h4us" target="_blank" rel="noopener noreferrer">CDC HAICViz candidemia dataset</a></li>
         <li><a href="https://arpsp.cdc.gov/profile/national-progress" target="_blank" rel="noopener noreferrer">CDC Antibiotic Resistance and Patient Safety Portal national progress profile</a></li>
         <li><a href="https://www.cdc.gov/mrsa/index.html" target="_blank" rel="noopener noreferrer">CDC MRSA information</a></li>
         <li><a href="https://www.ahrq.gov/hai/tools/mrsa-prevention/index.html" target="_blank" rel="noopener noreferrer">AHRQ MRSA Prevention Toolkit</a></li>
