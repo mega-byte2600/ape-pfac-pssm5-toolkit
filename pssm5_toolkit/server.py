@@ -9,6 +9,7 @@ import urllib.parse
 from pathlib import Path
 from wsgiref.simple_server import make_server
 
+from .evidence_search import fetch_evidence_search
 from .hai_dashboard import build_hai_dashboard
 from .live_data import (
     fetch_census_demographics,
@@ -127,6 +128,16 @@ def application(environ, start_response):
         return _json(start_response, fetch_hcahps(facility_id))
     if path == "/api/live/evidence-watch":
         return _json(start_response, fetch_evidence_watch())
+    if path == "/api/live/evidence-search":
+        query = urllib.parse.parse_qs(environ.get("QUERY_STRING", ""))
+        try:
+            limit = int(query.get("limit", ["10"])[0] or "10")
+        except ValueError:
+            limit = 10
+        return _json(
+            start_response,
+            fetch_evidence_search(query.get("q", [""])[0], limit=limit),
+        )
     if path == "/api/live/trials":
         query = urllib.parse.parse_qs(environ.get("QUERY_STRING", ""))
         return _json(

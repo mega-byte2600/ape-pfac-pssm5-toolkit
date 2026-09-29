@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="/live-data.css">
   <script defer src="/app.js"></script>
   <script defer src="/live-data.js"></script>
+  <script defer src="/evidence-search.js"></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
@@ -109,6 +110,11 @@
         <h3>What the evidence says now</h3>
         <p>Ongoing PubMed surveillance for PFAC and patient-engagement literature. Citations are formatted to AMA 11th edition, ready for the annotated bibliography.</p>
         <div id="evidence-watch" class="live-results" aria-live="polite"><p class="muted">Loading evidence watch…</p></div>
+        <form id="evidence-search-form" class="live-form">
+          <label>Search PubMed yourself <input type="search" id="evidence-search-term" placeholder="e.g. patient advisory council" autocomplete="off"></label>
+          <button type="submit" class="button">Search PubMed</button>
+        </form>
+        <div id="evidence-search-results" class="live-results" aria-live="polite"></div>
       </div>
 
       <div class="live-block">
