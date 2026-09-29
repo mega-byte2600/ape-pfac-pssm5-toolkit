@@ -114,8 +114,8 @@ class CDCDataContractTests(unittest.TestCase):
         self.assertIn('id="cdc-hai-live"', hai)
         self.assertIn("/api/live/cdc/hai-isa", app)
         self.assertIn("/api/live/cdc/candidemia", app)
-        self.assertNotIn("Carpe Data", resources)
-        self.assertNotIn("Carpe Data", hai)
+        for page in Path("web").glob("*.html"):
+            self.assertNotIn("Carpe Data", page.read_text(encoding="utf-8"), page.name)
 
     @patch("pssm5_toolkit.cdc_data._get_json")
     def test_server_places_route(self, mock_get):
