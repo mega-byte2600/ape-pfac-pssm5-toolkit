@@ -104,21 +104,11 @@
       </div>
       <p class="lede" id="live-data-status" aria-live="polite">Checking live sources…</p>
 
-      <div class="live-block">
-        <h3>Your hospital&rsquo;s patient experience</h3>
-        <p>Find any CMS-tracked hospital, then see its HCAHPS experience scores next to national benchmarks — plus the clinical trials running there, where advisor input counts most.</p>
-        <form id="facility-search-form" class="live-form">
-          <label>Hospital name <input type="search" id="facility-name" name="name" placeholder="e.g. Hitchcock" autocomplete="off"></label>
-          <label>State
-            <select id="facility-state" name="state" autocomplete="address-level1">
-              <option value="">Any state</option>
-            </select>
-          </label>
-          <button type="submit" class="button">Search</button>
-        </form>
-        <div id="facility-results" class="live-results" aria-live="polite"></div>
-        <div id="hcahps-panel" class="live-results" aria-live="polite"></div>
-        <div id="trials-panel" class="live-results" aria-live="polite"></div>
+      <div hidden aria-hidden="true">
+        <form id="facility-search-form"><input id="facility-name"><select id="facility-state"><option value=""></option></select></form>
+        <div id="facility-results"></div>
+        <div id="hcahps-panel"></div>
+        <div id="trials-panel"></div>
       </div>
 
       <div class="live-block">
