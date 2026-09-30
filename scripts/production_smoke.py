@@ -12,7 +12,7 @@ from urllib.request import Request, urlopen
 DEFAULT_BASE_URL = "https://ape-pfac-pssm5-toolkit.onrender.com"
 
 HTML_CHECKS = {
-    "/": ["Turn patient voice into accountable action through", "APE deliverables"],
+    "/": ["Evidence-Based Approach to Improve Outcomes for Patient-Care Experience", "APE deliverables"],
     "/story.html": ["Rosie Bartel", "lived experience"],
     "/about.html": ["Michael Bolton", "Project Lead"],
     "/hai-alert.html": ["hai-trend-chart", "hai-baseline-chart", "plotly-2.35.2.min.js"],
@@ -30,16 +30,17 @@ HTML_CHECKS = {
         "Bolton TDI APE 27",
         "Keep the architecture. Change the topic.",
     ],
-    "/resources.html": ["cdc-state", "cdc-county-fips", "No ZIP code or FIPS lookup needed."],
+    "/resources.html": ["cdc-state", "cdc-county-fips", "No ZIP code or FIPS lookup needed.", "cms-hcahps-explorer"],
     "/deliverables.html": ["APE deliverables"],
 }
 
 ASSET_CHECKS = {
-    "/app.js": ["Plotly"],
+    "/app.js": ["Plotly", "applyHomepageRationale", "serves as a bridge between leadership and PFACs"],
     "/applied-analysis.js": ["Plotly.react"],
     "/leadership-tools.js": ["leadership-tool-select", "data-leadership-tool", "history.replaceState"],
     "/leadership-tools.css": [".tool-workspace", ".tool-summary-grid", ".audit-table-details"],
     "/cdc-county-selector.js": ["/api/live/cdc/counties", "Choose state first"],
+    "/hcahps-explorer.js": ["/api/live/hcahps-compare", "context signals, not evidence that PFAC activity caused a score"],
     "/upper-valley-local-analysis.csv": ["Municipality"],
 }
 
@@ -185,6 +186,18 @@ def main() -> int:
             failures += 1
         else:
             print("CDC SVI live: San Luis Obispo County percentile returned")
+
+    hcahps, hcahps_failures = check_json_route(args.base_url, "/api/live/hcahps-compare?facility_id=300003")
+    failures += hcahps_failures
+    if hcahps.get("status") == "ok":
+        if str(hcahps.get("facility_id")) != "300003":
+            fail("CMS HCAHPS comparison returned the wrong facility")
+            failures += 1
+        elif not hcahps.get("measures"):
+            fail("CMS HCAHPS comparison returned no benchmark measures")
+            failures += 1
+        else:
+            print(f"CMS HCAHPS live: {len(hcahps.get('measures', []))} benchmark measure rows")
 
     if failures:
         print(f"Production smoke FAILED with {failures} issue(s).")
