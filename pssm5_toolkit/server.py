@@ -19,6 +19,7 @@ from .cdc_data import (
 from .cdc_geography import fetch_cdc_counties
 from .evidence_search import fetch_evidence_search
 from .hai_dashboard import build_hai_dashboard
+from .hcahps_data import fetch_hcahps_comparison
 from .live_data import (
     fetch_census_demographics,
     fetch_census_upper_valley,
@@ -143,6 +144,10 @@ def application(environ, start_response):
         query = urllib.parse.parse_qs(environ.get("QUERY_STRING", ""))
         facility_id = query.get("facility_id", ["300003"])[0] or "300003"
         return _json(start_response, fetch_hcahps(facility_id))
+    if path == "/api/live/hcahps-compare":
+        query = urllib.parse.parse_qs(environ.get("QUERY_STRING", ""))
+        facility_id = query.get("facility_id", [""])[0]
+        return _json(start_response, fetch_hcahps_comparison(facility_id))
     if path == "/api/live/evidence-watch":
         return _json(start_response, fetch_evidence_watch())
     if path == "/api/live/evidence-search":

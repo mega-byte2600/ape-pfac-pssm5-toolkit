@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="/live-data.css">
   <script defer src="/app.js"></script>
   <script defer src="/live-data.js"></script>
+  <script defer src="/hcahps-explorer.js"></script>
   <script defer src="/cdc-county-selector.js"></script>
   <script defer src="/evidence-search.js"></script>
 </head>
@@ -73,6 +74,26 @@
         <p>These public resources support toolkit review, benchmarking, and future updates.</p>
       </div>
       <div id="open-resources-grid" class="card-grid"></div>
+    </section>
+
+    <section class="panel" id="cms-hcahps-explorer">
+      <div class="section-title">
+        <p class="eyebrow">CMS Open Data API</p>
+        <h2>HCAHPS patient experience benchmark explorer.</h2>
+        <p>Search any CMS-tracked hospital and compare selected HCAHPS patient-experience measures with its state and the United States. Public aggregate data only. No API key or login required.</p>
+      </div>
+      <form id="hcahps-explorer-form" class="live-form">
+        <label>Hospital name <input type="search" id="hcahps-explorer-name" name="name" placeholder="e.g. Hitchcock" autocomplete="off"></label>
+        <label>State
+          <select id="hcahps-explorer-state" name="state" autocomplete="address-level1">
+            <option value="">Any state</option>
+          </select>
+        </label>
+        <button type="submit" class="button">Search CMS HCAHPS</button>
+      </form>
+      <p class="form-help">Source datasets: CMS HCAHPS Hospital, State, and National. Measures are context signals, not proof that PFAC activity caused a score.</p>
+      <div id="hcahps-explorer-results" class="live-results" aria-live="polite"></div>
+      <div id="hcahps-explorer-panel" class="live-results" aria-live="polite"></div>
     </section>
 
     <section class="panel" id="live-data">
