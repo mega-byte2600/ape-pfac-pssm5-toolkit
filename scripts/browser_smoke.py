@@ -28,6 +28,8 @@ VIEWPORTS = (
     ("mobile", 390, 844),
 )
 FORBIDDEN_COPY = ("Reviewer Guide", "/mvp-one.html", "Reviewer flow")
+HOME_RATIONALE = "toolkit that serves as a bridge between leadership and PFACs"
+OLD_HOME_COPY = "Turn patient voice into accountable action through a practical leadership approach"
 
 
 def find_port() -> int:
@@ -85,6 +87,13 @@ def run_browser_smoke(screenshots_dir: Path | None = None) -> list[str]:
                         for forbidden in FORBIDDEN_COPY:
                             if forbidden.casefold() in body_text.casefold() or forbidden.casefold() in body_html.casefold():
                                 failures.append(f"{label} {route}: retired reviewer-guide content is visible: {forbidden}")
+
+                        if route == "/":
+                            folded = body_text.casefold()
+                            if HOME_RATIONALE.casefold() not in folded:
+                                failures.append(f"{label} {route}: approved IF/THEN/SO THAT rationale is not visible")
+                            if OLD_HOME_COPY.casefold() in folded:
+                                failures.append(f"{label} {route}: superseded homepage copy is still visible")
 
                         if route == "/toolkit-tools.html":
                             if page.locator("#leadership-tool-select").count() != 1:
