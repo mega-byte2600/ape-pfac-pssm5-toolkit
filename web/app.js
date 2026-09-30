@@ -1,3 +1,10 @@
+function applyHomepageRationale() {
+  if (window.location.pathname !== "/" && window.location.pathname !== "/index.html") return;
+  const target = document.querySelector(".hero-copy > .lead + p");
+  if (!target) return;
+  target.innerHTML = "<strong>IF</strong> health system leaders are provided with a practical, evidence-informed toolkit that serves as a bridge between leadership and PFACs, <strong>THEN</strong> leaders will be better equipped to translate patient and family input into meaningful action, <strong>SO THAT</strong> care more consistently reflects patient and family priorities and supports a better patient experience.";
+}
+
 async function fetchJson(path) {
   const response = await fetch(path, { cache: "no-store" });
   if (!response.ok) throw new Error(`${path} returned ${response.status}`);
@@ -250,6 +257,8 @@ async function loadCdcHai() {
 }
 
 async function boot() {
+  applyHomepageRationale();
+
   const toolkitTarget = document.getElementById("motto");
   const resourcesTarget = document.getElementById("open-resources-grid");
   const haiTarget = document.getElementById("hai-trend-chart");
