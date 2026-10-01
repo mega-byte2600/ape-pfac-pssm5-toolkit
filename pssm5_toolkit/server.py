@@ -35,6 +35,8 @@ PACKAGE_ROOT = Path(__file__).resolve().parents[1]
 CWD_ROOT = Path.cwd()
 WEB = CWD_ROOT / "web" if (CWD_ROOT / "web").is_dir() else PACKAGE_ROOT / "web"
 RETIRED_PUBLIC_ROUTES = {"/mvp-one.html", "/review-flow.js"}
+LEGACY_BRAND_TAGLINE = "Evidence. Local analysis. Decisions. Accountability."
+BRAND_TAGLINE = "Patients. Leaders. Experience."
 
 
 def _release_sha() -> str:
@@ -68,6 +70,11 @@ def _asset(start_response, target: Path):
         return _json(start_response, {"error": "not_found"}, "404 Not Found")
     body = target.read_bytes()
     content_type = mimetypes.guess_type(str(target))[0] or "application/octet-stream"
+    if content_type.startswith("text/html"):
+        body = body.replace(
+            LEGACY_BRAND_TAGLINE.encode("utf-8"),
+            BRAND_TAGLINE.encode("utf-8"),
+        )
     start_response(
         "200 OK",
         [
