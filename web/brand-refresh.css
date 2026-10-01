@@ -4,7 +4,8 @@
    Pass 3: official D-Pine secondary mark, separate from the project photo logo.
    Pass 4: restrained surface, texture, shadow, and spacing refinement.
    Pass 5: mobile matrix-table legibility without changing table content or structure.
-   Pass 6: keep first-column decision labels intact on one line on mobile. */
+   Pass 6: keep first-column decision labels intact on one line on mobile.
+   Pass 7: keep executive decision labels intact at all viewport widths. */
 
 :root {
   --ape-serif: Cambria, "Times New Roman", Times, serif;
@@ -188,6 +189,17 @@ table,
 .journey-nav a,
 .command-strip a {
   box-shadow: var(--soft-shadow);
+}
+
+/*
+  Executive decision labels are short identifiers, not prose. Keep the ordinal
+  and label together at every viewport width. The slight size reduction offsets
+  the wider Cambria-era visual system without changing table structure.
+*/
+#decisions .matrix-table td:first-child {
+  min-width: 9.5rem;
+  white-space: nowrap;
+  font-size: .94rem;
 }
 
 @media (max-width: 700px) {
