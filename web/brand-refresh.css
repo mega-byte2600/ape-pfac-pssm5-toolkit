@@ -3,7 +3,8 @@
    Pass 2: official Dartmouth digital palette refinement.
    Pass 3: official D-Pine secondary mark, separate from the project photo logo.
    Pass 4: restrained surface, texture, shadow, and spacing refinement.
-   Pass 5: mobile matrix-table legibility without changing table content or structure. */
+   Pass 5: mobile matrix-table legibility without changing table content or structure.
+   Pass 6: keep first-column decision labels intact on one line on mobile. */
 
 :root {
   --ape-serif: Cambria, "Times New Roman", Times, serif;
@@ -214,6 +215,7 @@ table,
   .matrix-table td:first-child {
     min-width: 10.5rem;
     width: 10.5rem;
+    white-space: nowrap;
   }
 }
 
