@@ -229,7 +229,9 @@ def application(environ, start_response):
         )
     if path == "/api/live/cdc/svi":
         query = urllib.parse.parse_qs(environ.get("QUERY_STRING", ""))
-        return _json(start_response, fetch_cdc_svi_county(fips=query.get("fips", [""])[0]),
+        return _json(
+            start_response,
+            fetch_cdc_svi_county(fips=query.get("fips", [""])[0]),
         )
     relative = "index.html" if path in ("/", "") else path.lstrip("/")
     target = (WEB / relative).resolve()
