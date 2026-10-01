@@ -37,6 +37,7 @@ WEB = CWD_ROOT / "web" if (CWD_ROOT / "web").is_dir() else PACKAGE_ROOT / "web"
 RETIRED_PUBLIC_ROUTES = {"/mvp-one.html", "/review-flow.js"}
 LEGACY_BRAND_TAGLINE = "Evidence. Local analysis. Decisions. Accountability."
 BRAND_TAGLINE = "Patients. Leaders. Experience."
+BRAND_STYLESHEET = "/brand-refresh.css"
 
 
 def _release_sha() -> str:
@@ -75,6 +76,11 @@ def _asset(start_response, target: Path):
             LEGACY_BRAND_TAGLINE.encode("utf-8"),
             BRAND_TAGLINE.encode("utf-8"),
         )
+        if BRAND_STYLESHEET.encode("utf-8") not in body:
+            stylesheet = (
+                f'<link rel="stylesheet" href="{BRAND_STYLESHEET}?v={_release_sha()}">'
+            ).encode("utf-8")
+            body = body.replace(b"</head>", stylesheet + b"\n</head>", 1)
     start_response(
         "200 OK",
         [
@@ -223,9 +229,7 @@ def application(environ, start_response):
         )
     if path == "/api/live/cdc/svi":
         query = urllib.parse.parse_qs(environ.get("QUERY_STRING", ""))
-        return _json(
-            start_response,
-            fetch_cdc_svi_county(fips=query.get("fips", [""])[0]),
+        return _json(start_response, fetch_cdc_svi_county(fips=query.get("fips", [""])[0]),
         )
     relative = "index.html" if path in ("/", "") else path.lstrip("/")
     target = (WEB / relative).resolve()
