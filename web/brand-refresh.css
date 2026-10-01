@@ -1,13 +1,37 @@
 /* APE visual refresh: additive overrides only.
-   Pass 1: Cambria editorial typography while preserving sans-serif UI controls. */
+   Pass 1: Cambria editorial typography while preserving sans-serif UI controls.
+   Pass 2: official Dartmouth digital palette refinement. */
 
 :root {
   --ape-serif: Cambria, "Times New Roman", Times, serif;
   --ape-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+
+  --ape-rich-forest: #0d1e1c;
+  --ape-snow: #ffffff;
+  --ape-gray-1: #f7f7f7;
+  --ape-gray-2: #e2e2e2;
+  --ape-gray-3: #707070;
+  --ape-river-navy: #003c73;
+  --ape-spring: #c4dd88;
+  --ape-summer-yellow: #f5dc69;
+  --ape-bonfire-red: #9d162e;
+
+  /* Re-map legacy site tokens to the approved Dartmouth digital palette. */
+  --pine: var(--ape-rich-forest);
+  --gold: var(--ape-summer-yellow);
+  --cream: var(--ape-snow);
+  --ink: var(--ape-rich-forest);
+  --muted: var(--ape-gray-3);
+  --line: var(--ape-gray-2);
+  --risk: var(--ape-bonfire-red);
+  --focus: var(--river);
 }
 
 body {
   font-family: var(--ape-serif);
+  background:
+    radial-gradient(circle at 8% 0%, rgba(0, 105, 62, 0.10), transparent 27rem),
+    linear-gradient(180deg, var(--ape-snow) 0%, var(--ape-gray-1) 55%, var(--ape-snow) 100%);
 }
 
 h1,
@@ -43,4 +67,30 @@ table,
 .command-strip,
 .dash-card span {
   font-family: var(--ape-sans);
+}
+
+.hero::before {
+  background: linear-gradient(90deg, var(--dartmouth-green), var(--forest), var(--ape-spring));
+}
+
+.hero-executive {
+  background: linear-gradient(135deg, var(--ape-rich-forest), var(--dartmouth-green));
+}
+
+.hero-executive .lead {
+  color: var(--ape-gray-1);
+}
+
+.hero-executive .eyebrow,
+.dash-card.dark span {
+  color: var(--ape-spring);
+}
+
+.dash-card:not(.dark) span {
+  color: var(--dartmouth-green);
+}
+
+.button.secondary {
+  background: var(--ape-gray-1);
+  color: var(--forest);
 }
