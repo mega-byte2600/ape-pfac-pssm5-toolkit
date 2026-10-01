@@ -2,7 +2,8 @@
    Pass 1: Cambria editorial typography while preserving sans-serif UI controls.
    Pass 2: official Dartmouth digital palette refinement.
    Pass 3: official D-Pine secondary mark, separate from the project photo logo.
-   Pass 4: restrained surface, texture, shadow, and spacing refinement. */
+   Pass 4: restrained surface, texture, shadow, and spacing refinement.
+   Pass 5: mobile matrix-table legibility without changing table content or structure. */
 
 :root {
   --ape-serif: Cambria, "Times New Roman", Times, serif;
@@ -186,6 +187,34 @@ table,
 .journey-nav a,
 .command-strip a {
   box-shadow: var(--soft-shadow);
+}
+
+@media (max-width: 700px) {
+  /*
+    Tables remain true tables and horizontally scrollable on small screens.
+    Give them enough intrinsic width that the first column does not collapse
+    into tall word stacks such as "Representation" and "Measurement".
+  */
+  .matrix-table {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .matrix-table table {
+    min-width: 820px;
+  }
+
+  .matrix-table th,
+  .matrix-table td {
+    padding: .78rem .82rem;
+    vertical-align: top;
+  }
+
+  .matrix-table th:first-child,
+  .matrix-table td:first-child {
+    min-width: 10.5rem;
+    width: 10.5rem;
+  }
 }
 
 @media (max-width: 560px) {
