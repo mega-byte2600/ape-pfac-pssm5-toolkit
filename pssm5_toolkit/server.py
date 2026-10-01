@@ -37,6 +37,7 @@ WEB = CWD_ROOT / "web" if (CWD_ROOT / "web").is_dir() else PACKAGE_ROOT / "web"
 RETIRED_PUBLIC_ROUTES = {"/mvp-one.html", "/review-flow.js"}
 LEGACY_BRAND_TAGLINE = "Evidence. Local analysis. Decisions. Accountability."
 BRAND_TAGLINE = "Patients. Leaders. Experience."
+BRAND_STYLESHEET = "/brand-refresh.css"
 
 
 def _release_sha() -> str:
@@ -75,6 +76,11 @@ def _asset(start_response, target: Path):
             LEGACY_BRAND_TAGLINE.encode("utf-8"),
             BRAND_TAGLINE.encode("utf-8"),
         )
+        if BRAND_STYLESHEET.encode("utf-8") not in body:
+            stylesheet = (
+                f'<link rel="stylesheet" href="{BRAND_STYLESHEET}?v={_release_sha()}">'
+            ).encode("utf-8")
+            body = body.replace(b"</head>", stylesheet + b"\n</head>", 1)
     start_response(
         "200 OK",
         [

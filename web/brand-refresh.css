@@ -1,0 +1,46 @@
+/* APE visual refresh: additive overrides only.
+   Pass 1: Cambria editorial typography while preserving sans-serif UI controls. */
+
+:root {
+  --ape-serif: Cambria, "Times New Roman", Times, serif;
+  --ape-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+}
+
+body {
+  font-family: var(--ape-serif);
+}
+
+h1,
+h2,
+h3,
+.brand strong,
+.lead,
+.lede {
+  font-family: var(--ape-serif);
+}
+
+h1 {
+  letter-spacing: -0.025em;
+}
+
+h2 {
+  letter-spacing: -0.018em;
+}
+
+nav,
+.utility-nav,
+.eyebrow,
+.tag,
+.button,
+button,
+input,
+select,
+textarea,
+table,
+.analysis-controls,
+.analysis-stat,
+.status-pill,
+.command-strip,
+.dash-card span {
+  font-family: var(--ape-sans);
+}
