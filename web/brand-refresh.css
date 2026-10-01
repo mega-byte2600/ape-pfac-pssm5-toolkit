@@ -1,7 +1,8 @@
 /* APE visual refresh: additive overrides only.
    Pass 1: Cambria editorial typography while preserving sans-serif UI controls.
    Pass 2: official Dartmouth digital palette refinement.
-   Pass 3: official D-Pine secondary mark, separate from the project photo logo. */
+   Pass 3: official D-Pine secondary mark, separate from the project photo logo.
+   Pass 4: restrained surface, texture, shadow, and spacing refinement. */
 
 :root {
   --ape-serif: Cambria, "Times New Roman", Times, serif;
@@ -26,13 +27,20 @@
   --line: var(--ape-gray-2);
   --risk: var(--ape-bonfire-red);
   --focus: var(--river);
+
+  /* Lighter institutional depth in place of oversized application shadows. */
+  --shadow: 0 14px 38px rgba(13, 30, 28, 0.10);
+  --soft-shadow: 0 6px 18px rgba(13, 30, 28, 0.07);
 }
 
 body {
   font-family: var(--ape-serif);
-  background:
-    radial-gradient(circle at 8% 0%, rgba(0, 105, 62, 0.10), transparent 27rem),
+  background-color: var(--ape-gray-1);
+  background-image:
+    radial-gradient(circle at 8% 0%, rgba(0, 105, 62, 0.09), transparent 27rem),
+    radial-gradient(circle at 1px 1px, rgba(13, 30, 28, 0.018) 1px, transparent 1.15px),
     linear-gradient(180deg, var(--ape-snow) 0%, var(--ape-gray-1) 55%, var(--ape-snow) 100%);
+  background-size: auto, 18px 18px, auto;
 }
 
 h1,
@@ -121,6 +129,65 @@ table,
   pointer-events: none;
 }
 
+/* Editorial surfaces: quieter corners, shallower depth, clearer section rhythm. */
+.hero,
+.panel {
+  border-radius: 1.08rem;
+  border-color: rgba(18, 49, 43, 0.11);
+}
+
+.panel {
+  margin-top: 1.3rem;
+}
+
+.section-title {
+  margin-bottom: 1.4rem;
+}
+
+.card,
+.evidence-card,
+.step,
+.risk-card {
+  border-radius: .88rem;
+  border-color: rgba(18, 49, 43, 0.11);
+  box-shadow: 0 3px 12px rgba(13, 30, 28, 0.04);
+}
+
+.card:hover,
+.evidence-card:hover,
+.risk-card:hover {
+  border-color: rgba(0, 105, 62, 0.24);
+  box-shadow: 0 8px 22px rgba(13, 30, 28, 0.07);
+  transform: translateY(-1px);
+}
+
+.dash-card {
+  border-radius: .92rem;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+}
+
+.highlight-panel {
+  background: linear-gradient(135deg, var(--ape-snow), rgba(196, 221, 136, 0.16));
+}
+
+.patient-first {
+  background: linear-gradient(135deg, var(--ape-snow), rgba(226, 226, 226, 0.45));
+}
+
+.hero-command {
+  background: linear-gradient(135deg, var(--ape-snow), var(--ape-gray-1));
+}
+
+.boundary-note {
+  background: rgba(245, 220, 105, 0.16);
+}
+
+.button,
+.journey-nav a,
+.command-strip a {
+  box-shadow: var(--soft-shadow);
+}
+
 @media (max-width: 560px) {
   .site-header {
     padding-right: 7rem;
@@ -130,5 +197,10 @@ table,
     top: .6rem;
     width: 96px;
     height: 54px;
+  }
+
+  .hero,
+  .panel {
+    border-radius: .9rem;
   }
 }
