@@ -1,6 +1,7 @@
 /* APE visual refresh: additive overrides only.
    Pass 1: Cambria editorial typography while preserving sans-serif UI controls.
-   Pass 2: official Dartmouth digital palette refinement. */
+   Pass 2: official Dartmouth digital palette refinement.
+   Pass 3: official D-Pine secondary mark, separate from the project photo logo. */
 
 :root {
   --ape-serif: Cambria, "Times New Roman", Times, serif;
@@ -93,4 +94,41 @@ table,
 .button.secondary {
   background: var(--ape-gray-1);
   color: var(--forest);
+}
+
+/*
+  Official Dartmouth D-Pine color-combination artwork:
+  https://communications.dartmouth.edu/sites/communications/files/2024-07/d-pine-color-combinations.jpg
+  The top-left approved white-on-Dartmouth-Green treatment is selected without
+  recoloring, filters, distortion, or a custom lockup. The project photo logo
+  remains the primary mark at left; this institutional mark remains separate.
+*/
+.site-header {
+  padding-right: clamp(8rem, 10vw, 9rem);
+}
+
+.site-header::after {
+  content: "";
+  position: absolute;
+  top: .72rem;
+  right: 1rem;
+  width: 112px;
+  height: 63px;
+  background-image: url("https://communications.dartmouth.edu/sites/communications/files/2024-07/d-pine-color-combinations.jpg");
+  background-repeat: no-repeat;
+  background-size: 200% 400%;
+  background-position: left top;
+  pointer-events: none;
+}
+
+@media (max-width: 560px) {
+  .site-header {
+    padding-right: 7rem;
+  }
+
+  .site-header::after {
+    top: .6rem;
+    width: 96px;
+    height: 54px;
+  }
 }
