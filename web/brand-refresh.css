@@ -190,6 +190,13 @@ table,
   box-shadow: var(--soft-shadow);
 }
 
+/* Home page cleanup: remove two redundant empty presentation panels while
+   retaining their DOM hooks so existing app.js population logic is untouched. */
+#metrics,
+#competencies {
+  display: none;
+}
+
 @media (max-width: 700px) {
   /*
     Tables remain true tables and horizontally scrollable on small screens.
