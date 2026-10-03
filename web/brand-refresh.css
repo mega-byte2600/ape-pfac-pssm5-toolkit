@@ -4,7 +4,8 @@
    Pass 3: official D-Pine secondary mark, separate from the project photo logo.
    Pass 4: restrained surface, texture, shadow, and spacing refinement.
    Pass 5: mobile matrix-table legibility without changing table content or structure.
-   Pass 6: keep first-column decision labels intact on one line on mobile. */
+   Pass 6: keep first-column decision labels intact on one line on mobile.
+   Pass 8: keep executive decision labels intact at all viewport widths. */
 
 :root {
   --ape-serif: Cambria, "Times New Roman", Times, serif;
@@ -195,6 +196,16 @@ table,
 #metrics,
 #competencies {
   display: none;
+}
+
+/* Executive Brief decision labels are identifiers, not prose. Keep the
+   ordinal and label together at every viewport width. */
+#decisions .matrix-table th:first-child,
+#decisions .matrix-table td:first-child {
+  min-width: 10.5rem;
+  width: 10.5rem;
+  white-space: nowrap;
+  font-size: .94rem;
 }
 
 @media (max-width: 700px) {
