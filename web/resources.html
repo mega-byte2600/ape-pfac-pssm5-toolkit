@@ -99,28 +99,27 @@
     <section class="panel" id="dartmouth-atlas-explorer">
       <div class="section-title">
         <p class="eyebrow">Dartmouth Atlas Data</p>
-        <h2>Explore selected health-system variation data.</h2>
-        <p>Choose a dataset, area, and measure. The toolkit returns the latest published value from the selected Dartmouth Atlas dataset.</p>
+        <h2>Health-system variation, without the spreadsheet.</h2>
+        <p>Pick a topic, start typing a region, then choose a measure.</p>
       </div>
       <form id="atlas-form" class="live-form">
-        <label>Dataset
+        <label>Topic
           <select id="atlas-dataset">
-            <option value="">Loading datasets…</option>
+            <option value="">Loading…</option>
           </select>
         </label>
-        <label>Area
-          <select id="atlas-area" disabled>
-            <option value="">Choose dataset first</option>
-          </select>
+        <label>Region
+          <input type="search" id="atlas-area" list="atlas-area-list" placeholder="e.g. Lebanon, NH" autocomplete="off" disabled>
+          <datalist id="atlas-area-list"></datalist>
         </label>
         <label>Measure
           <select id="atlas-measure" disabled>
-            <option value="">Choose dataset first</option>
+            <option value="">Choose a topic first</option>
           </select>
         </label>
         <button type="submit" class="button" id="atlas-submit" disabled>View data</button>
       </form>
-      <p class="form-help">Hospital Referral Region data. Suppressed or statistically imprecise values are shown as not reportable, never as real numbers.</p>
+      <p class="form-help">Public Dartmouth Atlas HRR data. Suppressed values are shown as not reportable.</p>
       <div id="atlas-results" class="live-results" aria-live="polite"></div>
     </section>
 
