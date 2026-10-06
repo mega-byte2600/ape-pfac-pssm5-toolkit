@@ -21,6 +21,7 @@ ROUTES = (
     "/hai-alert.html",
     "/toolkit-tools.html",
     "/about.html",
+    "/resources.html",
 )
 VIEWPORTS = (
     ("desktop", 1440, 1000),
@@ -94,6 +95,25 @@ def run_browser_smoke(screenshots_dir: Path | None = None) -> list[str]:
                                 failures.append(f"{label} {route}: approved IF/THEN/SO THAT rationale is not visible")
                             if OLD_HOME_COPY.casefold() in folded:
                                 failures.append(f"{label} {route}: superseded homepage copy is still visible")
+
+                        if route == "/resources.html":
+                            if page.locator("#dartmouth-atlas-explorer").count() != 1:
+                                failures.append(f"{label} {route}: Dartmouth Atlas explorer is missing")
+                            if page.locator('script[src="/atlas-explorer.js"]').count() != 1:
+                                failures.append(f"{label} {route}: Dartmouth Atlas controller is not loaded")
+                            page.wait_for_timeout(250)
+                            dataset = page.locator("#atlas-dataset")
+                            area = page.locator("#atlas-area")
+                            measure = page.locator("#atlas-measure")
+                            submit = page.locator("#atlas-submit")
+                            if dataset.input_value() == "Loading…":
+                                failures.append(f"{label} {route}: Dartmouth Atlas topic selector remained stuck on Loading")
+                            if area.is_disabled():
+                                failures.append(f"{label} {route}: Dartmouth Atlas region control did not initialize")
+                            if measure.is_disabled():
+                                failures.append(f"{label} {route}: Dartmouth Atlas measure control did not initialize")
+                            if submit.is_disabled():
+                                failures.append(f"{label} {route}: Dartmouth Atlas View data button did not initialize")
 
                         if route == "/toolkit-tools.html":
                             if page.locator("#leadership-tool-select").count() != 1:
