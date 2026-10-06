@@ -159,6 +159,33 @@ def main() -> int:
         fail(f"/api/health request error: {exc}")
         failures += 1
 
+    atlas_catalog, atlas_catalog_failures = check_json_route(args.base_url, "/api/live/dartmouth-atlas/catalog")
+    failures += atlas_catalog_failures
+    if atlas_catalog.get("status") == "ok":
+        dataset_ids = {str(d.get("id")) for d in atlas_catalog.get("datasets", [])}
+        if "primary-care" not in dataset_ids:
+            fail("Dartmouth Atlas catalog is missing primary-care")
+            failures += 1
+        else:
+            print("Dartmouth Atlas catalog live: primary-care available")
+
+    atlas_options, atlas_options_failures = check_json_route(
+        args.base_url, "/api/live/dartmouth-atlas/options?dataset=primary-care"
+    )
+    failures += atlas_options_failures
+    if atlas_options.get("status") == "ok":
+        if not atlas_options.get("areas"):
+            fail("Dartmouth Atlas primary-care returned no HRR areas")
+            failures += 1
+        if not atlas_options.get("measures"):
+            fail("Dartmouth Atlas primary-care returned no measures")
+            failures += 1
+        if atlas_options.get("areas") and atlas_options.get("measures"):
+            print(
+                f"Dartmouth Atlas live: {len(atlas_options.get('areas', []))} HRR areas, "
+                f"{len(atlas_options.get('measures', []))} measures"
+            )
+
     counties, county_failures = check_json_route(args.base_url, "/api/live/cdc/counties?state=CA")
     failures += county_failures
     if counties.get("status") == "ok":
