@@ -17,6 +17,7 @@ from .cdc_data import (
     fetch_cdc_svi_county,
 )
 from .cdc_geography import fetch_cdc_counties
+from .dartmouth_atlas import atlas_catalog, atlas_options, atlas_value
 from .evidence_search import fetch_evidence_search
 from .hai_dashboard import build_hai_dashboard
 from .hcahps_data import fetch_hcahps_comparison
@@ -191,6 +192,21 @@ def application(environ, start_response):
         )
     if path == "/api/live/census-upper-valley":
         return _json(start_response, fetch_census_upper_valley())
+    if path == "/api/live/dartmouth-atlas/catalog":
+        return _json(start_response, atlas_catalog())
+    if path == "/api/live/dartmouth-atlas/options":
+        query = urllib.parse.parse_qs(environ.get("QUERY_STRING", ""))
+        return _json(start_response, atlas_options(query.get("dataset", [""])[0]))
+    if path == "/api/live/dartmouth-atlas/value":
+        query = urllib.parse.parse_qs(environ.get("QUERY_STRING", ""))
+        return _json(
+            start_response,
+            atlas_value(
+                query.get("dataset", [""])[0],
+                query.get("area", [""])[0],
+                query.get("measure", [""])[0],
+            ),
+        )
     if path == "/api/live/cdc/status":
         return _json(start_response, cdc_data_status())
     if path == "/api/live/cdc/counties":
