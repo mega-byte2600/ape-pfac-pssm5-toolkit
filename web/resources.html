@@ -96,6 +96,34 @@
       <div id="hcahps-explorer-panel" class="live-results" aria-live="polite"></div>
     </section>
 
+    <section class="panel" id="dartmouth-atlas-explorer">
+      <div class="section-title">
+        <p class="eyebrow">Dartmouth Atlas Data</p>
+        <h2>Explore selected health-system variation data.</h2>
+        <p>Choose a dataset, area, and measure. The toolkit returns the latest published value from the selected Dartmouth Atlas dataset.</p>
+      </div>
+      <form id="atlas-form" class="live-form">
+        <label>Dataset
+          <select id="atlas-dataset">
+            <option value="">Loading datasets…</option>
+          </select>
+        </label>
+        <label>Area
+          <select id="atlas-area" disabled>
+            <option value="">Choose dataset first</option>
+          </select>
+        </label>
+        <label>Measure
+          <select id="atlas-measure" disabled>
+            <option value="">Choose dataset first</option>
+          </select>
+        </label>
+        <button type="submit" class="button" id="atlas-submit" disabled>View data</button>
+      </form>
+      <p class="form-help">Hospital Referral Region data. Suppressed or statistically imprecise values are shown as not reportable, never as real numbers.</p>
+      <div id="atlas-results" class="live-results" aria-live="polite"></div>
+    </section>
+
     <section class="panel" id="live-data">
       <div class="section-title">
         <p class="eyebrow">Live public data</p>
