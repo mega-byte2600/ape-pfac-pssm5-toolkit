@@ -21,6 +21,7 @@ ROUTES = (
     "/hai-alert.html",
     "/toolkit-tools.html",
     "/about.html",
+    "/resources.html",
 )
 VIEWPORTS = (
     ("desktop", 1440, 1000),
@@ -74,6 +75,25 @@ def run_browser_smoke(screenshots_dir: Path | None = None) -> list[str]:
                 for label, width, height in VIEWPORTS:
                     context = browser.new_context(viewport={"width": width, "height": height})
                     page = context.new_page()
+
+                    # Atlas UI contract is tested with deterministic local responses.
+                    # Live upstream availability is checked separately in production_smoke.py.
+                    page.route("**/api/live/dartmouth-atlas/catalog", lambda route: route.fulfill(
+                        status=200,
+                        content_type="application/json",
+                        body='{"status":"ok","datasets":[{"id":"primary-care","label":"Primary care access & quality"}]}'
+                    ))
+                    page.route("**/api/live/dartmouth-atlas/options?dataset=primary-care", lambda route: route.fulfill(
+                        status=200,
+                        content_type="application/json",
+                        body='{"status":"ok","dataset":"primary-care","areas":["Lebanon, NH"],"measures":[{"id":"primary_visit_rate","label":"Primary visit rate"}]}'
+                    ))
+                    page.route("**/api/live/dartmouth-atlas/value?*", lambda route: route.fulfill(
+                        status=200,
+                        content_type="application/json",
+                        body='{"status":"ok","dataset":"primary-care","dataset_label":"Primary care access & quality","area":"Lebanon, NH","measure":"primary_visit_rate","measure_label":"Primary visit rate","year":"2019","value":75.2,"suppressed":false,"source":"Dartmouth Atlas Data","source_url":"https://data.dartmouthatlas.org/primary-care/","terms_url":"https://data.dartmouthatlas.org/terms-of-use/"}'
+                    ))
+
                     for route in ROUTES:
                         page.goto(f"{base_url}{route}", wait_until="domcontentloaded")
                         if page.locator('nav[aria-label="Primary"]').count() != 1:
@@ -94,6 +114,36 @@ def run_browser_smoke(screenshots_dir: Path | None = None) -> list[str]:
                                 failures.append(f"{label} {route}: approved IF/THEN/SO THAT rationale is not visible")
                             if OLD_HOME_COPY.casefold() in folded:
                                 failures.append(f"{label} {route}: superseded homepage copy is still visible")
+
+                        if route == "/resources.html":
+                            if page.locator("#dartmouth-atlas-explorer").count() != 1:
+                                failures.append(f"{label} {route}: Dartmouth Atlas explorer is missing")
+                            if page.locator('script[src="/atlas-explorer.js"]').count() != 1:
+                                failures.append(f"{label} {route}: Dartmouth Atlas controller is not loaded")
+                            dataset = page.locator("#atlas-dataset")
+                            area = page.locator("#atlas-area")
+                            measure = page.locator("#atlas-measure")
+                            submit = page.locator("#atlas-submit")
+                            try:
+                                page.wait_for_function(
+                                    "() => { const a=document.querySelector('#atlas-area'), m=document.querySelector('#atlas-measure'), s=document.querySelector('#atlas-submit'); return a && m && s && !a.disabled && !m.disabled && !s.disabled; }",
+                                    timeout=3000,
+                                )
+                            except Exception:
+                                failures.append(f"{label} {route}: Dartmouth Atlas controls did not initialize")
+                            if dataset.input_value() == "Loading…":
+                                failures.append(f"{label} {route}: Dartmouth Atlas topic selector remained stuck on Loading")
+                            if not area.is_disabled() and not measure.is_disabled() and not submit.is_disabled():
+                                area.fill("Lebanon, NH")
+                                measure.select_option("primary_visit_rate")
+                                submit.click()
+                                try:
+                                    page.wait_for_function(
+                                        "() => document.querySelector('#atlas-results') && document.querySelector('#atlas-results').innerText.includes('75.2')",
+                                        timeout=3000,
+                                    )
+                                except Exception:
+                                    failures.append(f"{label} {route}: Dartmouth Atlas View data interaction did not render a result")
 
                         if route == "/toolkit-tools.html":
                             if page.locator("#leadership-tool-select").count() != 1:

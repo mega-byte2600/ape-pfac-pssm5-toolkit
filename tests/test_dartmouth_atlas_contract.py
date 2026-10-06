@@ -3,6 +3,7 @@ import csv
 import io
 import zipfile
 import unittest
+from pathlib import Path
 from unittest.mock import patch
 
 from pssm5_toolkit.dartmouth_atlas import atlas_catalog, atlas_options, atlas_value, _load_dataset
@@ -26,6 +27,17 @@ class DartmouthAtlasContractTest(unittest.TestCase):
 
     def tearDown(self):
         _load_dataset.cache_clear()
+
+    def test_resources_page_loads_atlas_controller(self):
+        html = Path("web/resources.html").read_text(encoding="utf-8")
+        self.assertIn('<script defer src="/atlas-explorer.js"></script>', html)
+        self.assertIn('id="dartmouth-atlas-explorer"', html)
+
+    def test_browser_smoke_covers_resources_and_atlas_init(self):
+        smoke = Path("scripts/browser_smoke.py").read_text(encoding="utf-8")
+        self.assertIn('"/resources.html"', smoke)
+        self.assertIn('#dartmouth-atlas-explorer', smoke)
+        self.assertIn('Dartmouth Atlas topic selector remained stuck on Loading', smoke)
 
     def test_catalog_is_small_and_curated(self):
         payload = atlas_catalog()
