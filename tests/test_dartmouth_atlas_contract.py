@@ -33,6 +33,12 @@ class DartmouthAtlasContractTest(unittest.TestCase):
         self.assertIn('<script defer src="/atlas-explorer.js"></script>', html)
         self.assertIn('id="dartmouth-atlas-explorer"', html)
 
+    def test_browser_smoke_covers_resources_and_atlas_init(self):
+        smoke = Path("scripts/browser_smoke.py").read_text(encoding="utf-8")
+        self.assertIn('"/resources.html"', smoke)
+        self.assertIn('#dartmouth-atlas-explorer', smoke)
+        self.assertIn('Dartmouth Atlas topic selector remained stuck on Loading', smoke)
+
     def test_catalog_is_small_and_curated(self):
         payload = atlas_catalog()
         self.assertEqual(payload["status"], "ok")
